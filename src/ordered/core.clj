@@ -1,5 +1,6 @@
 (ns ordered.core
   (:import (clojure.lang IPersistentMap
+                         IPersistentCollection
                          IPersistentVector
                          IObj
                          IFn
@@ -28,7 +29,7 @@
                                 ^IPersistentVector key-order
                                 ^IPersistentMap meta-map]
   {Counted {backing-map [(count [])]}
-   IPersistentMap {backing-map [(equiv [other])]}
+   IPersistentCollection {backing-map [(equiv [other])]}
    Associative {backing-map [(entryAt [k])
                              (valAt [k])
                              (valAt [k not-found])]}
