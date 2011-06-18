@@ -68,4 +68,9 @@
   (withMeta [this m]
             (OrderedMap. backing-map key-order m)))
 
-(def ^OrderedMap testm (empty (OrderedMap. nil nil nil)))
+(def ^OrderedMap empty-ordered-map (empty (OrderedMap. nil nil nil)))
+
+(defn ordered-map
+  ([] empty-ordered-map)
+  ([coll]
+     (into empty-ordered-map coll)))
