@@ -6,8 +6,14 @@
                          IFn
                          MapEquivalence
                          Counted
-                         Associative)
+                         Associative
+                         Reversible
+                         ;; Indexed, maybe add later?
+                         ;; Sorted almost certainly not accurate
+                         )
            (java.util Map)))
+
+;; TODO implement transient/persistent! with :volatile-mutable
 
 (defn delegating-method [method-name args delegate]
   `(~method-name [~'this ~@args]
@@ -62,6 +68,10 @@
        (seq (map #(find backing-map %) key-order)))
   (iterator [this]
             (clojure.lang.SeqIterator. (seq this)))
+
+  Reversible
+  (rseq [this]
+        (seq (OrderedMap. backing-map (rseq key-order) meta-map)))
 
   IObj
   (meta [this]
