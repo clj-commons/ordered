@@ -22,33 +22,31 @@
 (defmacro delegating-deftype [cname [& fields] delegate-map & deftype-args]
   `(deftype ~cname [~@fields]
      ~@(apply concat
-         (for [[interface methods] delegate-map]
-           (cons interface
-                 (for [[send-to which] methods
-                       :let [send-to (vary-meta send-to
-                                                assoc :tag interface)]
-                       [name args] which]
-                   (delegating-method name args send-to)))))
+         (for [[send-to interfaces] delegate-map
+               [interface which] interfaces
+               :let [send-to (vary-meta send-to
+                                        assoc :tag interface)]
+               [name args] which]
+           [interface (delegating-method name args send-to)]))
      ~@deftype-args))
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
                                 ^IPersistentVector key-order
                                 ^IPersistentMap meta-map]
-  {Counted {backing-map [(count [])]}
-   IPersistentCollection {backing-map [(equiv [other])]}
-   Associative {backing-map [(entryAt [k])
+  {backing-map {Counted [(count [])]
+                IPersistentCollection [(equiv [other])]
+                Associative [(entryAt [k])
                              (valAt [k])
-                             (valAt [k not-found])]}
-   Map {backing-map [(size [])
+                             (valAt [k not-found])]
+                Map [(size [])
                      (get [k])
                      (containsKey [k])
                      (containsValue [v])
                      (isEmpty [])
                      (keySet [])
-                     (values [])]}
-   Object {backing-map [(equals [other])
+                     (values [])]
+                Object [(equals [other])
                         (hashCode [])]}}
-
   ;; tagging interfaces
   MapEquivalence
   
