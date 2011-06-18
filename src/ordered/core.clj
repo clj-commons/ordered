@@ -41,12 +41,13 @@
                              (valAt [k not-found])]}
    Map {backing-map [(size [])
                      (get [k])
-                     (equals [other])
                      (containsKey [k])
                      (containsValue [v])
                      (isEmpty [])
                      (keySet [])
-                     (values [])]}}
+                     (values [])]}
+   Object {backing-map [(equals [other])
+                        (hashCode [])]}}
 
   ;; tagging interfaces
   MapEquivalence
