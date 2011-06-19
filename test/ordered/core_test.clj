@@ -31,7 +31,13 @@
         (is (= {:succeeded true}
                (-> basic
                    (vary-meta assoc :succeeded true)
-                   meta)))))))
+                   meta)))
+        (testing "Metadata behaves like map's metadata"
+          (let [meta-map {:meta 1}
+                m1 (with-meta {} meta-map)
+                m2 (with-meta basic meta-map)]
+            (is (= (meta (assoc m1 1 2))
+                   (meta (assoc m2 1 2))))))))))
 
 (deftest equality
   (let [empty (ordered-map)
