@@ -71,8 +71,13 @@
 
 (deftest map-features
   (let [m (ordered-map {:k 1 :v 2})]
-    (is (= 1 (:k m)))
-    (is (= [:k :v] (keys m)))
-    (is (= [1 2] (vals m)))
-    (is (= 2 (m :v)))
-    (is (= 'not-here (m :nothing 'not-here)))))
+    (testing "Keyword lookup"
+      (is (= 1 (:k m))))
+    (testing "Sequence views"
+      (is (= [:k :v] (keys m)))
+      (is (= [1 2] (vals m))))
+    (testing "IFn support"
+      (is (= 2 (m :v)))
+      (is (= 'not-here (m :nothing 'not-here))))
+    (testing "Get out Map.Entry"
+      (is (= [:k 1] (find m :k))))))
