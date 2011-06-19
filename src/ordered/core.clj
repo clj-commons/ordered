@@ -15,7 +15,9 @@
                          )
            (java.util Map)))
 
-;; TODO implement transient/persistent! with :volatile-mutable
+(defn- remove-once [pred coll]
+  (let [[before [x & after]] (split-with (complement pred) coll)]
+    (concat before after)))
 
 (letfn [;; given a mess of deftype specs, possibly with classes/interfaces
         ;; specified multiple times, collapse it into a map like
@@ -110,6 +112,11 @@ options defined for it, delegating-deftype may break with them."
                          (conj key-order k)))))
   (assoc [this k v]
     (conj this [k v]))
+  (without [this k]
+           (if (contains? backing-map k)
+             (OrderedMap. (dissoc backing-map k)
+                          (vec (remove-once #(= k %) key-order)))
+             this))
   (seq [this]
        (seq (map #(find backing-map %) key-order)))
   (iterator [this]
@@ -169,10 +176,7 @@ options defined for it, delegating-deftype may break with them."
                              (if-not dissocs
                                key-order
                                (vec (reduce (fn [order dissoc]
-                                              (let [[before [x & after]]
-                                                    (split-with #(not= % dissoc)
-                                                                order)]
-                                                (concat before after)))
+                                              (remove-once #(= % dissoc) order))
                                             key-order, dissocs))))))
   (conj [this e]
         (let [[k v] e]
