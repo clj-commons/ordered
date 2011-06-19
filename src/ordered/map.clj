@@ -1,5 +1,5 @@
 (ns ordered.map
-  (:use deftype.delegate :only [delegating-deftype])
+  (:use [deftype.delegate :only [delegating-deftype]])
   (:import (clojure.lang IPersistentMap
                          IPersistentVector
                          IEditableCollection
