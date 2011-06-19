@@ -126,7 +126,8 @@
                              (if-not dissocs
                                key-order
                                (vec (reduce (fn [order dissoc]
-                                              (remove-once #(= % dissoc) order))
+                                              (remove-once #(= % dissoc)
+                                                           order))
                                             key-order, dissocs))))))
   (conj [this e]
         (let [[k v] e]
