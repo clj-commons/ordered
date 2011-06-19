@@ -13,10 +13,6 @@
                          )
            (java.util Map)))
 
-(defn- remove-once [pred coll]
-  (let [[before [x & after]] (split-with (complement pred) coll)]
-    (concat before after)))
-
 (declare transient-ordered-map)
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
