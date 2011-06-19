@@ -95,7 +95,7 @@
     (set! backing-map (assoc! backing-map k k))
     this)
   (contains [this k]
-    (.containsKey ^OrderedMap backing-map k))
+    (not (identical? this (.valAt backing-map k this))))
   (persistent [this]
     (OrderedSet. (persistent! backing-map))))
 

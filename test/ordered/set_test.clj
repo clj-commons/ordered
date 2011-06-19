@@ -113,4 +113,7 @@
             t (transient s)
             t (disj! t k)]
         (is (= (persistent! t)
-               (disj s k)))))))
+               (disj s k)))))
+    (testing "Can lookup in transients"
+      (let [t (transient s)]
+        (is (.contains t (first s)))))))
