@@ -126,4 +126,6 @@ options defined for it, delegating-deftype may break with them."
 (defn ordered-map
   ([] empty-ordered-map)
   ([coll]
-     (into empty-ordered-map coll)))
+     (into empty-ordered-map coll))
+  ([k v & more]
+     (apply assoc empty-ordered-map k v more)))
