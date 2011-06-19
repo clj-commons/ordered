@@ -25,8 +25,6 @@
                                 (valAt [k not-found])]
                 IFn [(invoke [k])
                      (invoke [k not-found])]
-                IObj [(meta [])
-                      (withMeta [m])]
                 Map [(size [])
                      (get [k])
                      (containsKey [k])
@@ -60,6 +58,13 @@
        (seq (map #(find backing-map %) key-order)))
   (iterator [this]
             (clojure.lang.SeqIterator. (seq this)))
+
+  IObj
+  (meta [this]
+        (meta backing-map))
+  (withMeta [this m]
+            (OrderedMap. (with-meta backing-map m)
+                         key-order))
 
   IEditableCollection
   (asTransient [this]
