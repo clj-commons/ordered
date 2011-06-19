@@ -1,7 +1,7 @@
-(ns ordered.core-test
+(ns ordered.map-test
   (:use clojure.test
-        [ordered.core :only [ordered-map]])
-  (:import ordered.core.OrderedMap))
+        [ordered.map :only [ordered-map]])
+  (:import ordered.map.OrderedMap))
 
 (deftest implementations
   (let [basic (ordered-map)]
