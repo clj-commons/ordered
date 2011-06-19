@@ -121,7 +121,8 @@ options defined for it, delegating-deftype may break with them."
   (withMeta [this m]
             (OrderedMap. backing-map key-order m)))
 
-(def ^OrderedMap empty-ordered-map (empty (OrderedMap. nil nil nil)))
+(def ^{:private true,
+       :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil nil)))
 
 (defn ordered-map
   ([] empty-ordered-map)
