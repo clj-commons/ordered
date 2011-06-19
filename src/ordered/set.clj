@@ -3,7 +3,7 @@
   (:import (clojure.lang IPersistentSet IObj IEditableCollection
                          SeqIterator Reversible ITransientSet IFn)
            (java.util Set Collection)
-           (ordered.map OrderedMap TransientOrderedMap)))
+           (ordered.map OrderedMap)))
 
 (deftype OrderedSet [^OrderedMap backing-map]
   IPersistentSet
