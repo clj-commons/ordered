@@ -1,7 +1,7 @@
-(ns ordered.core-test
+(ns ordered.map-test
   (:use clojure.test
-        [ordered.core :only [ordered-map]])
-  (:import ordered.core.OrderedMap))
+        [ordered.map :only [ordered-map]])
+  (:import ordered.map.OrderedMap))
 
 (deftest implementations
   (let [basic (ordered-map)]
@@ -23,7 +23,7 @@
              (seq basic)
              (rseq basic)))
       (testing "Metadata"
-        (is (nil? (meta basic)))
+        (is (nil? (seq (meta basic))))
         (is (= 10 (-> basic
                       (with-meta {:size 10})
                       meta
@@ -32,6 +32,10 @@
                (-> basic
                    (vary-meta assoc :succeeded true)
                    meta)))
+        (testing "Metadata doesn't affect other properties"
+          (let [m (with-meta basic {:a 1})]
+            (is (instance? OrderedMap m))
+            (is (= m basic))))
         (testing "Metadata behaves like map's metadata"
           (let [meta-map {:meta 1}
                 m1 (with-meta {} meta-map)
