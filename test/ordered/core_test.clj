@@ -21,7 +21,17 @@
       (testing "Seq-oriented operations return nil when empty"
         (are [object] (nil? object)
              (seq basic)
-             (rseq basic))))))
+             (rseq basic)))
+      (testing "Metadata"
+        (is (nil? (meta basic)))
+        (is (= 10 (-> basic
+                      (with-meta {:size 10})
+                      meta
+                      :size)))
+        (is (= {:succeeded true}
+               (-> basic
+                   (vary-meta assoc :succeeded true)
+                   meta)))))))
 
 (deftest equality
   (let [empty (ordered-map)

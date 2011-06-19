@@ -72,8 +72,7 @@ options defined for it, delegating-deftype may break with them."
          ~@(explode (aggregate (apply concat deftype-args our-stuff)))))))
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
-                                ^IPersistentVector key-order
-                                ^IPersistentMap meta-map]
+                                ^IPersistentVector key-order]
   {backing-map {Counted [(count [])]
                 IPersistentCollection [(equiv [other])]
                 Associative [(entryAt [k])
@@ -81,6 +80,8 @@ options defined for it, delegating-deftype may break with them."
                              (valAt [k not-found])]
                 IFn [(invoke [k])
                      (invoke [k not-found])]
+                IObj [(meta [])
+                      (withMeta [m])]
                 Map [(size [])
                      (get [k])
                      (containsKey [k])
@@ -95,15 +96,14 @@ options defined for it, delegating-deftype may break with them."
   
   IPersistentMap
   (empty [this]
-         (OrderedMap. {} [] {}))
+         (OrderedMap. {} []))
   (cons [this obj]
         (let [[k v] obj
               new-map (assoc backing-map k v)]
           (OrderedMap. new-map
                        (if (contains? backing-map k)
                          key-order
-                         (conj key-order k))
-                       meta-map)))
+                         (conj key-order k)))))
   (assoc [this k v]
     (conj this [k v]))
   (seq [this]
@@ -113,16 +113,10 @@ options defined for it, delegating-deftype may break with them."
 
   Reversible
   (rseq [this]
-        (seq (OrderedMap. backing-map (rseq key-order) meta-map)))
-
-  IObj
-  (meta [this]
-        meta-map)
-  (withMeta [this m]
-            (OrderedMap. backing-map key-order m)))
+        (seq (OrderedMap. backing-map (rseq key-order)))))
 
 (def ^{:private true,
-       :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil nil)))
+       :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
 
 (defn ordered-map
   ([] empty-ordered-map)
