@@ -1,6 +1,5 @@
 (ns ordered.set
-  (:use [deftype.delegate :only [delegating-deftype]]
-        [ordered.map :only [ordered-map]])
+  (:use [ordered.map :only [ordered-map]])
   (:import (clojure.lang IPersistentSet IObj IEditableCollection
                          SeqIterator Reversible ITransientSet IFn)
            (java.util Set Collection)
@@ -8,71 +7,69 @@
 
 (declare transient-ordered-set)
 
-(delegating-deftype OrderedSet [^OrderedMap backing-map]
-  {backing-map {IFn [(invoke [k])
-                     (invoke [k not-found])]}}
-
+(deftype OrderedSet [^OrderedMap backing-map]
   IPersistentSet
   (disjoin [this k]
-           (OrderedSet. (.without backing-map k)))
+    (OrderedSet. (.without backing-map k)))
   (cons [this k]
-        (OrderedSet. (.assoc backing-map k k)))
+    (OrderedSet. (.assoc backing-map k k)))
   (seq [this]
-       (seq (keys backing-map)))
+    (seq (keys backing-map)))
   (empty [this]
-         (OrderedSet. (ordered-map)))
+    (OrderedSet. (ordered-map)))
   (equiv [this other]
-         (.equals this other))
-
-  IPersistentSet
+    (.equals this other))
   (get [this k]
-       (.get backing-map k))
+    (.get backing-map k))
   (count [this]
-         (.count backing-map))
+    (.count backing-map))
 
   IObj
   (meta [this]
-        (meta backing-map))
+    (meta backing-map))
   (withMeta [this m]
-            (OrderedSet. (.withMeta backing-map m)))
+    (OrderedSet. (.withMeta backing-map m)))
                 
   Object
   (hashCode [this]
-            (reduce + (map hash (.seq this))))
+    (reduce + (map hash (.seq this))))
   (equals [this other]
-          (or (identical? this other)
-              (and (instance? Set other)
-                   (let [^Set s (cast Set other)]
-                     (and (= (.size this) (.size s))
-                          (every? #(.contains s %) this))))))
+    (or (identical? this other)
+        (and (instance? Set other)
+             (let [^Set s (cast Set other)]
+               (and (= (.size this) (.size s))
+                    (every? #(.contains s %) this))))))
 
   Set
   (iterator [this]
-            (SeqIterator. (.seq this)))
+    (SeqIterator. (.seq this)))
   (contains [this k]
-            (.containsKey backing-map k))
+    (.containsKey backing-map k))
   (containsAll [this ks]
-               (every? identity (map #(.contains this %) ks)))
+    (every? identity (map #(.contains this %) ks)))
   (size [this]
-        (.count this))
+    (.count this))
   (isEmpty [this]
-           (zero? (.count this)))
+    (zero? (.count this)))
   (toArray [this dest]
-           (reduce (fn [idx item]
-                     (aset dest idx item)
-                     (inc idx))
-                   0, (.seq this))
-           dest)
+    (reduce (fn [idx item]
+              (aset dest idx item)
+              (inc idx))
+            0, (.seq this))
+    dest)
   (toArray [this]
-           (.toArray this (object-array (count this))))
+    (.toArray this (object-array (count this))))
 
   Reversible
   (rseq [this]
-        (seq (map key (rseq backing-map))))
+    (seq (map key (rseq backing-map))))
 
   IEditableCollection
   (asTransient [this]
-               (transient-ordered-set this)))
+    (transient-ordered-set this))
+  IFn
+  (invoke [_ k] (.invoke backing-map k))
+  (invoke [_ k not-found] (.invoke backing-map k not-found)))
 
 (def ^{:private true,
        :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil)))
