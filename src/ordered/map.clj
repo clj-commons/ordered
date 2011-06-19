@@ -99,9 +99,7 @@
                                (valAt [k])
                                (valAt [k not-found])]
                 IFn [(invoke [k])
-                     (invoke [k not-found])]
-                Object [(equals [other])
-                        (hashCode [])]}}
+                     (invoke [k not-found])]}}
   
   ITransientMap
   (assoc [this k v]
