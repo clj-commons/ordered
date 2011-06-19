@@ -1,8 +1,9 @@
 (ns ordered.map
-  (:use [deftype.delegate :only [delegating-deftype]]
+  (:use [ordered.common :only [ensure-vector]]
+        [deftype.delegate :only [delegating-deftype]]
         [amalloy.utils.seq :only [remove-once]])
   (:import (clojure.lang IPersistentMap
-                         IPersistentVector
+                         IPersistentCollection
                          IEditableCollection
                          ITransientMap
                          IObj
@@ -17,7 +18,7 @@
 (declare transient-ordered-map)
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
-                                ^IPersistentVector key-order]
+                                ^IPersistentCollection key-order]
   {backing-map {IPersistentMap [(equiv [other])
                                 (count [])
                                 (entryAt [k])
@@ -46,13 +47,13 @@
           (OrderedMap. new-map
                        (if (contains? backing-map k)
                          key-order
-                         (conj key-order k)))))
+                         (conj (ensure-vector key-order) k)))))
   (assoc [this k v]
     (conj this [k v]))
   (without [this k]
            (if (contains? backing-map k)
              (OrderedMap. (dissoc backing-map k)
-                          (vec (remove-once #(= k %) key-order)))
+                          (remove-once #(= k %) key-order))
              this))
   (seq [this]
        (seq (map #(find backing-map %) key-order)))
@@ -72,7 +73,8 @@
 
   Reversible
   (rseq [this]
-        (seq (OrderedMap. backing-map (rseq key-order)))))
+        (seq (OrderedMap. backing-map
+                          (rseq (ensure-vector key-order))))))
 
 (def ^{:private true,
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
@@ -81,7 +83,7 @@
   ([] empty-ordered-map)
   ([coll]
      (if (map? coll)
-       (OrderedMap. coll (vec (keys coll))) ;; should be faster
+       (OrderedMap. coll (keys coll)) ;; should be faster
        (into empty-ordered-map coll)))
   ([k v & more]
      (apply assoc empty-ordered-map k v more)))
@@ -132,5 +134,5 @@
 
 (defn transient-ordered-map [^OrderedMap om]
   (TransientOrderedMap. (transient (.backing-map om))
-                        (transient (.key-order om))
+                        (transient (ensure-vector (.key-order om)))
                         (transient [])))
