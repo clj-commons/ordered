@@ -152,6 +152,8 @@ options defined for it, delegating-deftype may break with them."
   {backing-map {Counted [(count [])]
                 ILookup [(valAt [k])
                          (valAt [k not-found])]
+                IFn [(invoke [k])
+                     (invoke [k not-found])]
                 Object [(equals [other])
                         (hashCode [])]}}
   
