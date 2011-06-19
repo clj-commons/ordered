@@ -29,7 +29,7 @@
     (meta backing-map))
   (withMeta [this m]
     (OrderedSet. (.withMeta backing-map m)))
-                
+
   Object
   (hashCode [this]
     (reduce + (map hash (.seq this))))
@@ -76,7 +76,7 @@
 
 (defn ordered-set
   ([] empty-ordered-set)
-  ([coll] (into empty-ordered-set coll)))
+  ([& xs] (into empty-ordered-set xs)))
 
 (deftype TransientOrderedSet [^{:unsynchronized-mutable true
                                 :tag TransientOrderedMap} backing-map]
