@@ -62,7 +62,7 @@
   (let [values [[:first 10]
                 [:second 20]
                 [:third 30]]
-        s (ordered-set values)]
+        s (into (ordered-set) values)]
     (testing "Seq behaves like seq of a vector"
       (is (= (seq values) (seq s))))
     (testing "New values get added at the end"
@@ -83,7 +83,7 @@
     (is (= (rseq s) (rseq source)))))
 
 (deftest set-features
-  (let [s (ordered-set [:a 1 :b 2 :c 3])]
+  (let [s (ordered-set :a 1 :b 2 :c 3)]
     (testing "Keyword lookup"
       (is (= :a (:a s))))
     (testing "IFn support"
@@ -93,7 +93,7 @@
       (is (= #{:a 1 2 3} (disj s :b :c))))))
 
 (deftest transient-support
-  (let [s (ordered-set [1 2 7 8])]
+  (let [s (ordered-set 1 2 7 8)]
     (testing "Basic transient conj!"
       (let [t (transient s)
             t (conj! t 4) ; add 4

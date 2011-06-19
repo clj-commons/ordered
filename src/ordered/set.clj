@@ -91,4 +91,4 @@
 
 (defn ordered-set
   ([] empty-ordered-set)
-  ([coll] (into empty-ordered-set coll)))
+  ([& xs] (into empty-ordered-set xs)))
