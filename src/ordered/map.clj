@@ -7,10 +7,7 @@
                          IObj
                          IFn
                          MapEquivalence
-                         Counted
-                         Associative
                          Reversible
-                         ILookup
                          ;; Indexed, maybe add later?
                          ;; Sorted almost certainly not accurate
                          )
@@ -24,11 +21,11 @@
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
                                 ^IPersistentVector key-order]
-  {backing-map {Counted [(count [])]
-                IPersistentMap [(equiv [other])]
-                Associative [(entryAt [k])
-                             (valAt [k])
-                             (valAt [k not-found])]
+  {backing-map {IPersistentMap [(equiv [other])
+                                (count [])
+                                (entryAt [k])
+                                (valAt [k])
+                                (valAt [k not-found])]
                 IFn [(invoke [k])
                      (invoke [k not-found])]
                 IObj [(meta [])
@@ -94,9 +91,9 @@
 (delegating-deftype TransientOrderedMap [^{:unsynchronized-mutable true} backing-map
                                          ^{:unsynchronized-mutable true} key-order
                                          ^{:unsynchronized-mutable true} dissocs]
-  {backing-map {Counted [(count [])]
-                ILookup [(valAt [k])
-                         (valAt [k not-found])]
+  {backing-map {ITransientMap [(count [])
+                               (valAt [k])
+                               (valAt [k not-found])]
                 IFn [(invoke [k])
                      (invoke [k not-found])]
                 Object [(equals [other])
