@@ -1,6 +1,6 @@
 (ns ordered.map
   (:use [ordered.common :only [ensure-vector]]
-        [deftype.delegate :only [delegating-deftype]]
+        [deftype.delegate :only [delegating-deftype delegating-reify]]
         [amalloy.utils.seq :only [remove-once]])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
@@ -14,8 +14,6 @@
                          ;; Sorted almost certainly not accurate
                          )
            (java.util Map)))
-
-(declare transient-ordered-map)
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
                                 ^IPersistentCollection key-order]
@@ -69,7 +67,45 @@
 
   IEditableCollection
   (asTransient [this]
-               (transient-ordered-map this))
+               (let [[mutable-map mutable-order dissocs]
+                     (map (comp atom transient)
+                          [backing-map (ensure-vector key-order) []]),
+                     not-found (Object.)]
+                 (delegating-reify
+                  {@mutable-map {ITransientMap [(count [])
+                                                (valAt [k])
+                                                (valAt [k not-found])]
+                                 IFn [(invoke [k])
+                                      (invoke [k not-found])]}}
+                  ITransientMap
+                  (assoc [this k v]
+                    (when (identical? not-found (get @mutable-map k not-found))
+                      (swap! mutable-order conj! k))
+                    (swap! mutable-map assoc! k v)
+                    this)
+  
+                  (without [this k]
+                           (when-not (identical? not-found
+                                                 (get @mutable-map k not-found))
+                             ;; not-found not returned, so it was already there
+                             (swap! mutable-map dissoc! k)
+                             ;; defer updating key-order until persistence, since it's expensive
+                             (swap! dissocs conj! k))
+                           this)
+  
+                  (persistent [_]
+                              (OrderedMap. (persistent! @mutable-map)
+                                           (let [key-order (persistent! @mutable-order)
+                                                 dissocs (seq (persistent! @dissocs))]
+                                             (if-not dissocs
+                                               key-order
+                                               (vec (reduce (fn [order dissoc]
+                                                              (remove-once #(= % dissoc)
+                                                                           order))
+                                                            key-order, dissocs))))))
+                  (conj [this e]
+                        (let [[k v] e]
+                          (assoc! this k v))))))
 
   Reversible
   (rseq [this]
@@ -88,50 +124,3 @@
   ([k v & more]
      (apply assoc empty-ordered-map k v more)))
 
-;; contains? is broken for transients. we could define a closure around a gensym
-;; to use as the not-found argument to a get, but deftype can't be a closure.
-;; instead, we pass `this` as the not-found argument and hope nobody makes a
-;; transient contain itself.
-(delegating-deftype TransientOrderedMap [^{:unsynchronized-mutable true} backing-map
-                                         ^{:unsynchronized-mutable true} key-order
-                                         ^{:unsynchronized-mutable true} dissocs]
-  {backing-map {ITransientMap [(count [])
-                               (valAt [k])
-                               (valAt [k not-found])]
-                IFn [(invoke [k])
-                     (invoke [k not-found])]}}
-  
-  ITransientMap
-  (assoc [this k v]
-    (when (identical? this (get backing-map k this))
-      ;; not-found returned, so it wasn't already there
-      (set! key-order (conj! key-order k)))
-    (set! backing-map (assoc! backing-map k v))
-    this)
-  
-  (without [this k]
-           (when-not (identical? this (get backing-map k this))
-             ;; not-found not returned, so it was already there
-             (set! backing-map (dissoc! backing-map k))
-             ;; defer updating key-order until persistence, since it's expensive
-             (set! dissocs (conj! dissocs k)))
-           this)
-  
-  (persistent [this]
-              (OrderedMap. (persistent! backing-map)
-                           (let [key-order (persistent! key-order)
-                                 dissocs (seq (persistent! dissocs))]
-                             (if-not dissocs
-                               key-order
-                               (vec (reduce (fn [order dissoc]
-                                              (remove-once #(= % dissoc)
-                                                           order))
-                                            key-order, dissocs))))))
-  (conj [this e]
-        (let [[k v] e]
-          (assoc! this k v))))
-
-(defn transient-ordered-map [^OrderedMap om]
-  (TransientOrderedMap. (transient (.backing-map om))
-                        (transient (ensure-vector (.key-order om)))
-                        (transient [])))
