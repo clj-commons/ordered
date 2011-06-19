@@ -86,14 +86,39 @@
     (is (= (rseq m) (rseq source)))))
 
 (deftest map-features
-  (let [m (ordered-map {:k 1 :v 2})]
+  (let [m (ordered-map {:a 1 :b 2 :c 3})]
     (testing "Keyword lookup"
-      (is (= 1 (:k m))))
+      (is (= 1 (:a m))))
     (testing "Sequence views"
-      (is (= [:k :v] (keys m)))
-      (is (= [1 2] (vals m))))
+      (is (= [:a :b :c] (keys m)))
+      (is (= [1 2 3] (vals m))))
     (testing "IFn support"
-      (is (= 2 (m :v)))
+      (is (= 2 (m :b)))
       (is (= 'not-here (m :nothing 'not-here))))
     (testing "Get out Map.Entry"
-      (is (= [:k 1] (find m :k))))))
+      (is (= [:a 1] (find m :a))))
+    (testing "Ordered dissoc"
+      (let [m (dissoc m :b)]
+        (is (= [:a :c] (keys m)))
+        (is (= [1 3] (vals m)))))))
+
+(deftest transient-support
+  (let [m (ordered-map {1 2 7 8})]
+    (testing "Basic transient conj!"
+      (let [t (transient m)
+            t (conj! t [3 4])
+            t (conj! t [3 4])
+            p (persistent! t)]
+        (is (= p (conj m [3 4])))))
+    (testing "Transients still keep order"
+      (let [t (transient m)
+            t (assoc! t 0 1)
+            p (persistent! t)]
+        (is (= (concat (seq m) '([0 1]))
+               (seq p)))))
+    (testing "Transients can dissoc!"
+      (let [k (key (first m))
+            t (transient m)
+            t (dissoc! t k)]
+        (is (= (persistent! t)
+               (dissoc m k)))))))
