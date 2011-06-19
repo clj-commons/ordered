@@ -81,21 +81,23 @@
   ([] empty-ordered-set)
   ([coll] (into empty-ordered-set coll)))
 
-(delegating-deftype TransientOrderedSet [^{:unsynchronized-mutable true} backing-map]
-  {backing-map {ITransientSet [(count [])
-                               (get [k])]}}
-
+(deftype TransientOrderedSet [^{:unsynchronized-mutable true
+                                :tag TransientOrderedMap} backing-map]
   ITransientSet
+  (count [this]
+    (.count backing-map))
+  (get [this k]
+    (.valAt backing-map k))
   (disjoin [this k]
-           (set! backing-map (disj! backing-map k))
-           this)
+    (set! backing-map (dissoc! backing-map k))
+    this)
   (conj [this k]
-        (set! backing-map (assoc! backing-map k k))
-        this)
+    (set! backing-map (assoc! backing-map k k))
+    this)
   (contains [this k]
-            (.containsKey backing-map k))
+    (.containsKey ^OrderedMap backing-map k))
   (persistent [this]
-              (OrderedSet. (persistent! backing-map))))
+    (OrderedSet. (persistent! backing-map))))
 
 (defn transient-ordered-set [^OrderedSet os]
   (TransientOrderedSet. (transient (.backing-map os))))
