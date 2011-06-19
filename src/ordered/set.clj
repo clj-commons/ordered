@@ -5,8 +5,6 @@
            (java.util Set Collection)
            (ordered.map OrderedMap TransientOrderedMap)))
 
-(declare transient-ordered-set)
-
 (deftype OrderedSet [^OrderedMap backing-map]
   IPersistentSet
   (disjoin [this k]
@@ -64,12 +62,29 @@
   (rseq [this]
     (seq (map key (rseq backing-map))))
 
-  IEditableCollection
-  (asTransient [this]
-    (transient-ordered-set this))
   IFn
   (invoke [_ k] (.invoke backing-map k))
-  (invoke [_ k not-found] (.invoke backing-map k not-found)))
+  (invoke [_ k not-found] (.invoke backing-map k not-found))
+
+  IEditableCollection
+  (asTransient [this]
+    (let [not-found (Object.)
+          mutable (atom (transient backing-map))]
+      (reify ITransientSet
+        (count [_]
+          (count @mutable))
+        (get [_ k]
+          (get @mutable k))
+        (disjoin [this k]
+          (swap! mutable dissoc! k)
+          this)
+        (conj [this k]
+          (swap! mutable assoc! k k)
+          this)
+        (contains [_ k]
+          (not (identical? not-found (get @mutable k not-found))))
+        (persistent [_]
+          (OrderedSet. (persistent! @mutable)))))))
 
 (def ^{:private true,
        :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil)))
