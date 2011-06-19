@@ -23,7 +23,7 @@
              (seq basic)
              (rseq basic)))
       (testing "Metadata"
-        (is (nil? (meta basic)))
+        (is (nil? (seq (meta basic))))
         (is (= 10 (-> basic
                       (with-meta {:size 10})
                       meta
