@@ -125,4 +125,11 @@
             t (transient m)
             t (dissoc! t k)]
         (is (= (persistent! t)
-               (dissoc m k)))))))
+               (dissoc m k)))))
+    (testing "Can't edit transient after calling persistent!"
+      (let [more [[:a 1] [:b 2]]
+            t (transient m)
+            t (reduce conj! t more)
+            p (persistent! t)]
+        (is (thrown? Throwable (assoc! t :c 3)))
+        (is (= (into m more) p))))))
