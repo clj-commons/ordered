@@ -151,7 +151,9 @@ options defined for it, delegating-deftype may break with them."
                                          ^{:unsynchronized-mutable true} dissocs]
   {backing-map {Counted [(count [])]
                 ILookup [(valAt [k])
-                         (valAt [k not-found])]}}
+                         (valAt [k not-found])]
+                Object [(equals [other])
+                        (hashCode [])]}}
   
   ITransientMap
   (assoc [this k v]
