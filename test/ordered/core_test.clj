@@ -68,3 +68,11 @@
                       [n n]))
         m (into (sorted-map) source)]
     (is (= (rseq m) (rseq source)))))
+
+(deftest map-features
+  (let [m (ordered-map {:k 1 :v 2})]
+    (is (= 1 (:k m)))
+    (is (= [:k :v] (keys m)))
+    (is (= [1 2] (vals m)))
+    (is (= 2 (m :v)))
+    (is (= 'not-here (m :nothing 'not-here)))))

@@ -79,6 +79,8 @@ options defined for it, delegating-deftype may break with them."
                 Associative [(entryAt [k])
                              (valAt [k])
                              (valAt [k not-found])]
+                IFn [(invoke [k])
+                     (invoke [k not-found])]
                 Map [(size [])
                      (get [k])
                      (containsKey [k])
