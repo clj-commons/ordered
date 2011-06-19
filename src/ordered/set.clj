@@ -2,15 +2,15 @@
   (:use [deftype.delegate :only [delegating-deftype]]
         [ordered.map :only [ordered-map]])
   (:import (clojure.lang IPersistentSet IObj IEditableCollection
-                         SeqIterator Reversible ITransientSet)
+                         SeqIterator Reversible ITransientSet IFn)
            (java.util Set Collection)
-           ordered.map.OrderedMap))
+           (ordered.map OrderedMap TransientOrderedMap)))
 
 (declare transient-ordered-set)
 
 (delegating-deftype OrderedSet [^OrderedMap backing-map]
-  {backing-map {IPersistentSet [(get [k])
-                                (count [])]}}
+  {backing-map {IFn [(invoke [k])
+                     (invoke [k not-found])]}}
 
   IPersistentSet
   (disjoin [this k]
@@ -23,6 +23,18 @@
          (OrderedSet. (ordered-map)))
   (equiv [this other]
          (.equals this other))
+
+  IPersistentSet
+  (get [this k]
+       (.get backing-map k))
+  (count [this]
+         (.count backing-map))
+
+  IObj
+  (meta [this]
+        (meta backing-map))
+  (withMeta [this m]
+            (OrderedSet. (.withMeta backing-map m)))
                 
   Object
   (hashCode [this]
