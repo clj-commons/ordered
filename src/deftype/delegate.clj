@@ -23,12 +23,26 @@
 
         ;; Output the method body for a delegating implementation
         (delegating-method [method-name args delegate]
-          `(~method-name [~'this ~@args]
-             (. ~delegate (~method-name ~@args))))]
+          `(~method-name [~'_ ~@args]
+             (. ~delegate (~method-name ~@args))))
+
+        ;; Create a series of Interface (method...) (method...) expressions,
+        ;; suitable for creating the entire body of a deftype or reify.
+        (type-body [delegate-map other-args]
+          (let [our-stuff (for [[send-to interfaces] delegate-map
+                                [interface which] interfaces
+                                :let [send-to (vary-meta send-to
+                                                         assoc :tag interface)]
+                                [name args] which]
+                            [interface (delegating-method name args send-to)])]
+            (explode (aggregate (apply concat other-args our-stuff)))))]
 
   (defmacro delegating-deftype
     "Shorthand for defining a new type with deftype, which delegates the methods
-you name to some other object or objects (usually a member field).
+you name to some other object or objects. Delegates are usually a member field,
+but can be any expression: the expression will be evaluated every time a method
+is delegated. The delegate object (or expression) will be type-hinted with the
+type of the interface being delegated.
 
 The delegate-map argument should be structured like:
 {object-to-delegate-to {Interface1 [(method1 [])
@@ -47,11 +61,9 @@ Interface1 if you have no suitable delegate.
 Arguments after `delegate-map` are as with deftype, although if deftype ever has
 options defined for it, delegating-deftype may break with them."
     [cname [& fields] delegate-map & deftype-args]
-    (let [our-stuff (for [[send-to interfaces] delegate-map
-                          [interface which] interfaces
-                          :let [send-to (vary-meta send-to
-                                                   assoc :tag interface)]
-                          [name args] which]
-                      [interface (delegating-method name args send-to)])]
-      `(deftype ~cname [~@fields]
-         ~@(explode (aggregate (apply concat deftype-args our-stuff)))))))
+    `(deftype ~cname [~@fields]
+       ~@(type-body delegate-map deftype-args)))
+  (defmacro delegating-reify
+    "Like delegating-deftype, but creates a reify body instead of a deftype."
+    [delegate-map & reify-args]
+    `(reify ~@(type-body delegate-map reify-args))))
