@@ -3,4 +3,3 @@
   :dependencies [[clojure "1.2.1"]
                  [clojure-contrib "1.2.0"]
                  [amalloy/utils "[0.3.8-SNAPSHOT,)"]])
-
