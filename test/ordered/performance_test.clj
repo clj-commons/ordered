@@ -2,7 +2,7 @@
   (:use clojure.test))
 
 (deftest reflection
-  (binding [*warn-on-reflection* true]
+#_  (binding [*warn-on-reflection* true]
     (are [ns-sym] (= ""
                      (with-out-str
                        (binding [*err* *out*]
