@@ -1,9 +1,10 @@
 (ns ordered.map
-  (:use [ordered.common :only [ensure-vector]]
+  (:use [ordered.common :only [ensure-vector change!]]
         [deftype.delegate :only [delegating-deftype]]
         [amalloy.utils.seq :only [remove-once]])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
+                         IPersistentVector
                          IEditableCollection
                          ITransientMap
                          IObj
@@ -20,7 +21,7 @@
 
 (delegating-deftype OrderedMap [^IPersistentMap k->v
                                 ^IPersistentMap k->i
-                                ^IPersistentMap i->kv
+                                ^IPersistentVector i->kv
                                 next-index]
   {k->v {IPersistentMap [(equiv [other])
                          (count [])
@@ -106,30 +107,27 @@
   {k->v {ITransientMap [(count [])
                           (valAt [k])
                           (valAt [k not-found])]
-           IFn [(invoke [k])
-                (invoke [k not-found])]}}
+         IFn [(invoke [k])
+              (invoke [k not-found])]}}
 
   ITransientMap
   (assoc [this k v]
     (let [old-index (get k->i k)
           new-entry (MapEntry. k v)]
+      (change! k->v assoc! k v)
       (if old-index
-        (TransientOrderedMap. (assoc! k->v k v)
-                              k->i
-                              (assoc! i->kv old-index new-entry)
-                              next-index)
-        (TransientOrderedMap. (assoc! k->v k v)
-                              (assoc! k->i k next-index)
-                              (assoc! i->kv next-index new-entry)
-                              (inc next-index)))))
+        (change! i->kv assoc! old-index new-entry)
+        (do (change! k->i assoc! k next-index)
+            (change! i->kv assoc! next-index new-entry)
+            (change! next-index inc)))
+      this))
 
   (without [this k]
-    (if-let [i (get k->i k)]
-      (TransientOrderedMap. (dissoc! k->v k)
-                            (dissoc! k->i k)
-                            (assoc! i->kv i nil)
-                            next-index)
-      this))
+    (when-let [i (get k->i k)]
+      (change! k->v dissoc! k)
+      (change! k->i dissoc! k)
+      (change! i->kv assoc! i nil))
+    this)
 
   (persistent [this]
     (OrderedMap. (persistent! k->v)
