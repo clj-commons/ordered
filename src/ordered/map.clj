@@ -1,7 +1,6 @@
 (ns ordered.map
   (:use [ordered.common :only [ensure-vector]]
-        [deftype.delegate :only [delegating-deftype delegating-reify]]
-        [amalloy.utils.seq :only [remove-once]])
+        [deftype.delegate :only [delegating-deftype delegating-reify]])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
                          IEditableCollection
