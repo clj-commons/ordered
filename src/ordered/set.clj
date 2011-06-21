@@ -99,20 +99,20 @@
       (change! order conj! x))
     this)
   (disjoin [this x]
-    (let [new-set (disj! set x)]
-      (if (identical? new-set set)
-        this
-        (let [max (count order)]
-          (set! set new-set)
-          (loop [new-order (transient []), i 0]
-            (if (= i max)
-              (set! order new-order)
-              (let [item (.valAt order i)]
-                (recur (if (= item x)
-                         new-order
-                         (conj! new-order item))
-                       (inc i)))))
-          this))))
+    (when (and (.contains set x)
+               (not (zero? (.count set))))
+      (let [new-set (disj! set x)
+            max (count order)]
+        (set! set new-set)
+        (loop [new-order (transient []), i 0]
+          (if (= i max)
+            (set! order new-order)
+            (let [item (.valAt order i)]
+              (recur (if (= item x)
+                       new-order
+                       (conj! new-order item))
+                     (inc i)))))))
+           this)
   (persistent [this]
     (OrderedSet. (persistent! set)
                  (persistent! order))))
