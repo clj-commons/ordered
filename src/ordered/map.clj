@@ -1,5 +1,5 @@
 (ns ordered.map
-  (:use [ordered.common :only [ensure-vector change!]]
+  (:use [ordered.common :only [change!]]
         [deftype.delegate :only [delegating-deftype]])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
