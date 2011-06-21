@@ -1,7 +1,6 @@
 (ns ordered.map
   (:use [ordered.common :only [ensure-vector change!]]
-        [deftype.delegate :only [delegating-deftype]]
-        [amalloy.utils.seq :only [remove-once]])
+        [deftype.delegate :only [delegating-deftype]])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
                          IPersistentVector
