@@ -43,7 +43,7 @@
 
   IPersistentMap
   (empty [this]
-    (OrderedMap. {} {} (sorted-map) 0))
+    (OrderedMap. {} {} [] 0))
   (cons [this obj]
     (let [[k v] obj]
       (assoc this k v)))
@@ -63,11 +63,11 @@
     (if-let [i (get k->i k)]
       (OrderedMap. (dissoc k->v k)
                    (dissoc k->i k)
-                   (dissoc i->kv i)
+                   (assoc i->kv i nil)
                    next-index)
       this))
   (seq [this]
-    (seq (vals i->kv)))
+    (seq (keep identity i->kv)))
   (iterator [this]
     (clojure.lang.SeqIterator. (seq this)))
 
@@ -83,7 +83,7 @@
 
   Reversible
   (rseq [this]
-    (seq (map val (rseq i->kv)))))
+    (seq (keep identity (rseq i->kv)))))
 
 (def ^{:private true,
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil nil nil)))
@@ -111,29 +111,30 @@
 
   ITransientMap
   (assoc [this k v]
-    (if (identical? this (get k->i k this))
-      ;; not-found returned, so it wasn't already there
-      (TransientOrderedMap. (assoc! k->v k v)
-                            (assoc! k->i k next-index)
-                            (assoc i->kv next-index (MapEntry. k v))
-                            (inc next-index))
-      (TransientOrderedMap. (assoc! k->v k v)
-                            k->i
-                            i->kv
-                            next-index)))
+    (let [old-index (get k->i k)
+          new-entry (MapEntry. k v)]
+      (if old-index
+        (TransientOrderedMap. (assoc! k->v k v)
+                              k->i
+                              (assoc! i->kv old-index new-entry)
+                              next-index)
+        (TransientOrderedMap. (assoc! k->v k v)
+                              (assoc! k->i k next-index)
+                              (assoc! i->kv next-index new-entry)
+                              (inc next-index)))))
 
   (without [this k]
     (if-let [i (get k->i k)]
       (TransientOrderedMap. (dissoc! k->v k)
                             (dissoc! k->i k)
-                            (dissoc i->kv i)
+                            (assoc! i->kv i nil)
                             next-index)
       this))
 
   (persistent [this]
     (OrderedMap. (persistent! k->v)
                  (persistent! k->i)
-                 i->kv
+                 (persistent! i->kv)
                  next-index))
   (conj [this e]
     (let [[k v] e]
@@ -142,5 +143,5 @@
 (defn transient-ordered-map [^OrderedMap om]
   (TransientOrderedMap. (transient (.k->v om))
                         (transient (.k->i om))
-                        (.i->kv om)
+                        (transient (.i->kv om))
                         (.next-index om)))
