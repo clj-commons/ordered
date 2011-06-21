@@ -87,8 +87,7 @@
     (testing "Keyword lookup"
       (is (= :a (:a s))))
     (testing "IFn support"
-      (is (= :b (s :b)))
-      (is (= 'not-here (s :nothing 'not-here))))
+      (is (= :b (s :b))))
     (testing "Ordered disj"
       (is (= #{:a 1 2 3} (disj s :b :c))))))
 

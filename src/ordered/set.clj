@@ -1,94 +1,122 @@
 (ns ordered.set
-  (:use [ordered.map :only [ordered-map]])
+  (:use [deftype.delegate :only [delegating-deftype]]
+        [ordered.common :only [change!]])
   (:import (clojure.lang IPersistentSet IObj IEditableCollection
-                         SeqIterator Reversible ITransientSet IFn)
-           (java.util Set Collection)
-           (ordered.map OrderedMap)))
+                         SeqIterator Reversible ITransientSet IFn
+                         IPersistentVector ITransientVector RT)
+           (java.util Set Collection)))
 
-(deftype OrderedSet [^OrderedMap backing-map]
+(declare ^{:private true} transient-ordered-set)
+
+(delegating-deftype OrderedSet [^IPersistentSet backing-set
+                                ^IPersistentVector order]
+  {backing-set {IPersistentSet [(equiv [other])
+                                (get [k])
+                                (count [])]
+                Object [(hashCode [])
+                        (equals [other])]
+                Set [(contains [k])
+                     (containsAll [s])
+                     (size [])
+                     (isEmpty [])]
+                IFn [(invoke [x])]}
+   order {IPersistentSet [(seq [])]
+          Reversible [(rseq [])]}}
+  
   IPersistentSet
-  (disjoin [this k]
-    (OrderedSet. (.without backing-map k)))
-  (cons [this k]
-    (OrderedSet. (.assoc backing-map k k)))
-  (seq [this]
-    (seq (keys backing-map)))
-  (empty [this]
-    (OrderedSet. (ordered-map)))
-  (equiv [this other]
-    (.equals this other))
-  (get [this k]
-    (.get backing-map k))
-  (count [this]
-    (.count backing-map))
+  (disjoin [this x]
+    (if (.contains this x)
+      (let [[before-split more-items]
+            (loop [new-order (transient []), remaining (.seq this)]
+              (let [y (first remaining), more (rest remaining)]
+                (if (= x y)
+                  [new-order more]
+                  (recur (conj! new-order y) more))))
+            
+            final-order
+            (loop [new-order before-split, remaining more-items]
+              (if-let [more (seq remaining)]
+                (recur (conj! new-order (first more)) (rest more))
+                (persistent! new-order)))]
+        (OrderedSet. (disj backing-set x) final-order))
+      this))
+  (cons [this x]
+    (if (.contains this x)
+      this
+      (OrderedSet. (conj backing-set x)
+                   (conj order x))))
+  (empty [_]
+    (OrderedSet. #{} []))
 
   IObj
   (meta [this]
-    (meta backing-map))
+    (.meta ^IObj backing-set))
   (withMeta [this m]
-    (OrderedSet. (.withMeta backing-map m)))
-                
-  Object
-  (hashCode [this]
-    (reduce + (map hash (.seq this))))
-  (equals [this other]
-    (or (identical? this other)
-        (and (instance? Set other)
-             (let [^Set s (cast Set other)]
-               (and (= (.size this) (.size s))
-                    (every? #(.contains s %) this))))))
+    (OrderedSet. (.withMeta ^IObj backing-set m)
+                 order))
 
   Set
   (iterator [this]
     (SeqIterator. (.seq this)))
-  (contains [this k]
-    (.containsKey backing-map k))
-  (containsAll [this ks]
-    (every? identity (map #(.contains this %) ks)))
-  (size [this]
-    (.count this))
-  (isEmpty [this]
-    (zero? (.count this)))
   (toArray [this dest]
-    (reduce (fn [idx item]
-              (aset dest idx item)
-              (inc idx))
-            0, (.seq this))
-    dest)
+    (let [len (.count this)]
+      (if (> len (alength dest))
+        (.toArray this)
+        (do
+          (reduce (fn [idx item]
+                    (aset dest idx item)
+                    (inc idx))
+                  0, (.seq this))
+          (when (> len (alength dest))
+            (aset dest len nil))
+          dest))))
   (toArray [this]
-    (.toArray this (object-array (count this))))
+    (RT/seqToArray (.seq this)))
 
-  Reversible
-  (rseq [this]
-    (seq (map key (rseq backing-map))))
-
-  IFn
-  (invoke [_ k] (.invoke backing-map k))
-  (invoke [_ k not-found] (.invoke backing-map k not-found))
-  
   IEditableCollection
   (asTransient [this]
-    (let [not-found (Object.)
-          mutable (atom (transient backing-map))]
-      (reify ITransientSet
-        (count [_]
-          (count @mutable))
-        (get [_ k]
-          (get @mutable k))
-        (disjoin [this k]
-          (swap! mutable dissoc! k)
-          this)
-        (conj [this k]
-          (swap! mutable assoc! k k)
-          this)
-        (contains [_ k]
-          (not (identical? not-found (get @mutable k not-found))))
-        (persistent [_]
-          (OrderedSet. (persistent! @mutable)))))))
+    (transient-ordered-set this)))
 
 (def ^{:private true,
-       :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil)))
+       :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil nil)))
 
 (defn ordered-set
   ([] empty-ordered-set)
   ([& xs] (into empty-ordered-set xs)))
+
+(delegating-deftype TransientOrderedSet [^{:unsynchronized-mutable true,
+                                           :tag ITransientSet} set,
+                                         ^{:unsynchronized-mutable true,
+                                           :tag ITransientVector} order]
+  {set {ITransientSet [(count [])
+                       (contains [x])
+                       (get [x])]}}
+  ITransientSet
+  (conj [this x]
+    (when (or (zero? (.count set))
+              (not (.contains set x)))
+      (change! set conj! x)
+      (change! order conj! x))
+    this)
+  (disjoin [this x]
+    (let [new-set (disj! set x)]
+      (if (identical? new-set set)
+        this
+        (let [max (count order)]
+          (set! set new-set)
+          (loop [new-order (transient []), i 0]
+            (if (= i max)
+              (set! order new-order)
+              (let [item (.valAt order i)]
+                (recur (if (= item x)
+                         new-order
+                         (conj! new-order item))
+                       (inc i)))))
+          this))))
+  (persistent [this]
+    (OrderedSet. (persistent! set)
+                 (persistent! order))))
+
+(defn ^{:private true} transient-ordered-set [^OrderedSet os]
+  (TransientOrderedSet. (transient (.backing-set os))
+                        (transient (.order os))))
