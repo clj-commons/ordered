@@ -1,5 +1,6 @@
 (ns ordered.set
-  (:use [ordered.map :only [ordered-map]])
+  (:use [ordered.map :only [ordered-map]]
+        [ordered.common :only [Compactable compact]])
   (:import (clojure.lang IPersistentSet IObj IEditableCollection
                          SeqIterator Reversible ITransientSet IFn)
            (java.util Set Collection)
@@ -29,6 +30,10 @@
     (meta backing-map))
   (withMeta [this m]
     (OrderedSet. (.withMeta backing-map m)))
+
+  Compactable
+  (compact [this]
+    (OrderedSet. (compact backing-map)))
 
   Object
   (hashCode [this]
