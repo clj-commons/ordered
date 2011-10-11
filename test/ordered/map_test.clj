@@ -90,7 +90,7 @@
     (is (= (rseq m) (rseq source)))))
 
 (deftest map-features
-  (let [m (ordered-map {:a 1 :b 2 :c 3})]
+  (let [m (ordered-map :a 1 :b 2 :c 3)]
     (testing "Keyword lookup"
       (is (= 1 (:a m))))
     (testing "Sequence views"
