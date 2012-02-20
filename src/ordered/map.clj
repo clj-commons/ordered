@@ -73,8 +73,9 @@
   (empty [this]
     (OrderedMap. {} []))
   (cons [this obj]
-    (let [[k v] obj]
-      (.assoc this k v)))
+    (if-let [[k v] (seq obj)]
+      (.assoc this k v)
+      this))
 
   (assoc [this k v]
     (if-let [^MapEntry e (.get ^Map backing-map k)]

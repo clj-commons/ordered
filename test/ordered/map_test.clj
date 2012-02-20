@@ -104,7 +104,12 @@
     (testing "Ordered dissoc"
       (let [m (dissoc m :b)]
         (is (= [:a :c] (keys m)))
-        (is (= [1 3] (vals m)))))))
+        (is (= [1 3] (vals m)))))
+    (testing "(conj m nil) returns m"
+      (are [x] (= m x)
+           (conj m nil)
+           (merge m ())
+           (into m ())))))
 
 (deftest transient-support
   (let [m (ordered-map {1 2 7 8})]
