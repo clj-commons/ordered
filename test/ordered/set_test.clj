@@ -91,6 +91,10 @@
     (testing "Ordered disj"
       (is (= #{:a 1 2 3} (disj s :b :c))))))
 
+(deftest object-features
+  (let [s (ordered-set 'a 1 :b 2)]
+    (is (= "#{a 1 :b 2}" (str s)))))
+
 (deftest transient-support
   (let [s (ordered-set 1 2 7 8)]
     (testing "Basic transient conj!"

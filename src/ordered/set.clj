@@ -1,5 +1,6 @@
 (ns ordered.set
   (:use [ordered.common :only [Compactable compact change!]])
+  (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
                          IPersistentVector ITransientVector
@@ -45,6 +46,8 @@
                  (vec (.seq this))))
 
   Object
+  (toString [this]
+    (str "#{" (clojure.string/join " " (map str this)) "}"))
   (hashCode [this]
     (reduce + (map hash (.seq this))))
   (equals [this other]

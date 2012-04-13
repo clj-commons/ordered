@@ -1,6 +1,7 @@
 (ns ordered.map
   (:use [ordered.common :only [change! Compactable compact]]
         [deftype.delegate :only [delegating-deftype]])
+  (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
                          IPersistentVector
@@ -62,6 +63,10 @@
     (boolean (seq (filter #(= % v) (.values this)))))
   (values [this]
     (map (comp val val) (.seq this)))
+
+  Object
+  (toString [this]
+    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
   (equals [this other]
     (.equiv this other))
   (hashCode [this]

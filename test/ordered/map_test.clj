@@ -111,6 +111,10 @@
            (merge m ())
            (into m ())))))
 
+(deftest object-features
+  (let [m (ordered-map 'a 1 :b 2)]
+    (is (= "{a 1, :b 2}" (str m)))))
+
 (deftest transient-support
   (let [m (ordered-map {1 2 7 8})]
     (testing "Basic transient conj!"
