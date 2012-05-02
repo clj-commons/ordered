@@ -1,7 +1,6 @@
 (ns ordered.set-test
   (:use clojure.test
-        [ordered.set :only [ordered-set]]
-        [ordered.common :only [*print-ordered*]])
+        [ordered.set :only [ordered-set]])
   (:import (ordered.set OrderedSet)))
 
 (deftest implementations
@@ -124,13 +123,9 @@
 
 (deftest print-and-read-ordered
   (let [s (ordered-set 1 2 9 8 7 5)]
-    (is (re-matches #"#\{.*\}" (pr-str s)))
     (is (= "#ordered/set (1 2 9 8 7 5)"
-           (binding [*print-ordered* true]
-             (pr-str s))))
-    (let [o (read-string
-             (binding [*print-ordered* true]
-               (pr-str s)))]
+           (pr-str s)))
+    (let [o (read-string (pr-str s))]
       (is (= ordered.set.OrderedSet (type o)))
       (is (= '(1 2 9 8 7 5)
              (seq o))))))

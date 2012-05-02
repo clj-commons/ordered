@@ -1,7 +1,6 @@
 (ns ordered.map-test
   (:use clojure.test
-        [ordered.map :only [ordered-map]]
-        [ordered.common :only [*print-ordered*]])
+        [ordered.map :only [ordered-map]])
   (:import ordered.map.OrderedMap))
 
 (deftest implementations
@@ -153,13 +152,9 @@
 
 (deftest print-and-read-ordered
   (let [s (ordered-map 1 2, 3 4, 5 6, 1 9, 7 8)]
-    (is (re-matches #"\{.*\}" (pr-str s)))
     (is (= "#ordered/map ([1 9] [3 4] [5 6] [7 8])"
-           (binding [*print-ordered* true]
-             (pr-str s))))
-    (let [o (read-string
-             (binding [*print-ordered* true]
-               (pr-str s)))]
+           (pr-str s)))
+    (let [o (read-string (pr-str s))]
       (is (= ordered.map.OrderedMap (type o)))
       (is (= '([1 9] [3 4] [5 6] [7 8])
              (seq o))))))
