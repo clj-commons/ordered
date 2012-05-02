@@ -1,5 +1,5 @@
 (ns ordered.set
-  (:use [ordered.common :only [Compactable compact change!]])
+  (:use [ordered.common :only [Compactable compact change! *print-ordered*]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
@@ -124,3 +124,13 @@
 (defn transient-ordered-set [^OrderedSet os]
   (TransientOrderedSet. (transient (.k->i os))
                         (transient (.i->k os))))
+
+(defn into-ordered-set
+  [items]
+  (into empty-ordered-set items))
+
+(defmethod print-method OrderedSet [o ^java.io.Writer w]
+  (if *print-ordered*
+    (do (.write w "#ordered/set ")
+        (print-method (seq o) w))
+    (print-method (set o) w)))

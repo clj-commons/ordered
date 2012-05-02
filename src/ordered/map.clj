@@ -1,5 +1,5 @@
 (ns ordered.map
-  (:use [ordered.common :only [change! Compactable compact]]
+  (:use [ordered.common :only [change! Compactable compact *print-ordered*]]
         [deftype.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
@@ -168,7 +168,12 @@
     (OrderedMap. (.persistent backing-map)
                  (.persistent order))))
 
-
 (defn transient-ordered-map [^OrderedMap om]
   (TransientOrderedMap. (.asTransient ^IEditableCollection (.backing-map om))
                         (.asTransient ^IEditableCollection (.order om))))
+
+(defmethod print-method OrderedMap [o ^java.io.Writer w]
+  (if *print-ordered*
+    (do (.write w "#ordered/map ")
+        (print-method (seq o) w))
+    (print-method (into {} o) w)))

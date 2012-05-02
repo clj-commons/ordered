@@ -1,6 +1,7 @@
 (ns ordered.set-test
   (:use clojure.test
-        [ordered.set :only [ordered-set]])
+        [ordered.set :only [ordered-set]]
+        [ordered.common :only [*print-ordered*]])
   (:import (ordered.set OrderedSet)))
 
 (deftest implementations
@@ -120,3 +121,16 @@
     (testing "Can lookup in transients"
       (let [t (transient s)]
         (is (.contains t (first s)))))))
+
+(deftest print-and-read-ordered
+  (let [s (ordered-set 1 2 9 8 7 5)]
+    (is (re-matches #"#\{.*\}" (pr-str s)))
+    (is (= "#ordered/set (1 2 9 8 7 5)"
+           (binding [*print-ordered* true]
+             (pr-str s))))
+    (let [o (read-string
+             (binding [*print-ordered* true]
+               (pr-str s)))]
+      (is (= ordered.set.OrderedSet (type o)))
+      (is (= '(1 2 9 8 7 5)
+             (seq o))))))
