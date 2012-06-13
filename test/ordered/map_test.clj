@@ -105,6 +105,8 @@
       (let [m (dissoc m :b)]
         (is (= [:a :c] (keys m)))
         (is (= [1 3] (vals m)))))
+    (testing "Can conj a map"
+      (is (= {:a 1 :b 2 :c 3 :d 4} (conj m {:d 4}))))
     (testing "(conj m nil) returns m"
       (are [x] (= m x)
            (conj m nil)

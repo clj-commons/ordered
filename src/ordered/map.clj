@@ -16,7 +16,7 @@
                          ;; Indexed, maybe add later?
                          ;; Sorted almost certainly not accurate
                          )
-           (java.util Map)))
+           (java.util Map Map$Entry)))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -78,9 +78,17 @@
   (empty [this]
     (OrderedMap. {} []))
   (cons [this obj]
-    (if-let [[k v] (seq obj)]
-      (.assoc this k v)
-      this))
+    (condp instance? obj
+      Map$Entry (let [^Map$Entry e obj]
+                  (.assoc this (.getKey e) (.getValue e)))
+      IPersistentVector (if (= 2 (count obj))
+                          (.assoc this (nth obj 0) (nth obj 1))
+                          (throw (IllegalArgumentException.
+                                  "Vector arg to map conj must be a pair")))
+      (persistent! (reduce (fn [^ITransientMap m ^Map$Entry e]
+                             (.assoc m (.getKey e) (.getValue e)))
+                           (transient this)
+                           obj))))
 
   (assoc [this k v]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
