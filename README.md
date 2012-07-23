@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/flatland/ordered.png)](http://travis-ci.org/flatland/ordered)
+
 ordered provides sets and maps that maintain the insertion order of their contents.
 
 ## Sets
