@@ -1,4 +1,4 @@
-(defproject ordered "1.3.0"
+(defproject ordered "1.3.1"
   :url "https://github.com/flatland/ordered"
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
