@@ -131,6 +131,11 @@
             p (persistent! t)]
         (is (= (concat (seq m) '([0 1]))
                (seq p)))))
+    (testing "Transients can overwrite existing entries"
+      (let [t (transient m)
+            t (assoc! t 1 5)
+            p (persistent! t)]
+        (is (= p (assoc m 1 5)))))
     (testing "Transients can dissoc!"
       (let [k (key (first m))
             t (transient m)
