@@ -156,11 +156,14 @@
       not-found))
   (assoc [this k v]
     (let [^MapEntry e (.valAt backing-map k this)
+          vector-entry (MapEntry. k v)
           i (if (identical? e this)
-              (do (change! order .conj (MapEntry. k v))
+              (do (change! order .conj vector-entry)
                   (dec (.count order)))
-              (.key e))]
-      (change! backing-map conj! (entry k v i))
+              (let [idx (.key e)]
+                (change! order .assoc idx vector-entry)
+                idx))]
+      (change! backing-map .conj (entry k v i))
       this))
   (conj [this e]
     (let [[k v] e]
