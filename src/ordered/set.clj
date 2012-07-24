@@ -1,5 +1,6 @@
 (ns ordered.set
   (:use [ordered.common :only [Compactable compact change!]])
+  (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
                          IPersistentVector ITransientVector
@@ -45,6 +46,8 @@
                  (vec (.seq this))))
 
   Object
+  (toString [this]
+    (str "#{" (clojure.string/join " " (map str this)) "}"))
   (hashCode [this]
     (reduce + (map hash (.seq this))))
   (equals [this other]
@@ -121,3 +124,11 @@
 (defn transient-ordered-set [^OrderedSet os]
   (TransientOrderedSet. (transient (.k->i os))
                         (transient (.i->k os))))
+
+(defn into-ordered-set
+  [items]
+  (into empty-ordered-set items))
+
+(defmethod print-method OrderedSet [o ^java.io.Writer w]
+  (.write w "#ordered/set ")
+  (print-method (seq o) w))

@@ -104,7 +104,18 @@
     (testing "Ordered dissoc"
       (let [m (dissoc m :b)]
         (is (= [:a :c] (keys m)))
-        (is (= [1 3] (vals m)))))))
+        (is (= [1 3] (vals m)))))
+    (testing "Can conj a map"
+      (is (= {:a 1 :b 2 :c 3 :d 4} (conj m {:d 4}))))
+    (testing "(conj m nil) returns m"
+      (are [x] (= m x)
+           (conj m nil)
+           (merge m ())
+           (into m ())))))
+
+(deftest object-features
+  (let [m (ordered-map 'a 1 :b 2)]
+    (is (= "{a 1, :b 2}" (str m)))))
 
 (deftest transient-support
   (let [m (ordered-map {1 2 7 8})]
@@ -120,6 +131,11 @@
             p (persistent! t)]
         (is (= (concat (seq m) '([0 1]))
                (seq p)))))
+    (testing "Transients can overwrite existing entries"
+      (let [t (transient m)
+            t (assoc! t 1 5)
+            p (persistent! t)]
+        (is (= p (assoc m 1 5)))))
     (testing "Transients can dissoc!"
       (let [k (key (first m))
             t (transient m)
@@ -140,3 +156,12 @@
         (is (= (count ts) (count holder)))
         (are [t] (= t (holder t))
              t1 t2)))))
+
+(deftest print-and-read-ordered
+  (let [s (ordered-map 1 2, 3 4, 5 6, 1 9, 7 8)]
+    (is (= "#ordered/map ([1 9] [3 4] [5 6] [7 8])"
+           (pr-str s)))
+    (let [o (read-string (pr-str s))]
+      (is (= ordered.map.OrderedMap (type o)))
+      (is (= '([1 9] [3 4] [5 6] [7 8])
+             (seq o))))))

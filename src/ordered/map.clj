@@ -1,6 +1,7 @@
 (ns ordered.map
   (:use [ordered.common :only [change! Compactable compact]]
         [deftype.delegate :only [delegating-deftype]])
+  (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
                          IPersistentVector
@@ -15,7 +16,7 @@
                          ;; Indexed, maybe add later?
                          ;; Sorted almost certainly not accurate
                          )
-           (java.util Map)))
+           (java.util Map Map$Entry)))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -62,6 +63,10 @@
     (boolean (seq (filter #(= % v) (.values this)))))
   (values [this]
     (map (comp val val) (.seq this)))
+
+  Object
+  (toString [this]
+    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
   (equals [this other]
     (.equiv this other))
   (hashCode [this]
@@ -73,8 +78,17 @@
   (empty [this]
     (OrderedMap. {} []))
   (cons [this obj]
-    (let [[k v] obj]
-      (.assoc this k v)))
+    (condp instance? obj
+      Map$Entry (let [^Map$Entry e obj]
+                  (.assoc this (.getKey e) (.getValue e)))
+      IPersistentVector (if (= 2 (count obj))
+                          (.assoc this (nth obj 0) (nth obj 1))
+                          (throw (IllegalArgumentException.
+                                  "Vector arg to map conj must be a pair")))
+      (persistent! (reduce (fn [^ITransientMap m ^Map$Entry e]
+                             (.assoc m (.getKey e) (.getValue e)))
+                           (transient this)
+                           obj))))
 
   (assoc [this k v]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
@@ -142,11 +156,14 @@
       not-found))
   (assoc [this k v]
     (let [^MapEntry e (.valAt backing-map k this)
+          vector-entry (MapEntry. k v)
           i (if (identical? e this)
-              (do (change! order .conj (MapEntry. k v))
+              (do (change! order .conj vector-entry)
                   (dec (.count order)))
-              (.key e))]
-      (change! backing-map conj! (entry k v i))
+              (let [idx (.key e)]
+                (change! order .assoc idx vector-entry)
+                idx))]
+      (change! backing-map .conj (entry k v i))
       this))
   (conj [this e]
     (let [[k v] e]
@@ -162,7 +179,10 @@
     (OrderedMap. (.persistent backing-map)
                  (.persistent order))))
 
-
 (defn transient-ordered-map [^OrderedMap om]
   (TransientOrderedMap. (.asTransient ^IEditableCollection (.backing-map om))
                         (.asTransient ^IEditableCollection (.order om))))
+
+(defmethod print-method OrderedMap [o ^java.io.Writer w]
+  (.write w "#ordered/map ")
+  (print-method (seq o) w))
