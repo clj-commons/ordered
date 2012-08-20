@@ -57,7 +57,10 @@
             unsorted {1 2 3 4}]
         (is (= one-way other-way))
         (is (= one-way unsorted))
-        (is (= other-way unsorted))))))
+        (is (= other-way unsorted))))
+    (testing "Hash code sanity"
+      (is (integer? (hash one-item)))
+      (is (= #{one-item} (into #{} [one-item {1 2}]))))))
 
 (deftest ordering
   (let [values [[:first 10]
