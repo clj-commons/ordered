@@ -71,7 +71,7 @@
     (.equiv this other))
   (hashCode [this]
     (reduce (fn [acc ^MapEntry e]
-              (let [k (.key e), v (.val ^MapEntry (.val e))]
+              (let [k (.key e), v (.val e)]
                 (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
             0 (.seq this)))
   IPersistentMap
