@@ -41,8 +41,9 @@
                    (= (.val e) (.get ^Map other (.key e))))
                  (.seq this))))
   (entryAt [this k]
-    (when-let [v (.get this k)]
-      (MapEntry. k v)))
+    (let [v (get this k ::not-found)]
+      (when (not= v ::not-found) 
+        (MapEntry. k v))))
   (valAt [this k]
     (.valAt this k nil))
   (valAt [this k not-found]

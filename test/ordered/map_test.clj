@@ -101,9 +101,12 @@
       (is (= [1 2 3] (vals m))))
     (testing "IFn support"
       (is (= 2 (m :b)))
-      (is (= 'not-here (m :nothing 'not-here))))
+      (is (= 'not-here (m :nothing 'not-here)))
+      (is (= nil ((ordered-map {:x nil}) :x 'not-here))) )
     (testing "Get out Map.Entry"
       (is (= [:a 1] (find m :a))))
+    (testing "Get out Map.Entry with falsy value"
+      (is (= [:a nil] (find (ordered-map {:a nil}) :a))))
     (testing "Ordered dissoc"
       (let [m (dissoc m :b)]
         (is (= [:a :c] (keys m)))
