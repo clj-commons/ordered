@@ -43,9 +43,7 @@
   (entryAt [this k]
     (let [v (get this k ::not-found)]
       (when (not= v ::not-found) 
-        (MapEntry. k v)))
-    #_(when-let [v (.get this k)]
-       (MapEntry. k v)))
+        (MapEntry. k v))))
   (valAt [this k]
     (.valAt this k nil))
   (valAt [this k not-found]
