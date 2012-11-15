@@ -1,6 +1,6 @@
-(ns ordered.map
-  (:use [ordered.common :only [change! Compactable compact]]
-        [deftype.delegate :only [delegating-deftype]])
+(ns flatland.ordered.map
+  (:use [flatland.ordered.common :only [change! Compactable compact]]
+        [flatland.useful.experimental.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection

@@ -1,4 +1,4 @@
-(ns ordered.performance-test
+(ns flatland.ordered.performance-test
   (:use clojure.test))
 
 (deftest reflection

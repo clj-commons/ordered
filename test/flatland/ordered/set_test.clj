@@ -1,7 +1,7 @@
-(ns ordered.set-test
+(ns flatland.ordered.set-test
   (:use clojure.test
-        [ordered.set :only [ordered-set]])
-  (:import (ordered.set OrderedSet)))
+        [flatland.ordered.set :only [ordered-set]])
+  (:import (flatland.ordered.set OrderedSet)))
 
 (deftest implementations
   (let [s (ordered-set)]
@@ -126,6 +126,6 @@
     (is (= "#ordered/set (1 2 9 8 7 5)"
            (pr-str s)))
     (let [o (read-string (pr-str s))]
-      (is (= ordered.set.OrderedSet (type o)))
+      (is (= OrderedSet (type o)))
       (is (= '(1 2 9 8 7 5)
              (seq o))))))
