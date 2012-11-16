@@ -1,8 +1,6 @@
-.cake
 pom.xml
 *.jar
 *.war
-lib
-classes
-build
+target
+.lein*
 docs
