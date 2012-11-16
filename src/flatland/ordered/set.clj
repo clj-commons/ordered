@@ -1,5 +1,5 @@
-(ns ordered.set
-  (:use [ordered.common :only [Compactable compact change!]])
+(ns flatland.ordered.set
+  (:use [flatland.ordered.common :only [Compactable compact change!]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative

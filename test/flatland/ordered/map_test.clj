@@ -1,7 +1,7 @@
-(ns ordered.map-test
+(ns flatland.ordered.map-test
   (:use clojure.test
-        [ordered.map :only [ordered-map]])
-  (:import ordered.map.OrderedMap))
+        [flatland.ordered.map :only [ordered-map]])
+  (:import flatland.ordered.map.OrderedMap))
 
 (deftest implementations
   (let [basic (ordered-map)]
@@ -57,7 +57,10 @@
             unsorted {1 2 3 4}]
         (is (= one-way other-way))
         (is (= one-way unsorted))
-        (is (= other-way unsorted))))))
+        (is (= other-way unsorted))))
+    (testing "Hash code sanity"
+      (is (integer? (hash one-item)))
+      (is (= #{one-item} (into #{} [one-item {1 2}]))))))
 
 (deftest ordering
   (let [values [[:first 10]
@@ -162,6 +165,6 @@
     (is (= "#ordered/map ([1 9] [3 4] [5 6] [7 8])"
            (pr-str s)))
     (let [o (read-string (pr-str s))]
-      (is (= ordered.map.OrderedMap (type o)))
+      (is (= OrderedMap (type o)))
       (is (= '([1 9] [3 4] [5 6] [7 8])
              (seq o))))))

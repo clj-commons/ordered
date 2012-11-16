@@ -1,6 +1,6 @@
-(ns ordered.map
-  (:use [ordered.common :only [change! Compactable compact]]
-        [deftype.delegate :only [delegating-deftype]])
+(ns flatland.ordered.map
+  (:use [flatland.ordered.common :only [change! Compactable compact]]
+        [flatland.useful.experimental.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
                          IPersistentCollection
@@ -71,7 +71,7 @@
     (.equiv this other))
   (hashCode [this]
     (reduce (fn [acc ^MapEntry e]
-              (let [k (.key e), v (.val ^MapEntry (.val e))]
+              (let [k (.key e), v (.val e)]
                 (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
             0 (.seq this)))
   IPersistentMap
