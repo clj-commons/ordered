@@ -89,6 +89,8 @@
       (is (= :a (:a s))))
     (testing "IFn support"
       (is (= :b (s :b))))
+    (testing "Falsy lookup support"
+      (is (= false (#{false 1} false))))
     (testing "Ordered disj"
       (is (= #{:a 1 2 3} (disj s :b :c))))))
 
