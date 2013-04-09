@@ -138,9 +138,6 @@
         s2 (disj s1 :b)
         s3 (compact s2)
         s4 (disj s3 :c)]
-    (println (clojure.string/join "\n"
-                                  (for [s [s1 s2 s3 s4]]
-                                    [s (.k->i s) (.i->k s)])))
     (is (= s2 (ordered-set :a :c)))
     (is (= s3 s2))
     (is (= s4 (ordered-set :a)))))
