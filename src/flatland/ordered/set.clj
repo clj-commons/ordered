@@ -7,6 +7,7 @@
                          Associative SeqIterator Reversible IFn IObj)
            (java.util Set Collection)))
 
+(declare ordered-set)
 (declare transient-ordered-set)
 
 (deftype OrderedSet [^IPersistentMap k->i
@@ -42,8 +43,7 @@
 
   Compactable
   (compact [this]
-    (OrderedSet. k->i
-                 (vec (.seq this))))
+    (into (ordered-set) this))
 
   Object
   (toString [this]

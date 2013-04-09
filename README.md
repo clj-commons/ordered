@@ -4,7 +4,7 @@ ordered provides sets and maps that maintain the insertion order of their conten
 
 ## Sets
 
-    (use 'ordered.set)
+    (use 'flatland.ordered.set)
 
     (ordered-set 4 3 1 8 2)
     => #ordered/set (4 3 1 8 2)
@@ -20,7 +20,7 @@ ordered provides sets and maps that maintain the insertion order of their conten
 
 ## Maps
 
-    (use 'ordered.map)
+    (use 'flatland.ordered.map)
 
     (ordered-map :b 2 :a 1 :d 4)
     => #ordered/map ([:b 2] [:a 1] [:d 4])
