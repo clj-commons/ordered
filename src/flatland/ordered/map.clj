@@ -93,12 +93,10 @@
 
   (assoc [this k v]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
-      (let [old-v (.val e)]
-        (if (= old-v v)
-          this
-          (let [i (.key e)]
-            (OrderedMap. (.cons backing-map (entry k v i))
-                         (.assoc order i (MapEntry. k v))))))
+      (let [i (.key e)
+            old-k (.key ^MapEntry (order i))]
+        (OrderedMap. (.cons backing-map (entry old-k v i))
+                     (.assoc order i (MapEntry. old-k v))))
       (OrderedMap. (.cons backing-map (entry k v (.count order)))
                    (.cons order (MapEntry. k v)))))
   (without [this k]
@@ -156,15 +154,15 @@
       (.val e)
       not-found))
   (assoc [this k v]
-    (let [^MapEntry e (.valAt backing-map k this)
-          vector-entry (MapEntry. k v)
-          i (if (identical? e this)
-              (do (change! order .conj vector-entry)
-                  (dec (.count order)))
-              (let [idx (.key e)]
-                (change! order .assoc idx vector-entry)
-                idx))]
-      (change! backing-map .conj (entry k v i))
+    (let [^MapEntry e (.valAt backing-map k this)]
+      (if-not (identical? e this)
+        (let [i (.key e)
+              old-k (.key ^MapEntry (order i))]
+          (change! backing-map .conj (entry old-k v i))
+          (change! order .assoc i (MapEntry. old-k v)))
+        (do
+          (change! backing-map .conj (entry k v (.count order)))
+          (change! order .conj (MapEntry. k v))))
       this))
   (conj [this e]
     (let [[k v] e]
