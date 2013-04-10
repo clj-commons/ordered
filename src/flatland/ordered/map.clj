@@ -77,7 +77,7 @@
             0 (.seq this)))
   IPersistentMap
   (empty [this]
-    (OrderedMap. {} []))
+    (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
   (cons [this obj]
     (condp instance? obj
       Map$Entry (let [^Map$Entry e obj]

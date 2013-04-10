@@ -25,7 +25,8 @@
   (seq [this]
     (seq (remove #(identical? ::empty %) i->k)))
   (empty [this]
-    (OrderedSet. {} []))
+    (OrderedSet. (-> {} (with-meta (meta k->i)))
+                 []))
   (equiv [this other]
     (.equals this other))
   (get [this k]
