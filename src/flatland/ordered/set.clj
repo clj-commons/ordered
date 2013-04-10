@@ -53,7 +53,7 @@
   (equals [this other]
     (or (identical? this other)
         (and (instance? Set other)
-             (let [^Set s (cast Set other)]
+             (let [^Set s other]
                (and (= (.size this) (.size s))
                     (every? #(.contains s %) (.seq this)))))))
 
@@ -63,7 +63,7 @@
   (contains [this k]
     (.containsKey k->i k))
   (containsAll [this ks]
-    (every? identity (map #(.contains this %) ks)))
+    (every? #(.contains this %) ks))
   (size [this]
     (.count this))
   (isEmpty [this]
