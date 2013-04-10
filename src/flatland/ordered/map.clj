@@ -42,7 +42,7 @@
                  (.seq this))))
   (entryAt [this k]
     (let [v (get this k ::not-found)]
-      (when (not= v ::not-found) 
+      (when (not= v ::not-found)
         (MapEntry. k v))))
   (valAt [this k]
     (.valAt this k nil))

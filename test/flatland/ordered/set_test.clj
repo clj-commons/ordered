@@ -8,10 +8,10 @@
   (let [s (ordered-set)]
     (testing "Interfaces marked as implemented"
       (are [class] (instance? class s)
-          clojure.lang.IPersistentSet
-          clojure.lang.IPersistentCollection
-          clojure.lang.Counted
-          java.util.Set))
+           clojure.lang.IPersistentSet
+           clojure.lang.IPersistentCollection
+           clojure.lang.Counted
+           java.util.Set))
     (testing "Behavior smoke testing"
       (testing "Most operations don't change type"
         (are [object] (= (class object) (class s))
