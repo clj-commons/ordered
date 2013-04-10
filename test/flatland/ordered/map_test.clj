@@ -33,6 +33,12 @@
                (-> basic
                    (vary-meta assoc :succeeded true)
                    meta)))
+        (is (= {:meta :here}
+               (-> basic
+                   (with-meta {:meta :here})
+                   (assoc :a :b)
+                   (empty)
+                   (meta))))
         (testing "Metadata doesn't affect other properties"
           (let [m (with-meta basic {:a 1})]
             (is (instance? OrderedMap m))

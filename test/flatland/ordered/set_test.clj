@@ -32,6 +32,12 @@
                (-> s
                    (vary-meta assoc :succeeded true)
                    meta)))
+        (is (= {:meta :here}
+               (-> s
+                   (with-meta {:meta :here})
+                   (conj :a)
+                   (empty)
+                   (meta))))
         (testing "Metadata doesn't affect other properties"
           (let [m (with-meta s {:a 1})]
             (is (instance? OrderedSet m))
