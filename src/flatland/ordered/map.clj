@@ -127,8 +127,7 @@
 
   Compactable
   (compact [this]
-    (OrderedMap. backing-map
-                 (vec (filter identity order)))))
+    (into (empty this) this)))
 
 (def ^{:private true,
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
