@@ -1,5 +1,6 @@
 (ns flatland.ordered.map
   (:use [flatland.ordered.common :only [change! Compactable compact]]
+        [flatland.ordered.set :only [ordered-set]]
         [flatland.useful.experimental.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
@@ -110,6 +111,10 @@
     (seq (keep identity order)))
   (iterator [this]
     (clojure.lang.SeqIterator. (.seq this)))
+  (entrySet [this]
+    ;; not performant, but i'm not going to implement another whole java interface from scratch just
+    ;; because rich won't let us inherit from AbstractSet
+    (apply ordered-set this))
 
   IObj
   (meta [this]
