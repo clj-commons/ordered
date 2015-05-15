@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/flatland/ordered.png)](http://travis-ci.org/flatland/ordered)
+![lein dependency](https://clojars.org/org.flatland/ordered/latest-version.svg)
 
 ordered provides sets and maps that maintain the insertion order of their contents.
 
