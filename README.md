@@ -33,3 +33,15 @@ ordered provides sets and maps that maintain the insertion order of their conten
 
     (dissoc (ordered-map :c 3 :a 1 :d 4) :a)
     => #ordered/map ([:c 3] [:d 4])
+
+
+## Repositories
+
+These two repositories are usually identical:
+
+* https://github.com/amalloy/ordered
+* https://github.com/flatland/ordered
+
+The first is the canonical one.  Fixes tend to appear there first, and
+that is the preferred repository for filing issues on Github.  Fixes
+are backported to the second one periodically.
