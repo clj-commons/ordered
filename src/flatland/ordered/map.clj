@@ -9,6 +9,7 @@
                          IEditableCollection
                          ITransientMap
                          ITransientVector
+                         IHashEq
                          IObj
                          IFn
                          MapEquivalence
@@ -18,6 +19,11 @@
                          ;; Sorted almost certainly not accurate
                          )
            (java.util Map Map$Entry)))
+
+(defmacro ^:private compile-if [test then else]
+  (if (eval test)
+    then
+    else))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -74,8 +80,17 @@
   (hashCode [this]
     (reduce (fn [acc ^MapEntry e]
               (let [k (.key e), v (.val e)]
-                (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+                (unchecked-add ^Integer acc ^Integer (bit-xor (.hashCode k) (.hashCode v)))))
             0 (.seq this)))
+  IHashEq
+  (hasheq [this]
+    (compile-if (resolve 'clojure.core/hash-unordered-coll)
+      (hash-unordered-coll this)
+      (reduce (fn [acc ^MapEntry e]
+                (let [k (.key e), v (.val e)]
+                  (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+              0 (.seq this))))
+  
   IPersistentMap
   (empty [this]
     (OrderedMap. (-> {} (with-meta (meta backing-map))) []))

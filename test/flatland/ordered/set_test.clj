@@ -147,3 +147,11 @@
     (is (= s2 (ordered-set :a :c)))
     (is (= s3 s2))
     (is (= s4 (ordered-set :a)))))
+
+(deftest same-hash
+  (let [m1 (ordered-set :a :b :c)
+        m2 (hash-set :a :b :c)]
+    (is (= (hash m1) (hash m2)))
+    (is (= (.hashCode m1) (.hashCode m2)))
+    (is (= (hash (ordered-set)) (hash (hash-set))))
+    (is (= (.hashCode (ordered-set)) (.hashCode (hash-set))))))

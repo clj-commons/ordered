@@ -3,11 +3,16 @@
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
-                         IPersistentVector ITransientVector
+                         IPersistentVector ITransientVector IHashEq
                          Associative SeqIterator Reversible IFn IObj)
            (java.util Set Collection)))
 
 (declare transient-ordered-set)
+
+(defmacro ^:private compile-if [test then else]
+  (if (eval test)
+    then
+    else))
 
 (deftype OrderedSet [^IPersistentMap k->i
                      ^IPersistentVector i->k]
@@ -49,7 +54,7 @@
   (toString [this]
     (str "#{" (clojure.string/join " " (map str this)) "}"))
   (hashCode [this]
-    (reduce + (map hash (.seq this))))
+    (reduce + (map #(.hashCode ^Object %) (.seq this))))
   (equals [this other]
     (or (identical? this other)
         (and (instance? Set other)
@@ -57,6 +62,12 @@
                (and (= (.size this) (.size s))
                     (every? #(.contains s %) (.seq this)))))))
 
+  IHashEq
+  (hasheq [this]
+    (compile-if (resolve 'clojure.core/hash-unordered-coll)
+      (hash-unordered-coll this)
+      (reduce + (map hash (.seq this)))))
+  
   Set
   (iterator [this]
     (SeqIterator. (.seq this)))
