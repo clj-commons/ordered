@@ -9,10 +9,12 @@
 
 (declare transient-ordered-set)
 
-(defmacro ^:private compile-if [test then else]
-  (if (eval test)
-    then
-    else))
+;; We could use compile-if technique here, but hoping to avoid
+;; an AOT issue using this way instead.
+(def hasheq-ordered-set
+  (or (resolve 'clojure.core/hash-unordered-coll)
+      (fn old-hasheq-ordered-set [s]
+        (reduce + (map hash (.seq s))))))
 
 (deftype OrderedSet [^IPersistentMap k->i
                      ^IPersistentVector i->k]
@@ -64,9 +66,7 @@
 
   IHashEq
   (hasheq [this]
-    (compile-if (resolve 'clojure.core/hash-unordered-coll)
-      (hash-unordered-coll this)
-      (reduce + (map hash (.seq this)))))
+    (hasheq-ordered-set this))
   
   Set
   (iterator [this]

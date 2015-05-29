@@ -20,10 +20,15 @@
                          )
            (java.util Map Map$Entry)))
 
-(defmacro ^:private compile-if [test then else]
-  (if (eval test)
-    then
-    else))
+;; We could use compile-if technique here, but hoping to avoid
+;; an AOT issue using this way instead.
+(def hasheq-ordered-map
+  (or (resolve 'clojure.core/hash-unordered-coll)
+      (fn old-hasheq-ordered-map [m]
+        (reduce (fn [acc ^MapEntry e]
+                  (let [k (.key e), v (.val e)]
+                    (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+                0 (.seq m)))))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -84,12 +89,7 @@
             0 (.seq this)))
   IHashEq
   (hasheq [this]
-    (compile-if (resolve 'clojure.core/hash-unordered-coll)
-      (hash-unordered-coll this)
-      (reduce (fn [acc ^MapEntry e]
-                (let [k (.key e), v (.val e)]
-                  (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
-              0 (.seq this))))
+    (hasheq-ordered-map this))
   
   IPersistentMap
   (empty [this]
