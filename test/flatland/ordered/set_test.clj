@@ -8,10 +8,10 @@
   (let [s (ordered-set)]
     (testing "Interfaces marked as implemented"
       (are [class] (instance? class s)
-          clojure.lang.IPersistentSet
-          clojure.lang.IPersistentCollection
-          clojure.lang.Counted
-          java.util.Set))
+           clojure.lang.IPersistentSet
+           clojure.lang.IPersistentCollection
+           clojure.lang.Counted
+           java.util.Set))
     (testing "Behavior smoke testing"
       (testing "Most operations don't change type"
         (are [object] (= (class object) (class s))
@@ -32,6 +32,12 @@
                (-> s
                    (vary-meta assoc :succeeded true)
                    meta)))
+        (is (= {:meta :here}
+               (-> s
+                   (with-meta {:meta :here})
+                   (conj :a)
+                   (empty)
+                   (meta))))
         (testing "Metadata doesn't affect other properties"
           (let [m (with-meta s {:a 1})]
             (is (instance? OrderedSet m))
@@ -141,3 +147,11 @@
     (is (= s2 (ordered-set :a :c)))
     (is (= s3 s2))
     (is (= s4 (ordered-set :a)))))
+
+(deftest same-hash
+  (let [m1 (ordered-set :a :b :c)
+        m2 (hash-set :a :b :c)]
+    (is (= (hash m1) (hash m2)))
+    (is (= (.hashCode m1) (.hashCode m2)))
+    (is (= (hash (ordered-set)) (hash (hash-set))))
+    (is (= (.hashCode (ordered-set)) (.hashCode (hash-set))))))

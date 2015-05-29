@@ -1,6 +1,7 @@
 (ns flatland.ordered.map-test
   (:use clojure.test
-        [flatland.ordered.map :only [ordered-map]])
+        [flatland.ordered.map :only [ordered-map]]
+        [flatland.ordered.common :only [compact]])
   (:import flatland.ordered.map.OrderedMap))
 
 (deftest implementations
@@ -32,6 +33,12 @@
                (-> basic
                    (vary-meta assoc :succeeded true)
                    meta)))
+        (is (= {:meta :here}
+               (-> basic
+                   (with-meta {:meta :here})
+                   (assoc :a :b)
+                   (empty)
+                   (meta))))
         (testing "Metadata doesn't affect other properties"
           (let [m (with-meta basic {:a 1})]
             (is (instance? OrderedMap m))
@@ -171,3 +178,21 @@
       (is (= OrderedMap (type o)))
       (is (= '([1 9] [3 4] [5 6] [7 8])
              (seq o))))))
+
+(deftest compacting
+  (let [m1 (ordered-map :a 1 :b 2 :c 3)
+        m2 (dissoc m1 :b)
+        m3 (compact m2)
+        m4 (dissoc m3 :c)]
+    (is (= m2 (ordered-map :a 1 :c 3)))
+    (is (= m3 m2))
+    (is (= m4 (ordered-map :a 1)))))
+
+(deftest same-hash
+  (let [m1 (ordered-map :a 1 :b 2 :c 3)
+        m2 (hash-map :a 1 :b 2 :c 3)
+        m3 (array-map :a 1 :b 2 :c 3)]
+    (is (= (hash m1) (hash m2) (hash m3)))
+    (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
+    (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
+    (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map))))))

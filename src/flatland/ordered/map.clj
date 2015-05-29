@@ -1,5 +1,6 @@
 (ns flatland.ordered.map
   (:use [flatland.ordered.common :only [change! Compactable compact]]
+        [flatland.ordered.set :only [ordered-set]]
         [flatland.useful.experimental.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentMap
@@ -8,6 +9,7 @@
                          IEditableCollection
                          ITransientMap
                          ITransientVector
+                         IHashEq
                          IObj
                          IFn
                          MapEquivalence
@@ -17,6 +19,16 @@
                          ;; Sorted almost certainly not accurate
                          )
            (java.util Map Map$Entry)))
+
+;; We could use compile-if technique here, but hoping to avoid
+;; an AOT issue using this way instead.
+(def hasheq-ordered-map
+  (or (resolve 'clojure.core/hash-unordered-coll)
+      (fn old-hasheq-ordered-map [m]
+        (reduce (fn [acc ^MapEntry e]
+                  (let [k (.key e), v (.val e)]
+                    (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+                0 (.seq m)))))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -42,7 +54,7 @@
                  (.seq this))))
   (entryAt [this k]
     (let [v (get this k ::not-found)]
-      (when (not= v ::not-found) 
+      (when (not= v ::not-found)
         (MapEntry. k v))))
   (valAt [this k]
     (.valAt this k nil))
@@ -73,11 +85,15 @@
   (hashCode [this]
     (reduce (fn [acc ^MapEntry e]
               (let [k (.key e), v (.val e)]
-                (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+                (unchecked-add ^Integer acc ^Integer (bit-xor (.hashCode k) (.hashCode v)))))
             0 (.seq this)))
+  IHashEq
+  (hasheq [this]
+    (hasheq-ordered-map this))
+  
   IPersistentMap
   (empty [this]
-    (OrderedMap. {} []))
+    (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
   (cons [this obj]
     (condp instance? obj
       Map$Entry (let [^Map$Entry e obj]
@@ -110,6 +126,10 @@
     (seq (keep identity order)))
   (iterator [this]
     (clojure.lang.SeqIterator. (.seq this)))
+  (entrySet [this]
+    ;; not performant, but i'm not going to implement another whole java interface from scratch just
+    ;; because rich won't let us inherit from AbstractSet
+    (apply ordered-set this))
 
   IObj
   (meta [this]
@@ -127,8 +147,7 @@
 
   Compactable
   (compact [this]
-    (OrderedMap. backing-map
-                 (vec (filter identity order)))))
+    (into (empty this) this)))
 
 (def ^{:private true,
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))

@@ -3,12 +3,18 @@
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
-                         IPersistentVector ITransientVector
+                         IPersistentVector ITransientVector IHashEq
                          Associative SeqIterator Reversible IFn IObj)
            (java.util Set Collection)))
 
-(declare ordered-set)
 (declare transient-ordered-set)
+
+;; We could use compile-if technique here, but hoping to avoid
+;; an AOT issue using this way instead.
+(def hasheq-ordered-set
+  (or (resolve 'clojure.core/hash-unordered-coll)
+      (fn old-hasheq-ordered-set [s]
+        (reduce + (map hash (.seq s))))))
 
 (deftype OrderedSet [^IPersistentMap k->i
                      ^IPersistentVector i->k]
@@ -26,7 +32,8 @@
   (seq [this]
     (seq (remove #(identical? ::empty %) i->k)))
   (empty [this]
-    (OrderedSet. {} []))
+    (OrderedSet. (-> {} (with-meta (meta k->i)))
+                 []))
   (equiv [this other]
     (.equals this other))
   (get [this k]
@@ -43,27 +50,31 @@
 
   Compactable
   (compact [this]
-    (into (ordered-set) this))
+    (into (empty this) this))
 
   Object
   (toString [this]
     (str "#{" (clojure.string/join " " (map str this)) "}"))
   (hashCode [this]
-    (reduce + (map hash (.seq this))))
+    (reduce + (map #(.hashCode ^Object %) (.seq this))))
   (equals [this other]
     (or (identical? this other)
         (and (instance? Set other)
-             (let [^Set s (cast Set other)]
+             (let [^Set s other]
                (and (= (.size this) (.size s))
                     (every? #(.contains s %) (.seq this)))))))
 
+  IHashEq
+  (hasheq [this]
+    (hasheq-ordered-set this))
+  
   Set
   (iterator [this]
     (SeqIterator. (.seq this)))
   (contains [this k]
     (.containsKey k->i k))
   (containsAll [this ks]
-    (every? identity (map #(.contains this %) ks)))
+    (every? #(.contains this %) ks))
   (size [this]
     (.count this))
   (isEmpty [this]
