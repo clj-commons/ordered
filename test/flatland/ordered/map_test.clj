@@ -187,3 +187,12 @@
     (is (= m2 (ordered-map :a 1 :c 3)))
     (is (= m3 m2))
     (is (= m4 (ordered-map :a 1)))))
+
+(deftest same-hash
+  (let [m1 (ordered-map :a 1 :b 2 :c 3)
+        m2 (hash-map :a 1 :b 2 :c 3)
+        m3 (array-map :a 1 :b 2 :c 3)]
+    (is (= (hash m1) (hash m2) (hash m3)))
+    (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
+    (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
+    (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map))))))

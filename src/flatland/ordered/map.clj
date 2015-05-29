@@ -9,6 +9,7 @@
                          IEditableCollection
                          ITransientMap
                          ITransientVector
+                         IHashEq
                          IObj
                          IFn
                          MapEquivalence
@@ -18,6 +19,16 @@
                          ;; Sorted almost certainly not accurate
                          )
            (java.util Map Map$Entry)))
+
+;; We could use compile-if technique here, but hoping to avoid
+;; an AOT issue using this way instead.
+(def hasheq-ordered-map
+  (or (resolve 'clojure.core/hash-unordered-coll)
+      (fn old-hasheq-ordered-map [m]
+        (reduce (fn [acc ^MapEntry e]
+                  (let [k (.key e), v (.val e)]
+                    (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+                0 (.seq m)))))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -74,8 +85,12 @@
   (hashCode [this]
     (reduce (fn [acc ^MapEntry e]
               (let [k (.key e), v (.val e)]
-                (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
+                (unchecked-add ^Integer acc ^Integer (bit-xor (.hashCode k) (.hashCode v)))))
             0 (.seq this)))
+  IHashEq
+  (hasheq [this]
+    (hasheq-ordered-map this))
+  
   IPersistentMap
   (empty [this]
     (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
