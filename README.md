@@ -18,6 +18,16 @@ ordered provides sets and maps that maintain the insertion order of their conten
 
 (disj (ordered-set 8 1 7 2 6) 7)
 => #ordered/set (8 1 2 6)
+
+;; Adding an element already in an ordered set does not change its
+;; position in the order.
+(conj (ordered-set 4 3 1 8 2) 8)
+=> #ordered/set (4 3 1 8 2)
+
+;; Removing an element, then adding it back in, puts it at the end,
+;; just as it would if it were never part of the set.
+(-> (ordered-set 4 3 1 8 2) (disj 8) (conj 8))
+=> #ordered/set (4 3 1 2 8)
 ```
 
 ## Maps
@@ -36,6 +46,16 @@ ordered provides sets and maps that maintain the insertion order of their conten
 
 (dissoc (ordered-map :c 3 :a 1 :d 4) :a)
 => #ordered/map ([:c 3] [:d 4])
+
+;; Adding a key already in an ordered map does not change its position
+;; in the order.
+(assoc (ordered-map :b 2 :a 1 :d 4) :b 7)
+=> #ordered/map ([:b 7] [:a 1] [:d 4])
+
+;; Removing a key, then adding it back in, puts it at the end, just as
+;; it would if it were never part of the map.
+(-> (ordered-set 4 3 1 8 2) (disj 8) (conj 8))
+=> #ordered/set (4 3 1 2 8)
 ```
 
 
