@@ -54,8 +54,8 @@ ordered provides sets and maps that maintain the insertion order of their conten
 
 ;; Removing a key, then adding it back in, puts it at the end, just as
 ;; it would if it were never part of the map.
-(-> (ordered-set 4 3 1 8 2) (disj 8) (conj 8))
-=> #ordered/set (4 3 1 2 8)
+(-> (ordered-map :b 2 :a 1 :d 4) (dissoc :b) (assoc :b 7))
+=> #ordered/map ([:a 1] [:d 4] [:b 7])
 ```
 
 
