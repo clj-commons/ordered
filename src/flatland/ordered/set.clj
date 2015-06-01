@@ -102,15 +102,15 @@
        :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil nil)))
 
 (defn ordered-set
-  "Return a set with the given items, where items are sorted in the
-order that they are added.  conj'ing an item that was already in the
-se leaves its order unchanged.  disj'ing an item and then later
-conj'ing it puts it at the end, as if it were first added.  Supports
-transient.
+  "Return a set with the given items, whose items are sorted in the
+order that they are added. conj'ing an item that was already in the
+set leaves its order unchanged. disj'ing an item and then later
+conj'ing it puts it at the end, as if it were being added for the 
+first time. Supports transient.
 
 Note that clojure.set functions like union, intersection, and
 difference can change the order of their input sets for efficiency
-purposes, so may not return the order you expect given ordered-sets
+purposes, so may not return the order you expect given ordered sets
 as input."
   ([] empty-ordered-set)
   ([& xs] (into empty-ordered-set xs)))
