@@ -153,6 +153,11 @@
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
 
 (defn ordered-map
+  "Return a map with the given keys and values, where entries are
+sorted in the order that keys are added.  assoc'ing a key that is
+already in an ordered-map leaves its order unchanged.  dissoc'ing a
+key and then later assoc'ing it puts it at the end, as if it were
+first assoc'ed.  Supports transient."
   ([] empty-ordered-map)
   ([coll]
      (into empty-ordered-map coll))
