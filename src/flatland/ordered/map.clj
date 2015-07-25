@@ -33,6 +33,9 @@
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
 
+(defprotocol SubMap
+  (submap [this k]))
+
 (declare transient-ordered-map)
 
 (delegating-deftype OrderedMap [^IPersistentMap backing-map
@@ -147,7 +150,12 @@
 
   Compactable
   (compact [this]
-    (into (empty this) this)))
+    (into (empty this) this))
+
+  SubMap
+  (submap [this k]
+    (when-let [^MapEntry e (.get ^Map backing-map k)]
+      (OrderedMap. backing-map (subvec order (.key e))))))
 
 (def ^{:private true,
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
