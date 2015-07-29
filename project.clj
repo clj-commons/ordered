@@ -9,10 +9,12 @@
   :aliases {"testall" ["with-profile" "dev,default:dev,1.4,default:dev,1.5,default:dev,1.7,default" "test"]}
   :exclusions [[org.clojure/clojure]]
   :plugins [[org.skummet/lein-skummet "0.2.1"]]
+  :aot :all
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0-RC1"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              ;;:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
              ;; Not required except for benchmarks.
-             :dev {:dependencies [[ordered-collections "0.4.2"]]} })
+             :dev {:dependencies [[ordered-collections "0.4.2"]]}
+             :default []})
