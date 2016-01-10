@@ -6,8 +6,6 @@
 
 (declare transient-ordered-set)
 
-;; We could use compile-if technique here, but hoping to avoid
-;; an AOT issue using this way instead.
 (defn hasheq-ordered-set [s]
   (reduce + (map hash (seq s))))
 
