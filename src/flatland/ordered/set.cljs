@@ -6,9 +6,6 @@
 
 (declare transient-ordered-set)
 
-(defn hasheq-ordered-set [s]
-  (reduce + (map hash (seq s))))
-
 (deftype OrderedSet [^IMap k->i
                      ^IVector i->k]
 
@@ -37,7 +34,10 @@
 
   IEquiv
   (-equiv [this other]
-    (.equals this other))
+    (or (identical? this other)
+        (and (satisfies? ISet other)
+             (= (count this) (count other))
+             (every? #(contains? other %) (seq this)))))
 
   ILookup
   (-lookup [this k]
@@ -51,6 +51,7 @@
 
   IMeta
   (-meta [this] (meta k->i))
+
   IWithMeta
   (-with-meta [this m]
     (OrderedSet. (with-meta k->i m)
@@ -63,13 +64,9 @@
   Object
   (toString [this]
     (str "#{" (clojure.string/join " " (map str this)) "}"))
-  (hashCode [this]
-    (reduce + (map #(.hashCode ^Object %) (.seq this))))
-  (equals [this other]
-    (or (identical? this other)
-        (and (satisfies? ISet other)
-             (= (count this) (count other))
-             (every? #(contains? other %) (seq this)))))
+
+  (equiv [this other]
+    (-equiv this other))
 
   IHash
   (-hash [this]

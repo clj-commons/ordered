@@ -1,21 +1,36 @@
 (ns flatland.ordered.map-test
-  (:use clojure.test
-        [flatland.ordered.map :only [ordered-map]]
-        [flatland.ordered.common :only [compact]])
-  (:import flatland.ordered.map.OrderedMap))
+  #?(:cljs (:require-macros [cljs.test :refer [deftest testing are is]]))
+  (:require #?(:clj  [clojure.test :refer :all]
+               :cljs [cljs.test])
+            #?(:cljs [cljs.reader :refer [read-string]])
+            [flatland.ordered.map :refer [ordered-map]]
+            [flatland.ordered.common :refer [compact]]
+            #?(:cljs [flatland.ordered.map :refer [OrderedMap]]))
+  #?(:clj (:import (flatland.ordered.map OrderedMap))))
 
 (deftest implementations
   (let [basic (ordered-map)]
     (testing "Interfaces marked as implemented"
-      (are [class] (instance? class basic)
-          clojure.lang.IPersistentMap
-          clojure.lang.IPersistentCollection
-          clojure.lang.Counted
-          clojure.lang.Associative
-          java.util.Map))
+      (are [class] #?(:clj  (instance? class basic)
+                      :cljs (implements? class basic))
+          #?@(:clj
+              [clojure.lang.IPersistentMap
+               clojure.lang.IPersistentCollection
+               clojure.lang.Counted
+               clojure.lang.Associative
+               java.util.Map]
+
+              :cljs
+              [IMap
+               ICollection
+               ISeqable
+               ICounted
+               IEmptyableCollection
+               IEquiv
+               IAssociative])))
     (testing "Behavior smoke testing"
       (testing "Most operations don't change type"
-        (are [object] (= (class object) (class basic))
+        (are [object] (= (type object) (type basic))
              (conj basic [1 2])
              (assoc basic 1 2)
              (into basic {1 2})))
@@ -160,7 +175,7 @@
             t (transient m)
             t (reduce conj! t more)
             p (persistent! t)]
-        (is (thrown? Throwable (assoc! t :c 3)))
+        (is (thrown? #?(:clj Throwable :cljs js/Error) (assoc! t :c 3)))
         (is (= (into m more) p))))
     (testing "Transients are never equal to other objects"
       (let [[t1 t2 :as ts] (repeatedly 2 #(transient m))
@@ -193,6 +208,6 @@
         m2 (hash-map :a 1 :b 2 :c 3)
         m3 (array-map :a 1 :b 2 :c 3)]
     (is (= (hash m1) (hash m2) (hash m3)))
-    (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
+    #?(:clj (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3))))
     (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
-    (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map))))))
+    #?(:clj (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map)))))))
