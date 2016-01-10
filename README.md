@@ -58,6 +58,10 @@ ordered provides sets and maps that maintain the insertion order of their conten
 => #ordered/map ([:a 1] [:d 4] [:b 7])
 ```
 
+## ClojureScript
+
+Tests require PhantomJS.
+
 
 ## Repositories
 

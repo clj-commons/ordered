@@ -4,3 +4,4 @@ pom.xml
 target
 .lein*
 docs
+resources/compiled.js

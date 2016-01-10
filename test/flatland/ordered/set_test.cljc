@@ -1,20 +1,34 @@
 (ns flatland.ordered.set-test
-  (:use clojure.test
-        [flatland.ordered.set :only [ordered-set]]
-        [flatland.ordered.common :only [compact]])
-  (:import (flatland.ordered.set OrderedSet)))
+  #?(:cljs (:require-macros [cljs.test :refer [deftest testing are is]]))
+  (:require #?(:clj  [clojure.test :refer :all]
+               :cljs [cljs.test])
+            #?(:cljs [cljs.reader :refer [read-string]])
+            [flatland.ordered.set :refer [ordered-set]]
+            [flatland.ordered.common :refer [compact]]
+            #?(:cljs [flatland.ordered.set :refer [OrderedSet]]))
+  #?(:clj (:import (flatland.ordered.set OrderedSet))))
 
 (deftest implementations
   (let [s (ordered-set)]
     (testing "Interfaces marked as implemented"
-      (are [class] (instance? class s)
-           clojure.lang.IPersistentSet
-           clojure.lang.IPersistentCollection
-           clojure.lang.Counted
-           java.util.Set))
+      (are [class] #?(:clj  (instance? class s)
+                      :cljs (implements? class s))
+       #?@(:clj
+           [clojure.lang.IPersistentSet
+            clojure.lang.IPersistentCollection
+            clojure.lang.Counted
+            java.util.Set]
+
+           :cljs
+           [ISet
+            ICollection
+            ISeqable
+            IEmptyableCollection
+            IEquiv
+            ICounted])))
     (testing "Behavior smoke testing"
       (testing "Most operations don't change type"
-        (are [object] (= (class object) (class s))
+        (are [object] (= (type object) (type s))
              (conj s 1 2)
              (disj s 1)
              (into s #{1 2})))
@@ -128,7 +142,7 @@
                (disj s k)))))
     (testing "Can lookup in transients"
       (let [t (transient s)]
-        (is (.contains t (first s)))))))
+        (is (#?(:clj .contains :cljs contains?) t (first s)))))))
 
 (deftest print-and-read-ordered
   (let [s (ordered-set 1 2 9 8 7 5)]
@@ -152,6 +166,6 @@
   (let [m1 (ordered-set :a :b :c)
         m2 (hash-set :a :b :c)]
     (is (= (hash m1) (hash m2)))
-    (is (= (.hashCode m1) (.hashCode m2)))
+    #?(:clj (is (= (.hashCode m1) (.hashCode m2))))
     (is (= (hash (ordered-set)) (hash (hash-set))))
-    (is (= (.hashCode (ordered-set)) (.hashCode (hash-set))))))
+    #?(:clj (is (= (.hashCode (ordered-set)) (.hashCode (hash-set)))))))
