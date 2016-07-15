@@ -67,7 +67,9 @@
         (is (= other-way unsorted))))
     (testing "Hash code sanity"
       (is (integer? (hash one-item)))
-      (is (= #{one-item} (into #{} [one-item {1 2}]))))))
+      (is (= #{one-item} (into #{} [one-item {1 2}]))))
+    (testing "nil values don't break .equiv"
+      (is (not= (ordered-map :x nil) {:y 0})))))
 
 (deftest ordering
   (let [values [[:first 10]

@@ -50,7 +50,9 @@
     (and (instance? Map other)
          (= (.count this) (.size ^Map other))
          (every? (fn [^MapEntry e]
-                   (= (.val e) (.get ^Map other (.key e))))
+                   (let [k (.key e)]
+                     (and (.containsKey ^Map other k)
+                          (= (.val e) (.get ^Map other k)))))
                  (.seq this))))
   (entryAt [this k]
     (let [v (get this k ::not-found)]
@@ -90,7 +92,7 @@
   IHashEq
   (hasheq [this]
     (hasheq-ordered-map this))
-  
+
   IPersistentMap
   (empty [this]
     (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
