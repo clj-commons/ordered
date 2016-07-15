@@ -90,7 +90,7 @@
   IHashEq
   (hasheq [this]
     (hasheq-ordered-map this))
-  
+
   IPersistentMap
   (empty [this]
     (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
