@@ -86,9 +86,9 @@
     (.equiv this other))
   (hashCode [this]
     (reduce (fn [acc ^MapEntry e]
-              (let [k (if-some [k (.key e)] k 0)
-                    v (if-some [v (.val e)] v 0)]
-                (unchecked-add ^Integer acc ^Integer (bit-xor (.hashCode k) (.hashCode v)))))
+              (let [k (if-some [k (.key e)] (.hashCode k) 0)
+                    v (if-some [v (.val e)] (.hashCode v) 0)]
+                (unchecked-add ^Integer acc ^Integer (bit-xor k v))))
             0 (.seq this)))
   IHashEq
   (hasheq [this]
