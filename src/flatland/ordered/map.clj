@@ -3,7 +3,8 @@
         [flatland.ordered.set :only [ordered-set]]
         [flatland.useful.experimental.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
-  (:import (clojure.lang IPersistentMap
+  (:import (clojure.lang APersistentMap
+                         IPersistentMap
                          IPersistentCollection
                          IPersistentVector
                          IEditableCollection
@@ -85,11 +86,7 @@
   (equals [this other]
     (.equiv this other))
   (hashCode [this]
-    (reduce (fn [acc ^MapEntry e]
-              (let [k (if-some [k (.key e)] (.hashCode k) 0)
-                    v (if-some [v (.val e)] (.hashCode v) 0)]
-                (unchecked-add ^Integer acc ^Integer (bit-xor k v))))
-            0 (.seq this)))
+    (APersistentMap/mapHash this))
   IHashEq
   (hasheq [this]
     (hasheq-ordered-map this))
