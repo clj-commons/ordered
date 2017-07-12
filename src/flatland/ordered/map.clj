@@ -3,7 +3,8 @@
         [flatland.ordered.set :only [ordered-set]]
         [flatland.useful.experimental.delegate :only [delegating-deftype]])
   (:require [clojure.string :as s])
-  (:import (clojure.lang IPersistentMap
+  (:import (clojure.lang APersistentMap
+                         IPersistentMap
                          IPersistentCollection
                          IPersistentVector
                          IEditableCollection
@@ -12,6 +13,7 @@
                          IHashEq
                          IObj
                          IFn
+                         Seqable
                          MapEquivalence
                          Reversible
                          MapEntry
@@ -24,7 +26,7 @@
 ;; an AOT issue using this way instead.
 (def hasheq-ordered-map
   (or (resolve 'clojure.core/hash-unordered-coll)
-      (fn old-hasheq-ordered-map [m]
+      (fn old-hasheq-ordered-map [^Seqable m]
         (reduce (fn [acc ^MapEntry e]
                   (let [k (.key e), v (.val e)]
                     (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
@@ -85,10 +87,7 @@
   (equals [this other]
     (.equiv this other))
   (hashCode [this]
-    (reduce (fn [acc ^MapEntry e]
-              (let [k (.key e), v (.val e)]
-                (unchecked-add ^Integer acc ^Integer (bit-xor (.hashCode k) (.hashCode v)))))
-            0 (.seq this)))
+    (APersistentMap/mapHash this))
   IHashEq
   (hasheq [this]
     (hasheq-ordered-map this))
@@ -155,6 +154,11 @@
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
 
 (defn ordered-map
+  "Return a map with the given keys and values, whose entries are
+sorted in the order that keys are added. assoc'ing a key that is
+already in an ordered map leaves its order unchanged. dissoc'ing a
+key and then later assoc'ing it puts it at the end, as if it were
+assoc'ed for the first time. Supports transient."
   ([] empty-ordered-map)
   ([coll]
      (into empty-ordered-map coll))

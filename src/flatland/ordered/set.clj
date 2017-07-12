@@ -4,7 +4,7 @@
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
                          IPersistentVector ITransientVector IHashEq
-                         Associative SeqIterator Reversible IFn IObj)
+                         Associative Seqable SeqIterator Reversible IFn IObj)
            (java.util Set Collection)))
 
 (declare transient-ordered-set)
@@ -13,7 +13,7 @@
 ;; an AOT issue using this way instead.
 (def hasheq-ordered-set
   (or (resolve 'clojure.core/hash-unordered-coll)
-      (fn old-hasheq-ordered-set [s]
+      (fn old-hasheq-ordered-set [^Seqable s]
         (reduce + (map hash (.seq s))))))
 
 (deftype OrderedSet [^IPersistentMap k->i
@@ -102,6 +102,16 @@
        :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil nil)))
 
 (defn ordered-set
+  "Return a set with the given items, whose items are sorted in the
+order that they are added. conj'ing an item that was already in the
+set leaves its order unchanged. disj'ing an item and then later
+conj'ing it puts it at the end, as if it were being added for the 
+first time. Supports transient.
+
+Note that clojure.set functions like union, intersection, and
+difference can change the order of their input sets for efficiency
+purposes, so may not return the order you expect given ordered sets
+as input."
   ([] empty-ordered-set)
   ([& xs] (into empty-ordered-set xs)))
 
