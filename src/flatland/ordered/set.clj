@@ -4,7 +4,7 @@
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          IPersistentMap ITransientMap ITransientAssociative
                          IPersistentVector ITransientVector IHashEq
-                         Associative SeqIterator Reversible IFn IObj)
+                         Associative Seqable SeqIterator Reversible IFn IObj)
            (java.util Set Collection)))
 
 (declare transient-ordered-set)
@@ -13,7 +13,7 @@
 ;; an AOT issue using this way instead.
 (def hasheq-ordered-set
   (or (resolve 'clojure.core/hash-unordered-coll)
-      (fn old-hasheq-ordered-set [s]
+      (fn old-hasheq-ordered-set [^Seqable s]
         (reduce + (map hash (.seq s))))))
 
 (deftype OrderedSet [^IPersistentMap k->i
