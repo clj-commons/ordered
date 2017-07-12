@@ -13,6 +13,7 @@
                          IHashEq
                          IObj
                          IFn
+                         ISeq
                          MapEquivalence
                          Reversible
                          MapEntry
@@ -25,7 +26,7 @@
 ;; an AOT issue using this way instead.
 (def hasheq-ordered-map
   (or (resolve 'clojure.core/hash-unordered-coll)
-      (fn old-hasheq-ordered-map [m]
+      (fn old-hasheq-ordered-map [^ISeq m]
         (reduce (fn [acc ^MapEntry e]
                   (let [k (.key e), v (.val e)]
                     (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
