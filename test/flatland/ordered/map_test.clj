@@ -198,3 +198,11 @@
     (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
     (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
     (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map))))))
+
+(deftest nil-hash-code-npe
+  ;; No assertions here; just check that it doesn't NPE
+  ;; See: https://github.com/amalloy/ordered/issues/27
+  (are [contents] (.hashCode (ordered-map contents))
+    [[nil :a]]
+    [[:a nil]]
+    [[nil nil]]))

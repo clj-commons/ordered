@@ -155,3 +155,10 @@
     (is (= (.hashCode m1) (.hashCode m2)))
     (is (= (hash (ordered-set)) (hash (hash-set))))
     (is (= (.hashCode (ordered-set)) (.hashCode (hash-set))))))
+
+(deftest nil-hash-code-npe
+  ;; No assertions here; just check that it doesn't NPE
+  ;; See: https://github.com/amalloy/ordered/issues/27
+  (are [contents] (.hashCode (ordered-set contents))
+    [nil]
+    [nil :a]))
