@@ -126,7 +126,12 @@
       (are [x] (= m x)
            (conj m nil)
            (merge m ())
-           (into m ())))))
+           (into m ()))))
+  (let [m (ordered-map :a '("spark") :b '("flare" "bolt"))]
+    (testing "assoc replaces values if not identical?"
+      (is (vector? (-> m
+                      (update-in [:a] vec)
+                      (get :a)))))))
 
 (deftest object-features
   (let [m (ordered-map 'a 1 :b 2)]

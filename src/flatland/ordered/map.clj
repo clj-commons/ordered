@@ -111,7 +111,7 @@
   (assoc [this k v]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
       (let [old-v (.val e)]
-        (if (= old-v v)
+        (if (identical? old-v v)
           this
           (let [i (.key e)]
             (OrderedMap. (.cons backing-map (entry k v i))
