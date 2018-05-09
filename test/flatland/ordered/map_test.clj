@@ -211,3 +211,37 @@
     [[nil :a]]
     [[:a nil]]
     [[nil nil]]))
+
+(defrecord EmptyRec1 [])
+
+(defn is-same-collection [omap b]
+  (let [msg (format "(class omap)=%s (class b)=%s omap=%s b=%s"
+                    (.getName (class omap)) (.getName (class b)) omap b)
+        b-persistent? (map? b)
+        should-be-=? (not (record? b))]
+    (is (= (count omap) (count b) (.size omap) (.size b)) msg)
+    (is (= (= omap b) should-be-=?) msg)
+    (is (= (= b omap) should-be-=?) msg)
+    (is (.equals ^Object omap b) msg)
+    (is (.equals ^Object b omap) msg)
+    (is (= (.hashCode ^Object omap) (.hashCode ^Object b)) msg)
+    ;; At least while CLJ-1372 is unresolved, Clojure persistent
+    ;; collections intentionally have different result for
+    ;; clojure.core/hash than otherwise = non-persistent collections.
+    (if (and b-persistent? (not (record? b)))
+      (is (= (hash omap) (hash b)) msg))))
+
+(deftest map-collection-tests
+  (let [maps [ {}
+               (hash-map)
+               (array-map)
+               (sorted-map)
+               (sorted-map-by <)
+               (ordered-map)
+               (->EmptyRec1)
+               (java.util.HashMap.) ]]
+    (doseq [m maps]
+      (is-same-collection (ordered-map) m)))
+
+  (is (= false (.equals {1 17N} (java.util.HashMap. {1 17}))))
+  (is (= false (.equals (ordered-map 1 17N) (java.util.HashMap. {1 17})))))

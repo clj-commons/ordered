@@ -50,6 +50,7 @@
   IPersistentMap
   (equiv [this other]
     (and (instance? Map other)
+         (or (not (map? other)) (instance? MapEquivalence other))
          (= (.count this) (.size ^Map other))
          (every? (fn [^MapEntry e]
                    (let [k (.key e)]
@@ -85,7 +86,13 @@
   (toString [this]
     (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
   (equals [this other]
-    (.equiv this other))
+    (and (instance? Map other)
+         (= (.count this) (.size ^Map other))
+         (every? (fn [^MapEntry e]
+                   (let [k (.key e)]
+                     (and (.containsKey ^Map other k)
+                          (.equals (.val e) (.get ^Map other k)))))
+                 (.seq this))))
   (hashCode [this]
     (APersistentMap/mapHash this))
   IHashEq
