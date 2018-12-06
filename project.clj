@@ -6,6 +6,8 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.flatland/useful "0.11.6"]]
   :aliases {"testall" ["with-profile" "dev,default:dev,1.6,default:dev,1.7,default:dev,1.8,default:dev,1.10,default" "test"]}
+  :deploy-repositories [["releases" :clojars]
+                        ["snapshots" :clojars]]
   :profiles {:1.10 {:dependencies [[org.clojure/clojure "1.10.0-RC3"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
