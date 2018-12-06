@@ -1,4 +1,5 @@
 ![lein dependency](https://clojars.org/org.flatland/ordered/latest-version.svg)
+[![Build Status](https://travis-ci.org/clj-commons/ordered.svg?branch=develop)](https://travis-ci.org/clj-commons/ordered)
 
 ordered provides sets and maps that maintain the insertion order of their contents.
 
@@ -58,14 +59,8 @@ ordered provides sets and maps that maintain the insertion order of their conten
 => #ordered/map ([:a 1] [:d 4] [:b 7])
 ```
 
+## History
 
-## Repositories
+ordered was originally created by [Alan Malloy](https://github.com/amalloy) and was part of the [flatland](https://github.com/flatland) organisation. In December 2018 it was moved to CLJ Commons for continued maintenance.
 
-These two repositories are usually identical:
-
-* https://github.com/amalloy/ordered
-* https://github.com/flatland/ordered
-
-The first is the canonical one.  Fixes tend to appear there first, and
-that is the preferred repository for filing issues on Github.  Fixes
-are backported to the second one periodically.
+It could previously be found at [amalloy/ordered](https://github.com/amalloy/ordered) and [flatland/ordered](https://github.com/flatland/ordered). [clj-commons/ordered](https://github.com/clj-commons/ordered) is the canonical repository now.
