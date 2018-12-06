@@ -59,13 +59,8 @@ ordered provides sets and maps that maintain the insertion order of their conten
 => #ordered/map ([:a 1] [:d 4] [:b 7])
 ```
 
-## Repositories
+## History
 
-These two repositories are usually identical:
+ordered was originally created by [Alan Malloy](https://github.com/amalloy) and was part of the [flatland](https://github.com/flatland) organisation. In December 2018 it was moved to CLJ Commons for continued maintenance.
 
-- https://github.com/amalloy/ordered
-- https://github.com/flatland/ordered
-
-The first is the canonical one. Fixes tend to appear there first, and
-that is the preferred repository for filing issues on Github. Fixes
-are backported to the second one periodically.
+It could previously be found at [amalloy/ordered](https://github.com/amalloy/ordered) and [flatland/ordered](https://github.com/flatland/ordered). [clj-commons/ordered](https://github.com/clj-commons/ordered) is the canonical repository now.
