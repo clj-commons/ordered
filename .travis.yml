@@ -2,4 +2,4 @@ language: clojure
 jdk:
   - oraclejdk8
   - oraclejdk11
-  - oraclejdk-ea
+  - openjdk-ea
