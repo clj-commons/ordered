@@ -13,4 +13,6 @@
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              ;; Not required except for benchmarks.
-             :dev {:dependencies [[ordered-collections "0.4.2"]]} })
+             :dev {:dependencies [[ordered-collections "0.4.2"]
+                                  [collection-check "0.1.7"]
+                                  [org.clojure/test.check "0.10.0-alpha3"]]}})
