@@ -5,3 +5,5 @@ pom.xml.asc
 target
 .lein*
 docs
+.nrepl-*
+.lein-*
