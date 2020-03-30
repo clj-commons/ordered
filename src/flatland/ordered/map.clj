@@ -1,7 +1,6 @@
 (ns flatland.ordered.map
   (:use [flatland.ordered.common :only [change! Compactable compact]]
-        [flatland.ordered.set :only [ordered-set]]
-        [flatland.useful.experimental.delegate :only [delegating-deftype]])
+        [flatland.ordered.set :only [ordered-set]])
   (:require [clojure.string :as s])
   (:import (clojure.lang APersistentMap
                          IPersistentMap
@@ -37,15 +36,44 @@
 
 (declare transient-ordered-map)
 
-(delegating-deftype OrderedMap [^IPersistentMap backing-map
-                                ^IPersistentVector order]
-  {backing-map {IPersistentMap [(count [])]
-                Map [(size [])
-                     (containsKey [k])
-                     (isEmpty [])
-                     (keySet [])]}}
+(deftype OrderedMap [^IPersistentMap backing-map
+                     ^IPersistentVector order]
+
   ;; tagging interfaces
   MapEquivalence
+
+  IFn
+  (invoke [this k]
+    (.valAt this k))
+  (invoke [this k not-found]
+    (.valAt this k not-found))
+
+  Map
+  (size [this]
+    (.size backing-map))
+  (containsKey [this k]
+    (.containsKey backing-map k))
+  (isEmpty [this]
+    (.isEmpty backing-map))
+  (keySet [this]
+    (.keySet backing-map))
+  (get [this k]
+    (.valAt this k))
+  (containsValue [this v]
+    (boolean (seq (filter #(= % v) (.values this)))))
+  (values [this]
+    (map (comp val val) (.seq this)))
+
+  Object
+  (toString [this]
+    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
+  (equals [this other]
+    (.equiv this other))
+  (hashCode [this]
+    (APersistentMap/mapHash this))
+  IHashEq
+  (hasheq [this]
+    (hasheq-ordered-map this))
 
   IPersistentMap
   (equiv [this other]
@@ -66,33 +94,8 @@
     (if-let [^MapEntry e (.get ^Map backing-map k)]
       (.val e)
       not-found))
-
-  IFn
-  (invoke [this k]
-    (.valAt this k))
-  (invoke [this k not-found]
-    (.valAt this k not-found))
-
-  Map
-  (get [this k]
-    (.valAt this k))
-  (containsValue [this v]
-    (boolean (seq (filter #(= % v) (.values this)))))
-  (values [this]
-    (map (comp val val) (.seq this)))
-
-  Object
-  (toString [this]
-    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
-  (equals [this other]
-    (.equiv this other))
-  (hashCode [this]
-    (APersistentMap/mapHash this))
-  IHashEq
-  (hasheq [this]
-    (hasheq-ordered-map this))
-
-  IPersistentMap
+  (count [this]
+    (.count backing-map))
   (empty [this]
     (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
   (cons [this obj]
@@ -170,10 +173,11 @@ assoc'ed for the first time. Supports transient."
 ;; instead, we pass `this` as the not-found argument and hope nobody makes a
 ;; transient contain itself.
 
-(delegating-deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
-                                         ^{:unsynchronized-mutable true, :tag ITransientVector} order]
-  {backing-map {ITransientMap [(count [])]}}
+(deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
+                              ^{:unsynchronized-mutable true, :tag ITransientVector} order]
   ITransientMap
+  (count [this]
+    (. backing-map (count)))
   (valAt [this k]
     (.valAt this k nil))
   (valAt [this k not-found]
