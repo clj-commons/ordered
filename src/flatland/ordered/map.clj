@@ -42,39 +42,6 @@
   ;; tagging interfaces
   MapEquivalence
 
-  IFn
-  (invoke [this k]
-    (.valAt this k))
-  (invoke [this k not-found]
-    (.valAt this k not-found))
-
-  Map
-  (size [this]
-    (.size backing-map))
-  (containsKey [this k]
-    (.containsKey backing-map k))
-  (isEmpty [this]
-    (.isEmpty backing-map))
-  (keySet [this]
-    (.keySet backing-map))
-  (get [this k]
-    (.valAt this k))
-  (containsValue [this v]
-    (boolean (seq (filter #(= % v) (.values this)))))
-  (values [this]
-    (map (comp val val) (.seq this)))
-
-  Object
-  (toString [this]
-    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
-  (equals [this other]
-    (.equiv this other))
-  (hashCode [this]
-    (APersistentMap/mapHash this))
-  IHashEq
-  (hasheq [this]
-    (hasheq-ordered-map this))
-
   IPersistentMap
   (equiv [this other]
     (and (instance? Map other)
@@ -134,6 +101,39 @@
     ;; not performant, but i'm not going to implement another whole java interface from scratch just
     ;; because rich won't let us inherit from AbstractSet
     (apply ordered-set this))
+
+  IFn
+  (invoke [this k]
+    (.valAt this k))
+  (invoke [this k not-found]
+    (.valAt this k not-found))
+
+  Map
+  (size [this]
+    (.size backing-map))
+  (containsKey [this k]
+    (.containsKey backing-map k))
+  (isEmpty [this]
+    (.isEmpty backing-map))
+  (keySet [this]
+    (.keySet backing-map))
+  (get [this k]
+    (.valAt this k))
+  (containsValue [this v]
+    (boolean (seq (filter #(= % v) (.values this)))))
+  (values [this]
+    (map (comp val val) (.seq this)))
+
+  Object
+  (toString [this]
+    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
+  (equals [this other]
+    (.equiv this other))
+  (hashCode [this]
+    (APersistentMap/mapHash this))
+  IHashEq
+  (hasheq [this]
+    (hasheq-ordered-map this))
 
   IObj
   (meta [this]
