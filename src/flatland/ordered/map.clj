@@ -11,7 +11,6 @@
                          IHashEq
                          IObj
                          IFn
-                         Seqable
                          MapEquivalence
                          Reversible
                          MapEntry
@@ -21,16 +20,6 @@
            (java.util Map Map$Entry)))
 
 (set! *warn-on-reflection* true)
-
-;; We could use compile-if technique here, but hoping to avoid
-;; an AOT issue using this way instead.
-(def hasheq-ordered-map
-  (or (resolve 'clojure.core/hash-unordered-coll)
-      (fn old-hasheq-ordered-map [^Seqable m]
-        (reduce (fn [acc ^MapEntry e]
-                  (let [k (.key e), v (.val e)]
-                    (unchecked-add ^Integer acc ^Integer (bit-xor (hash k) (hash v)))))
-                0 (.seq m)))))
 
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
@@ -134,7 +123,7 @@
     (APersistentMap/mapHash this))
   IHashEq
   (hasheq [this]
-    (hasheq-ordered-map this))
+    (hash-unordered-coll this))
 
   IObj
   (meta [this]
