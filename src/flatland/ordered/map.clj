@@ -21,6 +21,8 @@
                          )
            (java.util Map Map$Entry)))
 
+(set! *warn-on-reflection* true)
+
 ;; We could use compile-if technique here, but hoping to avoid
 ;; an AOT issue using this way instead.
 (def hasheq-ordered-map
@@ -110,13 +112,13 @@
 
   Map
   (size [this]
-    (.size backing-map))
+    (.size ^Map backing-map))
   (containsKey [this k]
     (.containsKey backing-map k))
   (isEmpty [this]
-    (.isEmpty backing-map))
+    (.isEmpty ^Map backing-map))
   (keySet [this]
-    (.keySet backing-map))
+    (.keySet ^Map backing-map))
   (get [this k]
     (.valAt this k))
   (containsValue [this v]
