@@ -3,8 +3,7 @@
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :description "Pure-clojure implementation of ruby's ordered hash and set types - instead of sorting by key, these collections retain insertion order."
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.flatland/useful "0.11.6"]]
+  :dependencies [[org.clojure/clojure "1.9.0"]]
   :aliases {"testall" ["with-profile" "+1.6:+1.7:+1.8:+1.9:+1.10.0:+1.10.1" "test"]
             "depsall" ["with-profile" "+1.6:+1.7:+1.8:+1.9:+1.10.0:+1.10.1" "deps"]}
   :deploy-repositories [["releases" :clojars]
