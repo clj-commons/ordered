@@ -48,7 +48,20 @@ commands:
           command: |
             lein with-profile +1.10.1 test
 
+  run-reflection:
+    description: "Ensure no reflection warnings"
+    steps:
+      - run: "! lein check 2>&1 | grep 'Reflection warning'"
+
 jobs:
+  reflection:
+    docker:
+      - image: circleci/clojure:openjdk-11-lein-2.9.1-node
+    working_directory: ~/repo
+
+    steps:
+      - setup-project
+      - run-reflection
 
   openjdk-8:
     docker:
@@ -78,5 +91,6 @@ workflows:
   version: 2
   default:
     jobs:
+      - reflection
       - openjdk-8
       - openjdk-11
