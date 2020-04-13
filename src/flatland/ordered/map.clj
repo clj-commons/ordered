@@ -1,10 +1,9 @@
 (ns flatland.ordered.map
-  (:use [flatland.ordered.common :only [change! Compactable compact]]
-        [flatland.ordered.set :only [ordered-set]])
+  (:require [flatland.ordered.common :refer [change! Compactable compact]]
+            [flatland.ordered.set :refer [ordered-set]])
   (:require [clojure.string :as s])
   (:import (clojure.lang APersistentMap
                          IPersistentMap
-                         IPersistentCollection
                          IPersistentVector
                          IEditableCollection
                          ITransientMap
