@@ -186,6 +186,12 @@
       (is (= '([1 9] [3 4] [5 6] [7 8])
              (seq o))))))
 
+(deftest print-read-eval-ordered
+  (is (= (pr-str (eval (read-string "#ordered/map[[:a 1] [:b 2]]")))
+         "#ordered/map ([:a 1] [:b 2])"))
+  (is (= (pr-str (eval (read-string "#ordered/map[[1 2] [3 4] [5 6] [1 9] [7 8]]")))
+         "#ordered/map ([1 9] [3 4] [5 6] [7 8])")))
+
 (deftest compacting
   (let [m1 (ordered-map :a 1 :b 2 :c 3)
         m2 (dissoc m1 :b)
