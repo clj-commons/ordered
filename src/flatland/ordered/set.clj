@@ -16,8 +16,8 @@
       (fn old-hasheq-ordered-set [^Seqable s]
         (reduce + (map hash (.seq s))))))
 
-(deftype OrderedSet [^IPersistentMap k->i
-                     ^IPersistentVector i->k]
+(deftype OrderedSet [^clojure.lang.IPersistentMap k->i
+                     ^clojure.lang.IPersistentVector i->k]
   IPersistentSet
   (disjoin [this k]
     (if-let [i (.valAt k->i k)]

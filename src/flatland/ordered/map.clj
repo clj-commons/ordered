@@ -26,8 +26,8 @@
 
 (declare transient-ordered-map)
 
-(deftype OrderedMap [^IPersistentMap backing-map
-                     ^IPersistentVector order]
+(deftype OrderedMap [^clojure.lang.IPersistentMap backing-map
+                     ^clojure.lang.IPersistentVector order]
 
   ;; tagging interfaces
   MapEquivalence
