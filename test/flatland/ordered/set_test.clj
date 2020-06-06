@@ -139,6 +139,12 @@
       (is (= '(1 2 9 8 7 5)
              (seq o))))))
 
+(deftest print-read-eval-ordered
+  (is (= (seq (eval (read-string "#ordered/set (1 2 9 8 7 5)")))
+         '(1 2 9 8 7 5)))
+  (is (= (seq (eval (read-string "#ordered/set ([1 2] [3 4] [5 6] [1 9] [7 8])")))
+         '([1 2] [3 4] [5 6] [1 9] [7 8]))))
+
 (deftest compacting
   (let [s1 (ordered-set :a :b :c)
         s2 (disj s1 :b)
