@@ -1,6 +1,6 @@
 [![Clojars Project](https://img.shields.io/clojars/v/org.flatland/ordered.svg)](https://clojars.org/org.flatland/ordered)
 [![cljdoc badge](https://cljdoc.org/badge/org.flatland/ordered)](https://cljdoc.org/d/org.flatland/ordered/CURRENT)
-[![CircleCI Status](https://circleci.com/gh/clj-commons/ordered.svg?style=svg)](https://circleci.com/gh/ordered/clj-yaml)
+[![CircleCI Status](https://circleci.com/gh/clj-commons/ordered.svg?style=svg)](https://circleci.com/gh/clj-commons/ordered)
 
 ordered provides sets and maps that maintain the insertion order of their contents.
 
