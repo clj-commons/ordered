@@ -11,8 +11,6 @@
      (-write w \space)
      (-write w (pr-str (get kvs k)))
      (-write w \]))
-   ;; Printing with square brackets so that we can define a data_reader that
-   ;; preserves order.
    "(" " " ")"
    opts
    ks))

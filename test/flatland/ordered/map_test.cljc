@@ -5,8 +5,6 @@
                :cljs [cljs.reader :as reader]))
   #?(:clj (:import flatland.ordered.map.OrderedMap)))
 
-#_(read-string "#ordered/map ([1 9] [3 4] [5 6] [7 8])")
-
 #?(:cljs
    (defn read-string [s]
      (reader/read-string {:readers {'ordered/map ordered-map}} s)))
