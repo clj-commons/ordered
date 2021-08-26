@@ -6,12 +6,14 @@
   (pr-sequential-writer
    writer
    (fn [k w opts]
+     (-write w \[)
      (-write w (pr-str k))
      (-write w \space)
-     (-write w (pr-str (get kvs k))))
+     (-write w (pr-str (get kvs k)))
+     (-write w \]))
    ;; Printing with square brackets so that we can define a data_reader that
    ;; preserves order.
-   "[" ", " "]"
+   "(" " " ")"
    opts
    ks))
 
@@ -81,6 +83,11 @@
     (when (seq ks)
       (map #(-find kvs %) ks)))
 
+  IReversible
+  (-rseq [this]
+    (when (seq ks)
+      (map #(-find kvs %) (rseq ks))))
+
   ICounted
   (-count [this] (count kvs))
 
@@ -128,9 +135,15 @@
            (.-kvs that)
            that)))
 
-(defn ordered-map [& kvs]
-  (OrderedMap. (apply hash-map kvs)
-               (mapv first (partition 2 kvs))))
+(def ^:private empty-ordered-map (OrderedMap. {} []))
+
+(defn ordered-map
+  ([]
+   empty-ordered-map)
+  ([coll]
+   (into empty-ordered-map coll))
+  ([k v & kvs]
+   (apply assoc empty-ordered-map k v kvs)))
 
 (comment
   (ordered-map :foo 123 :bar 456)
