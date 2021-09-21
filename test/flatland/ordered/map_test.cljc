@@ -1,28 +1,34 @@
 (ns flatland.ordered.map-test
-  (:use clojure.test
-        [flatland.ordered.map :only [ordered-map]]
-        [flatland.ordered.common :only [compact]])
-  (:import flatland.ordered.map.OrderedMap))
+  (:require [clojure.test :refer [deftest testing is are]]
+            [flatland.ordered.map :refer [#?(:cljs OrderedMap) ordered-map]]
+            #?(:clj [flatland.ordered.common :refer [compact]]
+               :cljs [cljs.reader :as reader]))
+  #?(:clj (:import flatland.ordered.map.OrderedMap)))
+
+#?(:cljs
+   (defn read-string [s]
+     (reader/read-string {:readers {'ordered/map ordered-map}} s)))
 
 (deftest implementations
   (let [basic (ordered-map)]
-    (testing "Interfaces marked as implemented"
-      (are [class] (instance? class basic)
-          clojure.lang.IPersistentMap
-          clojure.lang.IPersistentCollection
-          clojure.lang.Counted
-          clojure.lang.Associative
-          java.util.Map))
+    #?(:clj
+       (testing "Interfaces marked as implemented"
+         (are [class] (instance? class basic)
+           clojure.lang.IPersistentMap
+           clojure.lang.IPersistentCollection
+           clojure.lang.Counted
+           clojure.lang.Associative
+           java.util.Map)))
     (testing "Behavior smoke testing"
       (testing "Most operations don't change type"
-        (are [object] (= (class object) (class basic))
-             (conj basic [1 2])
-             (assoc basic 1 2)
-             (into basic {1 2})))
+        (are [object] (= (type object) (type basic))
+          (conj basic [1 2])
+          (assoc basic 1 2)
+          (into basic {1 2})))
       (testing "Seq-oriented operations return nil when empty"
         (are [object] (nil? object)
-             (seq basic)
-             (rseq basic)))
+          (seq basic)
+          (rseq basic)))
       (testing "Metadata"
         (is (nil? (seq (meta basic))))
         (is (= 10 (-> basic
@@ -124,58 +130,60 @@
       (is (= {:a 1 :b 2 :c 3 :d 4} (conj m {:d 4}))))
     (testing "(conj m nil) returns m"
       (are [x] (= m x)
-           (conj m nil)
-           (merge m ())
-           (into m ()))))
+        (conj m nil)
+        (merge m ())
+        (into m ()))))
   (let [m (ordered-map :a '("spark") :b '("flare" "bolt"))]
     (testing "assoc replaces values if not identical?"
       (is (vector? (-> m
-                      (update-in [:a] vec)
-                      (get :a)))))))
+                       (update-in [:a] vec)
+                       (get :a)))))))
 
-(deftest object-features
-  (let [m (ordered-map 'a 1 :b 2)]
-    (is (= "{a 1, :b 2}" (str m)))))
+#?(:clj
+   (deftest object-features
+     (let [m (ordered-map 'a 1 :b 2)]
+       (is (= "{a 1, :b 2}" (str m))))))
 
-(deftest transient-support
-  (let [m (ordered-map {1 2 7 8})]
-    (testing "Basic transient conj!"
-      (let [t (transient m)
-            t (conj! t [3 4])
-            t (conj! t [3 4])
-            p (persistent! t)]
-        (is (= p (conj m [3 4])))))
-    (testing "Transients still keep order"
-      (let [t (transient m)
-            t (assoc! t 0 1)
-            p (persistent! t)]
-        (is (= (concat (seq m) '([0 1]))
-               (seq p)))))
-    (testing "Transients can overwrite existing entries"
-      (let [t (transient m)
-            t (assoc! t 1 5)
-            p (persistent! t)]
-        (is (= p (assoc m 1 5)))))
-    (testing "Transients can dissoc!"
-      (let [k (key (first m))
-            t (transient m)
-            t (dissoc! t k)]
-        (is (= (persistent! t)
-               (dissoc m k)))))
-    (testing "Can't edit transient after calling persistent!"
-      (let [more [[:a 1] [:b 2]]
-            t (transient m)
-            t (reduce conj! t more)
-            p (persistent! t)]
-        (is (thrown? Throwable (assoc! t :c 3)))
-        (is (= (into m more) p))))
-    (testing "Transients are never equal to other objects"
-      (let [[t1 t2 :as ts] (repeatedly 2 #(transient m))
-            holder (apply hash-set ts)]
-        (is (not= t1 t2))
-        (is (= (count ts) (count holder)))
-        (are [t] (= t (holder t))
-             t1 t2)))))
+#?(:clj
+   (deftest transient-support
+     (let [m (ordered-map {1 2 7 8})]
+       (testing "Basic transient conj!"
+         (let [t (transient m)
+               t (conj! t [3 4])
+               t (conj! t [3 4])
+               p (persistent! t)]
+           (is (= p (conj m [3 4])))))
+       (testing "Transients still keep order"
+         (let [t (transient m)
+               t (assoc! t 0 1)
+               p (persistent! t)]
+           (is (= (concat (seq m) '([0 1]))
+                  (seq p)))))
+       (testing "Transients can overwrite existing entries"
+         (let [t (transient m)
+               t (assoc! t 1 5)
+               p (persistent! t)]
+           (is (= p (assoc m 1 5)))))
+       (testing "Transients can dissoc!"
+         (let [k (key (first m))
+               t (transient m)
+               t (dissoc! t k)]
+           (is (= (persistent! t)
+                  (dissoc m k)))))
+       (testing "Can't edit transient after calling persistent!"
+         (let [more [[:a 1] [:b 2]]
+               t (transient m)
+               t (reduce conj! t more)
+               p (persistent! t)]
+           (is (thrown? Throwable (assoc! t :c 3)))
+           (is (= (into m more) p))))
+       (testing "Transients are never equal to other objects"
+         (let [[t1 t2 :as ts] (repeatedly 2 #(transient m))
+               holder (apply hash-set ts)]
+           (is (not= t1 t2))
+           (is (= (count ts) (count holder)))
+           (are [t] (= t (holder t))
+             t1 t2))))))
 
 (deftest print-and-read-ordered
   (let [s (ordered-map 1 2, 3 4, 5 6, 1 9, 7 8)]
@@ -186,34 +194,38 @@
       (is (= '([1 9] [3 4] [5 6] [7 8])
              (seq o))))))
 
-(deftest print-read-eval-ordered
-  (is (= (pr-str (eval (read-string "#ordered/map[[:a 1] [:b 2]]")))
-         "#ordered/map ([:a 1] [:b 2])"))
-  (is (= (pr-str (eval (read-string "#ordered/map[[1 2] [3 4] [5 6] [1 9] [7 8]]")))
-         "#ordered/map ([1 9] [3 4] [5 6] [7 8])")))
+#?(:clj
+   (deftest print-read-eval-ordered
+     (is (= (pr-str (eval (read-string "#ordered/map[[:a 1] [:b 2]]")))
+            "#ordered/map ([:a 1] [:b 2])"))
+     (is (= (pr-str (eval (read-string "#ordered/map[[1 2] [3 4] [5 6] [1 9] [7 8]]")))
+            "#ordered/map ([1 9] [3 4] [5 6] [7 8])"))))
 
-(deftest compacting
-  (let [m1 (ordered-map :a 1 :b 2 :c 3)
-        m2 (dissoc m1 :b)
-        m3 (compact m2)
-        m4 (dissoc m3 :c)]
-    (is (= m2 (ordered-map :a 1 :c 3)))
-    (is (= m3 m2))
-    (is (= m4 (ordered-map :a 1)))))
+#?(:clj
+   (deftest compacting
+     (let [m1 (ordered-map :a 1 :b 2 :c 3)
+           m2 (dissoc m1 :b)
+           m3 (compact m2)
+           m4 (dissoc m3 :c)]
+       (is (= m2 (ordered-map :a 1 :c 3)))
+       (is (= m3 m2))
+       (is (= m4 (ordered-map :a 1))))))
 
-(deftest same-hash
-  (let [m1 (ordered-map :a 1 :b 2 :c 3)
-        m2 (hash-map :a 1 :b 2 :c 3)
-        m3 (array-map :a 1 :b 2 :c 3)]
-    (is (= (hash m1) (hash m2) (hash m3)))
-    (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
-    (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
-    (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map))))))
+#?(:clj
+   (deftest same-hash
+     (let [m1 (ordered-map :a 1 :b 2 :c 3)
+           m2 (hash-map :a 1 :b 2 :c 3)
+           m3 (array-map :a 1 :b 2 :c 3)]
+       (is (= (hash m1) (hash m2) (hash m3)))
+       (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
+       (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
+       (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map)))))))
 
-(deftest nil-hash-code-npe
-  ;; No assertions here; just check that it doesn't NPE
-  ;; See: https://github.com/amalloy/ordered/issues/27
-  (are [contents] (.hashCode (ordered-map contents))
-    [[nil :a]]
-    [[:a nil]]
-    [[nil nil]]))
+#?(:clj
+   (deftest nil-hash-code-npe
+     ;; No assertions here; just check that it doesn't NPE
+     ;; See: https://github.com/amalloy/ordered/issues/27
+     (are [contents] (.hashCode (ordered-map contents))
+       [[nil :a]]
+       [[:a nil]]
+       [[nil nil]])))

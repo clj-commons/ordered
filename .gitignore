@@ -5,3 +5,12 @@ pom.xml.asc
 target
 .lein*
 docs
+tests.edn
+.cljs_node_repl
+.cpcache
+.dir-locals.el
+.nrepl-port
+node_modules
+out
+package-lock.json
+package.json
