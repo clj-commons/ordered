@@ -24,14 +24,6 @@ commands:
     description: "Run tests"
     steps:
       - run:
-          name: Run JVM tests with clojure 1.6
-          command: |
-            lein with-profile +1.6 test
-      - run:
-          name: Run JVM tests with clojure 1.7
-          command: |
-            lein with-profile +1.7 test
-      - run:
           name: Run JVM tests with clojure 1.8
           command: |
             lein with-profile +1.8 test
