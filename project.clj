@@ -6,8 +6,10 @@
   :dependencies [[org.clojure/clojure "1.10.1"]]
   :aliases {"testall" ["with-profile" "+1.8:+1.9:+1.10.0:+1.10.1" "test"]
             "depsall" ["with-profile" "+1.8:+1.9:+1.10.0:+1.10.1" "deps"]}
-  :deploy-repositories [["releases" :clojars]
-                        ["snapshots" :clojars]]
+  :deploy-repositories [["clojars" {:url "https://repo.clojars.org"
+                                    :username :env/clojars_username
+                                    :password :env/clojars_ordered_password
+                                    :sign-releases true}]]
   :profiles {:1.10.1 {:dependencies [[org.clojure/clojure "1.10.1"]]}
              :1.10.0 {:dependencies [[org.clojure/clojure "1.10.0"]]}
              :1.9  {:dependencies [[org.clojure/clojure "1.9.0"]]}
