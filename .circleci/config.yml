@@ -20,8 +20,7 @@ workflows:
               only: /.*/
 
       - deploy:
-          requires:
-            - openjdk-8
+          requires: [openjdk-8, openjdk-11, reflection]
           filters:
             tags:
               only: /Release-.*/
