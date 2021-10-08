@@ -1,4 +1,4 @@
-(defproject org.flatland/ordered "1.5.10"
+(defproject org.flatland/ordered (or (System/getenv "PROJECT_VERSION") "1.5.10")
   :url "https://github.com/clj-commons/ordered"
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
