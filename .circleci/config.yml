@@ -4,17 +4,17 @@ workflows:
   version: 2
   default:
     jobs:
-      - reflection
+      - reflection:
           filters:
             tags:
               only: /.*/
 
-      - openjdk-8
+      - openjdk-8:
           filters:
             tags:
               only: /.*/
 
-      - openjdk-11
+      - openjdk-11:
           filters:
             tags:
               only: /.*/
