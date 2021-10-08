@@ -21,7 +21,7 @@ workflows:
 
       - deploy:
           requires:
-            - build
+            - openjdk-8
           filters:
             tags:
               only: /Release-.*/
