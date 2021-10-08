@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Added support for ClojureScript: [#59](https://github.com/clj-commons/ordered/pull/59)
+
 ## 1.5.7 - 2018-12-07
 
 ### Fixed
