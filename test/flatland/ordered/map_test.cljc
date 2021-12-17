@@ -98,13 +98,14 @@
     (testing "Large number of keys still sorted"
       (let [kvs (for [n (range 5000)]
                   [(str n) n])
+            expected (into values kvs)
             ordered (into m kvs)]
-        (= (seq kvs) (seq ordered))))))
+        (is (= (seq expected) (seq ordered)))))))
 
 (deftest reversing
   (let [source (vec (for [n (range 10)]
                       [n n]))
-        m (into (sorted-map) source)]
+        m (into (ordered-map) source)]
     (is (= (rseq m) (rseq source)))))
 
 (deftest map-features
