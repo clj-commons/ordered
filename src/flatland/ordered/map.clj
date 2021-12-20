@@ -154,16 +154,17 @@ sorted in the order that keys are added. assoc'ing a key that is
 already in an ordered map leaves its order unchanged. dissoc'ing a
 key and then later assoc'ing it puts it at the end, as if it were
 assoc'ed for the first time. Supports transient."
-  (^OrderedMap [] empty-ordered-map)
-  (^OrderedMap [coll]
+  ([] empty-ordered-map)
+  ([coll]
      (into empty-ordered-map coll))
-  (^OrderedMap [k v & more]
+  ([k v & more]
      (apply assoc empty-ordered-map k v more)))
 
 ;; contains? is broken for transients. we could define a closure around a gensym
 ;; to use as the not-found argument to a get, but deftype can't be a closure.
 ;; instead, we pass `this` as the not-found argument and hope nobody makes a
 ;; transient contain itself.
+
 (deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
                               ^{:unsynchronized-mutable true, :tag ITransientVector} order]
   ITransientMap

@@ -138,7 +138,10 @@
     (testing "assoc replaces values if not identical?"
       (is (vector? (-> m
                        (update-in [:a] vec)
-                       (get :a)))))))
+                       (get :a))))))
+  (testing "Can't store the not-found value"
+    (let [m (ordered-map :a :flatland.ordered.map/not-found)]
+      (is (some? (find m :a))))))
 
 #?(:clj
    (deftest object-features
