@@ -207,7 +207,8 @@ assoc'ed for the first time. Supports transient."
   (.write w "#ordered/map ")
   (print-method (seq o) w))
 
-(defn ordered-map-reader [coll]
-  (if (some-> (resolve 'cljs.env/*compiler*) deref)
-    `(ordered-map ~(vec coll))
-    (ordered-map coll)))
+(defn ordered-map-reader-clj [coll]
+  (ordered-map coll))
+
+(defn ordered-map-reader-cljs [coll]
+  `(ordered-map ~(vec coll)))
