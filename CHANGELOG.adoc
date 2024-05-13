@@ -25,6 +25,7 @@ A release with known breaking changes is marked with:
 
 === Added
 
+* Remove use of `resolve` in ordered-set. https://github.com/clj-commons/ordered/issues/71[#71]
 * Added ClojureScript support for `ordered-set`: https://github.com/clj-commons/ordered/issues/66[#66]
 (thanks, https://github.com/marksto[@marksto]!)
 
