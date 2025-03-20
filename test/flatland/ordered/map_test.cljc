@@ -188,9 +188,10 @@
 
 (deftest print-and-read-ordered
   (let [s (ordered-map 1 2, 3 4, 5 6, 1 9, 7 8)]
-    (is (= "#ordered/map ([1 9] [3 4] [5 6] [7 8])"
+    (is (= "#ordered/map [[1 9] [3 4] [5 6] [7 8]]"
            (pr-str s)))
-    (let [o (read-string (pr-str s))]
+    (let [o #?(:clj (load-string (pr-str s))
+               :cljs (read-string (pr-str s)) )]
       (is (= OrderedMap (type o)))
       (is (= '([1 9] [3 4] [5 6] [7 8])
              (seq o))))))
@@ -198,9 +199,9 @@
 #?(:clj
    (deftest print-read-eval-ordered
      (is (= (pr-str (eval (read-string "#ordered/map[[:a 1] [:b 2]]")))
-            "#ordered/map ([:a 1] [:b 2])"))
+            "#ordered/map [[:a 1] [:b 2]]"))
      (is (= (pr-str (eval (read-string "#ordered/map[[1 2] [3 4] [5 6] [1 9] [7 8]]")))
-            "#ordered/map ([1 9] [3 4] [5 6] [7 8])"))))
+            "#ordered/map [[1 9] [3 4] [5 6] [7 8]]"))))
 
 #?(:clj
    (deftest compacting
@@ -230,3 +231,8 @@
        [[nil :a]]
        [[:a nil]]
        [[nil nil]])))
+
+#?(:clj
+   (deftest issue-77-reader-macro-test
+     (is (= 1 (let [x #ordered/map [[:a 1]]]
+                (:a x))))))

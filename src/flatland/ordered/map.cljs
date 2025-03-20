@@ -11,7 +11,7 @@
      (-write w \space)
      (-write w (pr-str (get kvs k)))
      (-write w \]))
-   "(" " " ")"
+   "[" " " "]"
    opts
    ks))
 

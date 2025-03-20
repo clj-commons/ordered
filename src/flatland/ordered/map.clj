@@ -205,10 +205,10 @@ assoc'ed for the first time. Supports transient."
 
 (defmethod print-method OrderedMap [o ^java.io.Writer w]
   (.write w "#ordered/map ")
-  (print-method (seq o) w))
+  (print-method (vec o) w))
 
 (defn ordered-map-reader-clj [coll]
-  (ordered-map coll))
+  `(ordered-map ~coll))
 
 (defn ordered-map-reader-cljs [coll]
   `(ordered-map ~(vec coll)))
