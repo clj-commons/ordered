@@ -234,4 +234,6 @@
 #?(:clj
    (deftest issue-77-reader-macro-test
      (is (= 1 (let [x #ordered/map [[:a 1]]]
-                (:a x))))))
+                (:a x))))
+     (is (= [:a] (let [x #ordered/map [[:a 1]]]
+                   (keys x) )))))

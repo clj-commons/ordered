@@ -21,6 +21,12 @@
 
 (set! *warn-on-reflection* true)
 
+(defmacro key* [map-entry]
+  `(.nth ~(with-meta map-entry {:tag 'IPersistentVector}) 0))
+
+(defmacro val* [map-entry]
+  `(.nth ~(with-meta map-entry {:tag 'IPersistentVector}) 1))
+
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
 
@@ -37,9 +43,9 @@
     (and (instance? Map other)
          (= (.count this) (.size ^Map other))
          (every? (fn [^MapEntry e]
-                   (let [k (.key e)]
+                   (let [k (key* e)]
                      (and (.containsKey ^Map other k)
-                          (= (.val e) (.get ^Map other k)))))
+                          (= (val* e) (.get ^Map other k)))))
                  (.seq this))))
   (entryAt [this k]
     (let [v (get this k ::not-found)]
@@ -70,10 +76,10 @@
 
   (assoc [this k v]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
-      (let [old-v (.val e)]
+      (let [old-v (val* e)]
         (if (identical? old-v v)
           this
-          (let [i (.key e)]
+          (let [i (key* e)]
             (OrderedMap. (.cons backing-map (entry k v i))
                          (.assoc order i (MapEntry. k v))))))
       (OrderedMap. (.cons backing-map (entry k v (.count order)))
@@ -81,7 +87,7 @@
   (without [this k]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
       (OrderedMap. (.without backing-map k)
-                   (.assoc order (.key e) nil))
+                   (.assoc order (key* e) nil))
       this))
   (seq [this]
     (seq (keep identity order)))
@@ -172,7 +178,7 @@ assoc'ed for the first time. Supports transient."
     (.valAt this k nil))
   (valAt [this k not-found]
     (if-let [^MapEntry e (.valAt backing-map k)]
-      (.val e)
+      (val* e)
       not-found))
   (assoc [this k v]
     (let [^MapEntry e (.valAt backing-map k this)
@@ -180,7 +186,7 @@ assoc'ed for the first time. Supports transient."
           i (if (identical? e this)
               (do (change! order .conj vector-entry)
                   (dec (.count order)))
-              (let [idx (.key e)]
+              (let [idx (key* e)]
                 (change! order .assoc idx vector-entry)
                 idx))]
       (change! backing-map .conj (entry k v i))
@@ -191,7 +197,7 @@ assoc'ed for the first time. Supports transient."
   (without [this k]
     (let [^MapEntry e (.valAt backing-map k this)]
       (when-not (identical? e this)
-        (let [i (.key e)]
+        (let [i (key* e)]
           (change! backing-map dissoc! k)
           (change! order assoc! i nil)))
       this))
