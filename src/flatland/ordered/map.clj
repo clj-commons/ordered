@@ -48,8 +48,8 @@
   (valAt [this k]
     (.valAt this k nil))
   (valAt [this k not-found]
-    (if-let [^MapEntry e (.get ^Map backing-map k)]
-      (.val e)
+    (if-let [^IPersistentVector e (.get ^Map backing-map k)]
+      (.nth e 1)
       not-found))
   (count [this]
     (.count backing-map))

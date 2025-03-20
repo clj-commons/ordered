@@ -230,3 +230,8 @@
        [[nil :a]]
        [[:a nil]]
        [[nil nil]])))
+
+#?(:clj
+   (deftest issue-77-reader-macro-test
+     (is (= 1 (let [x #ordered/map [[:a 1]]]
+                (:a x))))))

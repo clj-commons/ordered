@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+* Fix [#77](https://github.com/clj-commons/ordered/pull/77): tagged literal issue
+
 ## 1.15.12 - 2024-05-13
 
 * Fix NPE when hashing ordered-set that contain `nil`.
