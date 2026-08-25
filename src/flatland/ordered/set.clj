@@ -147,9 +147,11 @@ as input."
   (TransientOrderedSet. (transient (.k->i os))
                         (transient (.i->k os))))
 
-(defn into-ordered-set
-  [items]
+(defn into-ordered-set [items]
   (into empty-ordered-set items))
+
+(defn into-ordered-set-reader-cljs [items]
+  `(into-ordered-set ~(vec items)))
 
 (defmethod print-method OrderedSet [o ^java.io.Writer w]
   (.write w "#ordered/set ")
