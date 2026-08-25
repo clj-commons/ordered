@@ -1,7 +1,9 @@
 (ns flatland.ordered.set-test
   (:require [clojure.test :refer [deftest testing is are]]
             [clojure.set :as set]
-            [flatland.ordered.set :refer [#?(:cljs OrderedSet) ordered-set into-ordered-set]]
+            [flatland.ordered.set :refer [#?(:cljs OrderedSet)
+                                          #?(:cljs into-ordered-set)
+                                          ordered-set]]
             #?(:clj [flatland.ordered.common :refer [compact]]
                :cljs [cljs.reader :as reader]))
   #?(:clj (:import (flatland.ordered.set OrderedSet))))

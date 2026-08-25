@@ -1,11 +1,14 @@
 (ns flatland.ordered.set
-  (:require [flatland.ordered.common :refer [Compactable change!]]
-            [clojure.string :as s])
+  (:require [clojure.string :as str]
+            [flatland.ordered.common :refer [change! Compactable]])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          ITransientMap ITransientAssociative
                          ITransientVector IHashEq
                          Associative Seqable SeqIterator Reversible IFn IObj)
+           (java.io Writer)
            (java.util Set)))
+
+(set! *warn-on-reflection* true)
 
 (declare transient-ordered-set)
 
@@ -54,7 +57,7 @@
 
   Object
   (toString [this]
-    (str "#{" (clojure.string/join " " (map str this)) "}"))
+    (str "#{" (str/join " " (map str this)) "}"))
   (hashCode [this]
     (reduce + (keep #(when (some? %) (.hashCode ^Object %)) (.seq this))))
   (equals [this other]
@@ -103,16 +106,16 @@
        :tag OrderedSet} empty-ordered-set (empty (OrderedSet. nil nil)))
 
 (defn ordered-set
-  "Return a set with the given items, whose items are sorted in the
-order that they are added. conj'ing an item that was already in the
-set leaves its order unchanged. disj'ing an item and then later
-conj'ing it puts it at the end, as if it were being added for the
-first time. Supports transient.
+  "Return a set with the given `xs`, whose elements are sorted in the order
+   that they are added. conj'ing an item that was already in the set leaves
+   its order unchanged. disj'ing an item and then later conj'ing it puts it
+   at the end, as if it were being added for the first time.
 
-Note that clojure.set functions like union, intersection, and
-difference can change the order of their input sets for efficiency
-purposes, so may not return the order you expect given ordered sets
-as input."
+   Supports transient.
+
+   NB: The `clojure.set` functions like union, intersection, and difference
+   can change the order of their input sets for efficiency purposes, so may
+   not return the order you expect given ordered sets as input."
   ([] empty-ordered-set)
   ([& xs] (into empty-ordered-set xs)))
 
@@ -147,12 +150,12 @@ as input."
   (TransientOrderedSet. (transient (.k->i os))
                         (transient (.i->k os))))
 
-(defn into-ordered-set [items]
-  (into empty-ordered-set items))
+(defn into-ordered-set [elements]
+  (into empty-ordered-set elements))
 
-(defn into-ordered-set-reader-cljs [items]
-  `(into-ordered-set ~(vec items)))
+(defn into-ordered-set-reader-cljs [elements]
+  `(into-ordered-set ~(vec elements)))
 
-(defmethod print-method OrderedSet [o ^java.io.Writer w]
+(defmethod print-method OrderedSet [o ^Writer w]
   (.write w "#ordered/set ")
   (print-method (seq o) w))

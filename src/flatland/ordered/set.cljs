@@ -1,5 +1,5 @@
 (ns flatland.ordered.set
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as str]))
 
 (declare equiv-impl)
 
@@ -16,14 +16,14 @@
 (deftype OrderedSet [elements order]
   Object
   (toString [this]
-    (str "#{" (string/join " " (map str this)) "}"))
-  (equiv [this that] (equiv-impl elements that))
+    (str "#{" (str/join " " (map str this)) "}"))
+  (equiv [_this that] (equiv-impl elements that))
 
   ;; js Set interface
-  (keys [this] (es6-iterator (seq order)))
-  (entries [this] (es6-set-entries-iterator (seq order)))
-  (values [this] (es6-iterator (seq order)))
-  (has [this k] (contains? elements k))
+  (keys [_this] (es6-iterator (seq order)))
+  (entries [_this] (es6-set-entries-iterator (seq order)))
+  (values [_this] (es6-iterator (seq order)))
+  (has [_this k] (contains? elements k))
   (forEach [this f]
     (doseq [k order]
       (f k k this)))
@@ -98,19 +98,16 @@
 (def ^:private empty-ordered-set (OrderedSet. #{} []))
 
 (defn ordered-set
-  "Return a set with the given items, whose items are sorted in the
-order that they are added. conj'ing an item that was already in the
-set leaves its order unchanged. disj'ing an item and then later
-conj'ing it puts it at the end, as if it were being added for the
-first time.
+  "Return a set with the given `xs`, whose elements are sorted in the order
+   that they are added. conj'ing an item that was already in the set leaves
+   its order unchanged. disj'ing an item and then later conj'ing it puts it
+   at the end, as if it were being added for the first time.
 
-Note that clojure.set functions like union, intersection, and
-difference can change the order of their input sets for efficiency
-purposes, so may not return the order you expect given ordered sets
-as input."
+   NB: The `clojure.set` functions like union, intersection, and difference
+   can change the order of their input sets for efficiency purposes, so may
+   not return the order you expect given ordered sets as input."
   ([] empty-ordered-set)
   ([& xs] (into empty-ordered-set xs)))
 
-(defn into-ordered-set
-  [items]
-  (into empty-ordered-set items))
+(defn into-ordered-set [elements]
+  (into empty-ordered-set elements))
