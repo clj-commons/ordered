@@ -190,6 +190,15 @@
     (is (= "#ordered/set nil" (pr-str (ordered-set))))
     (is (= (ordered-set) (read-string "#ordered/set nil")))))
 
+(deftest read-tagged-literal
+  ;; Unlike `print-and-read-ordered`, a literal in source goes through
+  ;; 'data_readers.cljc': read directly into an OrderedSet on the JVM,
+  ;; emitted as a call to into-ordered-set at compile time in cljs.
+  (is (= (ordered-set 4 3 1 8 2) #ordered/set (4 3 1 8 2)))
+  (is (= '(4 3 1 8 2) (seq #ordered/set (4 3 1 8 2))))
+  (is (= OrderedSet (type #ordered/set (4 3 1 8 2))))
+  (is (= (ordered-set) #ordered/set nil)))
+
 #?(:clj
    (deftest print-read-eval-ordered
      (is (= (seq (eval (read-string "#ordered/set (1 2 9 8 7 5)")))
