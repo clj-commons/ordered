@@ -1,7 +1,9 @@
 {:min-bb-version "1.13.220"
  :paths ["script"]
  :deps {lread/status-line {:git/url "https://github.com/lread/status-line.git"
-                           :sha "eace48e2e0fcc65a3986d696fb0b910fa5790a1c"}}
+                           :sha "eace48e2e0fcc65a3986d696fb0b910fa5790a1c"}
+        version-clj/version-clj {:mvn/version "2.0.3"}
+        wevre/natural-compare {:mvn/version "0.0.10"}}
  :tasks {:requires ([clojure.string :as str]
                     [lread.status-line :as status])
          :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (str/join " " *command-line-args*)))
@@ -9,4 +11,5 @@
          :cli helper.cli/base-opts
 
          ;; commands
-         clean             {:exec-fn clean/task             :doc "delete all build work"}}}
+         clean             {:exec-fn clean/task             :doc "delete all build work"}
+         test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}}}

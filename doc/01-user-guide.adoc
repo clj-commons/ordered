@@ -38,6 +38,9 @@ Include the following dependency in your `project.clj` file:
 `ordered` is a babashka built-in library.
 There is no project setup.
 
+== Supported Envs
+For usage from Clojure on the JVM, we support Clojure v1.10.3 and above.
+
 == Sets
 
 [source, clojure]

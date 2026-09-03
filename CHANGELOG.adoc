@@ -11,6 +11,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 * Docs
 ** While converting to AsiiDoc, restructured to separate User, Developer and Maintainer guide docs
 https://github.com/clj-commons/ordered/issues/81[#81]
+** Explicitly state that the minimum supported Clojure version is 1.10.3 https://github.com/clj-commons/ordered/issues/86[#86]
 
 == 1.15.12 - 2024-05-13
 

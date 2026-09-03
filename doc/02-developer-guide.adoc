@@ -2,4 +2,43 @@
 :toclevels: 6
 :toc:
 
-Coming soon!
+== Prerequisites
+* Java JDK 1.8 or above (Clojure 1.13+ required JDK 17+)
+* Current Clojure CLI
+** Note that `ordered` itself supports Clojure v1.10.3 and above
+* Current Babashka
+
+== Babashka Tasks
+All scripts are written in Clojure and invoked via https://github.com/borkdude/babashka[babashka] tasks.
+This gives us a cross platform scripting language that is familiar, fun and consistent.
+
+To see all available tasks with a short description run:
+----
+bb tasks
+----
+
+To run a task, for example, the `test-clj` task:
+----
+bb test-clj
+----
+
+Usage help for a task is requested via `--help`, for example:
+----
+bb test-clj --help
+----
+
+Tasks are described throughout this document.
+
+=== Clean
+Sometimes you want to turf any local build work and caches, you can do so via:
+
+----
+bb clean
+----
+
+=== Unit tests
+Unit tests can be run locally on your dev box.
+Some tests require a specific os and jdk, you will see warnings if a test is skipped for your current environment.
+----
+bb test-clj
+----
