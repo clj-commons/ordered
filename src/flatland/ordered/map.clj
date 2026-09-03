@@ -1,5 +1,5 @@
 (ns flatland.ordered.map
-  (:require [flatland.ordered.common :refer [change! Compactable compact]]
+  (:require [flatland.ordered.common :refer [change! Compactable]]
             [flatland.ordered.set :refer [ordered-set]])
   (:require [clojure.string :as s])
   (:import (clojure.lang APersistentMap
