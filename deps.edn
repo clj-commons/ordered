@@ -24,7 +24,6 @@
 
   :eastwood {:extra-deps {jonase/eastwood {:mvn/version "1.4.3"}}
              :main-opts ["-m" "eastwood.lint" {:source-paths ["src"]
-                                               :test-paths ["test"]
                                                :add-linters [:performance]}]}
 
   ;;
