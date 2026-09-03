@@ -1,7 +1,7 @@
 (ns flatland.ordered.set-test
-  (:use clojure.test
-        [flatland.ordered.set :only [ordered-set]]
-        [flatland.ordered.common :only [compact]])
+  (:require [clojure.test :refer [deftest testing is are]]
+            [flatland.ordered.set :refer [ordered-set]]
+            [flatland.ordered.common :refer [compact]])
   (:import (flatland.ordered.set OrderedSet)))
 
 (deftest implementations

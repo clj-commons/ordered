@@ -1,6 +1,6 @@
 (ns flatland.ordered.set
-  (:use [flatland.ordered.common :only [Compactable change!]])
-  (:require [clojure.string :as s])
+  (:require [flatland.ordered.common :refer [Compactable change!]]
+            [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          ITransientMap ITransientAssociative
                          ITransientVector IHashEq
