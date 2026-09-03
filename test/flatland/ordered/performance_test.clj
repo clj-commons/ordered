@@ -1,5 +1,5 @@
 (ns flatland.ordered.performance-test
-  (:use clojure.test))
+  (:require [clojure.test :refer [deftest]]))
 
 (deftest ^:kaocha/pending reflection
   #_(binding [*warn-on-reflection* true]

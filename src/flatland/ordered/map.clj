@@ -1,5 +1,5 @@
 (ns flatland.ordered.map
-  (:require [flatland.ordered.common :refer [change! Compactable compact]]
+  (:require [flatland.ordered.common :refer [change! Compactable]]
             [flatland.ordered.set :refer [ordered-set]])
   (:require [clojure.string :as s])
   (:import (clojure.lang APersistentMap
@@ -47,13 +47,13 @@
         (MapEntry. k v))))
   (valAt [this k]
     (.valAt this k nil))
-  (valAt [this k not-found]
+  (valAt [_this k not-found]
     (if-let [^MapEntry e (.get ^Map backing-map k)]
       (.val e)
       not-found))
-  (count [this]
+  (count [_this]
     (.count backing-map))
-  (empty [this]
+  (empty [_this]
     (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
   (cons [this obj]
     (condp instance? obj
@@ -83,7 +83,7 @@
       (OrderedMap. (.without backing-map k)
                    (.assoc order (.key e) nil))
       this))
-  (seq [this]
+  (seq [_this]
     (seq (keep identity order)))
   (iterator [this]
     (clojure.lang.SeqIterator. (.seq this)))
@@ -99,13 +99,13 @@
     (.valAt this k not-found))
 
   Map
-  (size [this]
+  (size [_this]
     (.size ^Map backing-map))
-  (containsKey [this k]
+  (containsKey [_this k]
     (.containsKey backing-map k))
-  (isEmpty [this]
+  (isEmpty [_this]
     (.isEmpty ^Map backing-map))
-  (keySet [this]
+  (keySet [_this]
     (.keySet ^Map backing-map))
   (get [this k]
     (.valAt this k))
@@ -126,9 +126,9 @@
     (hash-unordered-coll this))
 
   IObj
-  (meta [this]
+  (meta [_this]
     (.meta ^IObj backing-map))
-  (withMeta [this m]
+  (withMeta [_this m]
     (OrderedMap. (.withMeta ^IObj backing-map m) order))
 
   IEditableCollection
@@ -136,7 +136,7 @@
     (transient-ordered-map this))
 
   Reversible
-  (rseq [this]
+  (rseq [_this]
     (seq (keep identity (rseq order))))
 
   Compactable
@@ -166,11 +166,11 @@ assoc'ed for the first time. Supports transient."
 (deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
                               ^{:unsynchronized-mutable true, :tag ITransientVector} order]
   ITransientMap
-  (count [this]
+  (count [_this]
     (. backing-map (count)))
   (valAt [this k]
     (.valAt this k nil))
-  (valAt [this k not-found]
+  (valAt [_this k not-found]
     (if-let [^MapEntry e (.valAt backing-map k)]
       (.val e)
       not-found))
@@ -195,7 +195,7 @@ assoc'ed for the first time. Supports transient."
           (change! backing-map dissoc! k)
           (change! order assoc! i nil)))
       this))
-  (persistent [this]
+  (persistent [_this]
     (OrderedMap. (.persistent backing-map)
                  (.persistent order))))
 

@@ -1,11 +1,11 @@
 (ns flatland.ordered.set
-  (:use [flatland.ordered.common :only [Compactable compact change!]])
-  (:require [clojure.string :as s])
+  (:require [flatland.ordered.common :refer [Compactable change!]]
+            [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
-                         IPersistentMap ITransientMap ITransientAssociative
-                         IPersistentVector ITransientVector IHashEq
+                         ITransientMap ITransientAssociative
+                         ITransientVector IHashEq
                          Associative Seqable SeqIterator Reversible IFn IObj)
-           (java.util Set Collection)))
+           (java.util Set)))
 
 (declare transient-ordered-set)
 
@@ -25,26 +25,26 @@
                    (assoc i->k i ::empty))
       this))
   (cons [this k]
-    (if-let [i (.valAt k->i k)]
+    (if (.valAt k->i k)
       this
       (OrderedSet. (.assoc ^Associative k->i k (.count i->k))
                    (.cons i->k k))))
-  (seq [this]
+  (seq [_this]
     (seq (remove #(identical? ::empty %) i->k)))
-  (empty [this]
+  (empty [_this]
     (OrderedSet. (-> {} (with-meta (meta k->i)))
                  []))
   (equiv [this other]
     (.equals this other))
-  (get [this k]
+  (get [_this k]
     (when (.valAt k->i k) k))
-  (count [this]
+  (count [_this]
     (.count k->i))
 
   IObj
-  (meta [this]
+  (meta [_this]
     (.meta ^IObj k->i))
-  (withMeta [this m]
+  (withMeta [_this m]
     (OrderedSet. (.withMeta ^IObj k->i m)
                  i->k))
 
@@ -67,11 +67,11 @@
   IHashEq
   (hasheq [this]
     (hasheq-ordered-set this))
-  
+
   Set
   (iterator [this]
     (SeqIterator. (.seq this)))
-  (contains [this k]
+  (contains [_this k]
     (.containsKey k->i k))
   (containsAll [this ks]
     (every? #(.contains this %) ks))
@@ -89,7 +89,7 @@
     (.toArray this (object-array (.count this))))
 
   Reversible
-  (rseq [this]
+  (rseq [_this]
     (seq (remove #(identical? ::empty %) (rseq i->k))))
 
   IEditableCollection
@@ -105,7 +105,7 @@
   "Return a set with the given items, whose items are sorted in the
 order that they are added. conj'ing an item that was already in the
 set leaves its order unchanged. disj'ing an item and then later
-conj'ing it puts it at the end, as if it were being added for the 
+conj'ing it puts it at the end, as if it were being added for the
 first time. Supports transient.
 
 Note that clojure.set functions like union, intersection, and
@@ -120,9 +120,9 @@ as input."
                               ^{:unsynchronized-mutable true
                                 :tag ITransientVector} i->k]
   ITransientSet
-  (count [this]
+  (count [_this]
     (.count k->i))
-  (get [this k]
+  (get [_this k]
     (when (.valAt k->i k) k))
   (disjoin [this k]
     (let [i (.valAt k->i k)]
@@ -136,9 +136,9 @@ as input."
         (change! ^ITransientAssociative k->i .assoc k (.count i->k))
         (change! i->k conj! k)))
     this)
-  (contains [this k]
+  (contains [_this k]
     (boolean (.valAt k->i k)))
-  (persistent [this]
+  (persistent [_this]
     (OrderedSet. (.persistent k->i)
                  (.persistent i->k))))
 

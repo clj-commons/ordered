@@ -1,7 +1,7 @@
 (ns flatland.ordered.set-test
-  (:use clojure.test
-        [flatland.ordered.set :only [ordered-set]]
-        [flatland.ordered.common :only [compact]])
+  (:require [clojure.test :refer [deftest testing is are]]
+            [flatland.ordered.set :refer [ordered-set]]
+            [flatland.ordered.common :refer [compact]])
   (:import (flatland.ordered.set OrderedSet)))
 
 (deftest implementations
@@ -82,12 +82,15 @@
     (testing "Large number of keys still sorted"
       (let [ints (range 5000)
             ordered (into s ints)]
-        (= (seq ints) (seq ordered))))))
+        (is (= (seq (concat values ints))
+               (seq ordered)))))))
 
 (deftest reversing
   (let [source (vec (range 1000))
         s (into (sorted-set) source)]
-    (is (= (rseq s) (rseq source)))))
+    (is (= ;; a sorted-set is Reversible, so should be fine
+           #_{:clj-kondo/ignore [:type-mismatch]} (rseq s)
+           (rseq source)))))
 
 (deftest set-features
   (let [s (ordered-set :a 1 :b 2 :c 3)]
