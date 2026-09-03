@@ -52,6 +52,15 @@ bb test-clj
 bb test-cljs
 ----
 
+== Checking for Outdated Dependencies
+
+To see what new dependencies are available, run:
+----
+bb outdated
+----
+
+This task uses  https://github.com/liquidz/antq[antq].
+
 === Linting
 We use https://github.com/borkdude/clj-kondo[clj-kondo] and https://github.com/jonase/eastwood[eastwood] to lint rewrite-clj source code.
 
