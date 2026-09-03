@@ -12,5 +12,6 @@
 
          ;; commands
          clean             {:exec-fn clean/task             :doc "delete all build work"}
+         lint-kondo        {:exec-fn lint-kondo/task        :doc "lint with clj-kondo" }
          test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}
          test-cljs         {:exec-fn test-cljs/task         :doc "run tests against a ClojureScript environment"}}}

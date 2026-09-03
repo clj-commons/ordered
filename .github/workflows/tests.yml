@@ -8,6 +8,21 @@ on:
     branches: [ "master" ]
 
 jobs:
+   lint-kondo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/workflows/shared-setup
+        with:
+          jdk: '25'
+
+      - name: Lint
+        run: bb lint-kondo
+
   test-clj:
     runs-on: ${{ matrix.os.name }}-latest
     strategy:
