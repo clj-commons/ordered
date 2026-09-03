@@ -12,4 +12,5 @@
 
          ;; commands
          clean             {:exec-fn clean/task             :doc "delete all build work"}
-         test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}}}
+         test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}
+         test-cljs         {:exec-fn test-cljs/task         :doc "run tests against a ClojureScript environment"}}}

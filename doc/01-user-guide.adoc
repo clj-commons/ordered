@@ -45,6 +45,8 @@ For usage from Clojure on the JVM we support:
 * JDK 11+ (Clojure 1.13 requires JDK 17+)
 * Clojure v1.10.3 and above
 
+For ClojureScript, we support the current release of ClojureScript.
+
 We test on macOS, Windows, and Linux.
 
 == Sets
