@@ -1,0 +1,23 @@
+:project-src-coords: clj-commons/ordered
+:project-mvn-coords: org.flatland/ordered
+
+= `ordered`
+
+https://cljdoc.org/d/{project-mvn-coords}/CURRENT[image:https://cljdoc.org/badge/{project-mvn-coords}[cljdoc]]
+https://clojars.org/{project-mvn-coords}[image:https://img.shields.io/clojars/v/{project-mvn-coords}.svg[Clojars project]]
+https://book.babashka.org#badges[image:https://raw.githubusercontent.com/babashka/babashka/master/logo/built-in-badge.svg[bb built-in]]
+
+`ordered` provides sets and maps that preserve insertion order.
+
+== Docs
+
+* link:doc/01-user-guide.adoc[User Guide]
+* link:CHANGELOG.adoc[Changelog]
+* link:doc/02-developer-guide.adoc[Developer Guide]
+* link:doc/03-maintainer-guide.adoc[Maintainer Guide]
+
+== People
+A big thank you to all the people who have contributed to `ordered`!
+
+== License
+We honor the original Eclipse Public License link:LICENSE[LICENSE].
