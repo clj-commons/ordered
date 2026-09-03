@@ -18,14 +18,14 @@
 (deftype OrderedMap [kvs ks]
   Object
   (toString [this] (pr-str* this))
-  (equiv [this that] (equiv-impl kvs that))
+  (equiv [_this that] (equiv-impl kvs that))
 
   ;; js/map interface
-  (keys [this] (es6-iterator ks))
-  (entries [this] (es6-entries-iterator (seq kvs)))
-  (values [this] (es6-iterator (vals kvs)))
-  (has [this k] (not (nil? (.get kvs k))))
-  (get [this k] (.get kvs k))
+  (keys [_this] (es6-iterator ks))
+  (entries [_this] (es6-entries-iterator (seq kvs)))
+  (values [_this] (es6-iterator (vals kvs)))
+  (has [_this k] (not (nil? (.get kvs k))))
+  (get [_this k] (.get kvs k))
   (forEach [this f]
     (doseq [k ks]
       (f k (get kvs k) this)))
@@ -34,9 +34,9 @@
       (.call f use-as-this k (get kvs k) this)))
 
   ;; js fallbacks
-  (key_set   [this] (to-array (keys kvs)))
-  (entry_set [this] (to-array (map to-array kvs)))
-  (value_set [this] (to-array (map val kvs)))
+  (key_set   [_this] (to-array (keys kvs)))
+  (entry_set [_this] (to-array (map to-array kvs)))
+  (value_set [_this] (to-array (map val kvs)))
 
   ICloneable
   (-clone [_] (OrderedMap. kvs ks))
@@ -51,7 +51,7 @@
       (OrderedMap. (with-meta kvs new-meta) ks)))
 
   IMeta
-  (-meta [this] (meta kvs))
+  (-meta [_this] (meta kvs))
 
   ICollection
   (-conj [coll entry]
@@ -71,38 +71,38 @@
       this))
 
   IEquiv
-  (-equiv [this that] (equiv-impl kvs that))
+  (-equiv [_this that] (equiv-impl kvs that))
 
   IHash
   (-hash [_] (hash kvs))
 
   ISeqable
-  (-seq [this]
+  (-seq [_this]
     (when (seq ks)
       (map #(-find kvs %) ks)))
 
   IReversible
-  (-rseq [this]
+  (-rseq [_this]
     (when (seq ks)
       (map #(-find kvs %) (rseq ks))))
 
   ICounted
-  (-count [this] (count kvs))
+  (-count [_this] (count kvs))
 
   ILookup
-  (-lookup [this attr]           (-lookup kvs attr))
-  (-lookup [this attr not-found] (-lookup kvs attr not-found))
+  (-lookup [_this attr]           (-lookup kvs attr))
+  (-lookup [_this attr not-found] (-lookup kvs attr not-found))
 
   IAssociative
-  (-assoc [coll k v]
+  (-assoc [_coll k v]
     (OrderedMap. (assoc kvs k v) (if (contains? kvs k)
                                    ks
                                    (conj ks k))))
-  (-contains-key? [this k]
+  (-contains-key? [_this k]
     (contains? kvs k))
 
   IFind
-  (-find [this k]
+  (-find [_this k]
     (-find kvs k))
 
   IMap
@@ -120,8 +120,8 @@
      ks))
 
   IFn
-  (-invoke [this k] (kvs k))
-  (-invoke [this k not-found] (kvs k not-found))
+  (-invoke [_this k] (kvs k))
+  (-invoke [_this k not-found] (kvs k not-found))
 
   IPrintWithWriter
   (-pr-writer [_ writer opts]
