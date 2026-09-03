@@ -1,11 +1,11 @@
 (ns flatland.ordered.set
-  (:use [flatland.ordered.common :only [Compactable compact change!]])
+  (:use [flatland.ordered.common :only [Compactable change!]])
   (:require [clojure.string :as s])
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
-                         IPersistentMap ITransientMap ITransientAssociative
-                         IPersistentVector ITransientVector IHashEq
+                         ITransientMap ITransientAssociative
+                         ITransientVector IHashEq
                          Associative Seqable SeqIterator Reversible IFn IObj)
-           (java.util Set Collection)))
+           (java.util Set)))
 
 (declare transient-ordered-set)
 
