@@ -53,12 +53,13 @@ bb test-cljs
 ----
 
 === Linting
-We use https://github.com/borkdude/clj-kondo[clj-kondo] to lint rewrite-clj source code.
+We use https://github.com/borkdude/clj-kondo[clj-kondo] and https://github.com/jonase/eastwood[eastwood] to lint rewrite-clj source code.
 
 We fail the build on any lint violations.
 The CI server runs:
 ----
 bb lint-kondo
+bb lint-eastwood
 ----
 and you can too. The lint script will build the clj-kondo cache when it is missing or stale.
 If you want to force a rebuild of the cache run:

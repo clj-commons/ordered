@@ -23,6 +23,21 @@ jobs:
       - name: Lint
         run: bb lint-kondo
 
+  lint-eastwood:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/workflows/shared-setup
+        with:
+          jdk: '26'
+
+      - name: Lint
+        run: bb lint-eastwood
+
   test-clj:
     runs-on: ${{ matrix.os.name }}-latest
     strategy:
