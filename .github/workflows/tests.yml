@@ -16,7 +16,7 @@ jobs:
         os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}, {name: 'macos', shell: 'bash'}]
         jdk: ['11', '17', '21', '25', '26']
 
-    name: ${{matrix.os.name}} jdk ${{ matrix.jdk }}
+    name: clj ${{matrix.os.name}} jdk ${{ matrix.jdk }}
 
     steps:
     - name: Checkout
@@ -39,7 +39,7 @@ jobs:
         os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}, {name: 'macos', shell: 'bash'}]
         optimizations: ['none', 'advanced']
 
-    name: ${{matrix.os.name}} optimizations ${{ matrix.optimizations }}
+    name: cljs ${{matrix.os.name}} optimizations ${{ matrix.optimizations }}
 
     steps:
     - name: Checkout
