@@ -82,7 +82,8 @@
     (testing "Large number of keys still sorted"
       (let [ints (range 5000)
             ordered (into s ints)]
-        (= (seq ints) (seq ordered))))))
+        (is (= (seq (concat values ints))
+               (seq ordered)))))))
 
 (deftest reversing
   (let [source (vec (range 1000))
