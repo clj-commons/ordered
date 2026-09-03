@@ -80,10 +80,11 @@
   (isEmpty [this]
     (zero? (.count this)))
   (^objects toArray [this ^objects dest]
-    (reduce (fn [idx item]
-              (aset dest idx item)
-              (inc idx))
-            0, (.seq this))
+    (loop [idx 0
+           s (.seq this)]
+      (when s
+        (aset dest idx (first s))
+        (recur (inc idx) (next s))))
     dest)
   (toArray [this]
     (.toArray this (object-array (.count this))))
