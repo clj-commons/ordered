@@ -12,6 +12,12 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 ** While converting to AsiiDoc, restructured to separate User, Developer and Maintainer guide docs
 https://github.com/clj-commons/ordered/issues/81[#81]
 ** Explicitly state that the minimum supported Clojure version is 1.10.3 https://github.com/clj-commons/ordered/issues/86[#86]
+** Explicitly state that the minimum supported JDK is 11 https://github.com/clj-commons/ordered/pull/88[#88]
+* Quality
+** Increase CI test coverage to include Windows and macOS (in addition to Linux) https://github.com/clj-commons/ordered/pull/88[#88]
+** Add CI test coverage for ClojureScript https://github.com/clj-commons/ordered/pull/89[#89]
+** Add clj-kondo linter and address findings https://github.com/clj-commons/ordered/pull/90[#90].
+** Add eastwood linter and address findings https://github.com/clj-commons/ordered/pull/91[#91]
 
 == 1.15.12 - 2024-05-13
 

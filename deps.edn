@@ -22,6 +22,10 @@
               :override-deps {org.clojure/clojure {:mvn/version "1.12.3"}}
               :main-opts ["-m" "clj-kondo.main"]}
 
+  :eastwood {:extra-deps {jonase/eastwood {:mvn/version "1.4.3"}}
+             :main-opts ["-m" "eastwood.lint" {:source-paths ["src"]
+                                               :add-linters [:performance]}]}
+
   ;;
   ;; Test Runners
   ;;
