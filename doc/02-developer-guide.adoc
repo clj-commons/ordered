@@ -49,4 +49,5 @@ Unit tests can be run locally on your dev box.
 Some tests require a specific os and jdk, you will see warnings if a test is skipped for your current environment.
 ----
 bb test-clj
+bb test-cljs
 ----
