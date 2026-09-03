@@ -5,7 +5,7 @@
 (defn print-ordered-map [writer kvs ks opts]
   (pr-sequential-writer
    writer
-   (fn [k w opts]
+   (fn [k w _opts]
      (-write w \[)
      (-write w (pr-str k))
      (-write w \space)
@@ -54,7 +54,7 @@
   (-meta [_this] (meta kvs))
 
   ICollection
-  (-conj [coll entry]
+  (-conj [_coll entry]
     (if (vector? entry)
       (OrderedMap. (conj kvs entry) (if (contains? kvs (-nth entry 0))
                                       ks
@@ -112,7 +112,7 @@
       this))
 
   IKVReduce
-  (-kv-reduce [coll f init]
+  (-kv-reduce [_coll f init]
     (reduce
      (fn [acc k]
        (f acc k (get kvs k)))
