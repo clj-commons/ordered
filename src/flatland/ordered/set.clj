@@ -25,7 +25,7 @@
                    (assoc i->k i ::empty))
       this))
   (cons [this k]
-    (if-let [i (.valAt k->i k)]
+    (if (.valAt k->i k)
       this
       (OrderedSet. (.assoc ^Associative k->i k (.count i->k))
                    (.cons i->k k))))
