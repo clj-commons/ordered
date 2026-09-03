@@ -1,0 +1,12 @@
+{:min-bb-version "1.13.220"
+ :paths ["script"]
+ :deps {lread/status-line {:git/url "https://github.com/lread/status-line.git"
+                           :sha "eace48e2e0fcc65a3986d696fb0b910fa5790a1c"}}
+ :tasks {:requires ([clojure.string :as str]
+                    [lread.status-line :as status])
+         :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (str/join " " *command-line-args*)))
+         :leave (let [{:keys [name]} (current-task)] (status/line :detail "\nTASK %s done." name))
+         :cli helper.cli/base-opts
+
+         ;; commands
+         clean             {:exec-fn clean/task             :doc "delete all build work"}}}
