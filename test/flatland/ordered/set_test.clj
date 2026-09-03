@@ -88,7 +88,9 @@
 (deftest reversing
   (let [source (vec (range 1000))
         s (into (sorted-set) source)]
-    (is (= (rseq s) (rseq source)))))
+    (is (= ;; a sorted-set is Reversible, so should be fine
+           #_{:clj-kondo/ignore [:type-mismatch]} (rseq s)
+           (rseq source)))))
 
 (deftest set-features
   (let [s (ordered-set :a 1 :b 2 :c 3)]
