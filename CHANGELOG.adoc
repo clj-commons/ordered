@@ -1,0 +1,50 @@
+= Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on https://keepachangelog.com/en/1.0.0/[Keep a Changelog],
+and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning] (although like most Clojure projects, we are never likely to bump the major version).
+
+== Unreleased
+
+=== Changed
+
+* Docs
+** While converting to AsiiDoc, restructured to separate User, Developer and Maintainer guide docs
+https://github.com/clj-commons/ordered/issues/81[#81]
+
+== 1.15.12 - 2024-05-13
+
+* Fix NPE when hashing ordered-set that contain `nil`.
+
+== 1.15.11 - 2023-03-26
+
+* Solve native image size problem by removing runtime `resolve` https://github.com/clj-commons/ordered/issues/71[#71]
+
+== 1.15.10 - 2021-10-09
+
+=== Added
+
+* Added support for ClojureScript: https://github.com/clj-commons/ordered/pull/59[#59]
+* Automatic deploys from CI are now enabled for `Release-` tags: https://github.com/clj-commons/ordered/pull/65[#65]
+
+=== Fixed
+
+* Fixed data reader importing issues: https://github.com/clj-commons/ordered/pull/56[#56]
+
+== 1.5.9 - 2020-04-14
+
+=== Fixed
+
+* Fixed reflection warnings: https://github.com/clj-commons/ordered/pull/51[#51]
+
+== 1.5.8 - 2020-04-13
+
+=== Changed
+
+* Updated README, CircleCI configuration.
+
+== 1.5.7 - 2018-12-07
+
+=== Fixed
+
+* Type hint toArray to be compatible with JDK 11: https://github.com/clj-commons/ordered/pull/37[#37]
