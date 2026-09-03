@@ -42,7 +42,7 @@ There is no project setup.
 
 For usage from Clojure on the JVM we support:
 
-* JDK 1.8+ (Clojure 1.13 requires JDK 17+)
+* JDK 11+ (Clojure 1.13 requires JDK 17+)
 * Clojure v1.10.3 and above
 
 We test on macOS, Windows, and Linux.

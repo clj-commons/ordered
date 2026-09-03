@@ -11,7 +11,7 @@ GitHub Actions tests will cover all versions.
 JVM tests cover supported LTS JDKs and the current latest JDK.
 
 == Prerequisites
-* Java JDK 1.8 or above (Clojure 1.13+ required JDK 17+)
+* Java JDK 11 or above (Clojure 1.13+ required JDK 17+)
 * Current Clojure CLI
 ** Note that `ordered` itself supports Clojure v1.10.3 and above
 * Current Babashka

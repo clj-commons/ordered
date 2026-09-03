@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}, {name: 'macos', shell: 'bash'}]
-        jdk: ['8', '11', '17', '21', '25', '26']
+        jdk: ['11', '17', '21', '25', '26']
 
     name: ${{matrix.os.name}} jdk ${{ matrix.jdk }}
 
