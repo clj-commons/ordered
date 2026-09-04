@@ -2,6 +2,9 @@
 :toclevels: 6
 :toc:
 
+== Audience
+You want contribute to, or learn about, the development of the `ordered` library.
+
 == Supported Environments
 `ordered` is verified on each push on macOS, Ubuntu and Windows via GitHub Actions.
 
@@ -81,7 +84,7 @@ bb outdated
 This task uses  https://github.com/liquidz/antq[antq].
 
 === Linting
-We use https://github.com/borkdude/clj-kondo[clj-kondo] and https://github.com/jonase/eastwood[eastwood] to lint rewrite-clj source code.
+We use https://github.com/borkdude/clj-kondo[clj-kondo] and https://github.com/jonase/eastwood[eastwood] to lint `ordered` source code.
 
 We fail the build on any lint violations.
 The CI server runs:

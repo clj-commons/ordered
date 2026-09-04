@@ -1,9 +1,10 @@
 {:min-bb-version "1.13.220"
- :paths ["script"]
+ :paths ["script" "build"]
  :deps {lread/status-line {:git/url "https://github.com/lread/status-line.git"
                            :sha "eace48e2e0fcc65a3986d696fb0b910fa5790a1c"}
         version-clj/version-clj {:mvn/version "2.0.3"}
-        wevre/natural-compare {:mvn/version "0.0.10"}}
+        wevre/natural-compare {:mvn/version "0.0.10"}
+        io.github.babashka/neil {:git/tag "v0.3.70" :git/sha "2cdd7c6"}}
  :tasks {:requires ([clojure.string :as str]
                     [lread.status-line :as status])
          :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (str/join " " *command-line-args*)))
@@ -19,4 +20,13 @@
          lint-eastwood     {:exec-fn lint-eastwood/task     :doc "lint with Eastwood"}
          test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}
          test-cljs         {:exec-fn test-cljs/task         :doc "run tests against a ClojureScript environment"}
-         outdated          {:exec-fn outdated/task          :doc "report on outdated Clojure and npm dependencies"}}}
+         outdated          {:exec-fn outdated/task          :doc "report on outdated Clojure and npm dependencies"}
+         pubcheck          {:exec-fn publish/pubcheck       :doc "Run only publish checks (without publishing)"}
+         publish           {:exec-fn publish/publish        :doc "Publish a release (for maintainers)"}
+         ;; let's not rely on a random version of neil
+         neil              {:task babashka.neil/-main       :doc "Pinned version of babashka/neil (used in scripting)"}
+
+         ;; hidden tasks, no need for folks to be trying these ci invoked tasks
+         -ci-clojars-deploy        {:exec-fn ci-publish/clojars-deploy        :doc "triggered on ci by release tag"}
+         -ci-github-create-release {:exec-fn ci-publish/github-create-release :doc "triggered on ci by release tag"}
+         -ci-cljdoc-request-build  {:exec-fn ci-publish/cljdoc-request-build  :doc "ask cljdoc to build docs for new release"}}}

@@ -1,8 +1,11 @@
 = User Guide
 :toclevels: 5
 :toc:
-// TODO: Soon to be managed by publish workflow
-:lib-version: 1.2.57
+// DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
+:lib-version: 1.15.12
+
+== Audience
+You want to learn more about how to use the `ordered` library from your app, library or script.
 
 == Introduction
 `ordered` provides sets and maps that preserve insertion order.

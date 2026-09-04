@@ -1,7 +1,14 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.10.3"}}
  :aliases
- {;;
+ {;; we use babashka/neil for project attributes
+  ;; publish workflow references these values (and automatically bumps patch component of version)
+  :neil {:project {:version "1.15.12" ;; describes last release and is template for next release
+                   :name org.flatland/ordered
+                   ;; not neilisms - could potentially conflict with new neilisms
+                   :github-coords clj-commons/ordered}}
+
+  ;;
   ;; Clojure versions we support (discovered by scripts by their clojure- prefix)
   ;;
   :clojure-1.10 {:override-deps {org.clojure/clojure {:mvn/version "1.10.3"}}}
@@ -37,7 +44,7 @@
    :main-opts ["-m" "nrepl.cmdline"
                "--middleware" "[cider.nrepl/cider-middleware,cider.piggieback/wrap-cljs-repl]"
                "-i"]}
-  
+
   ;;
   ;; Linters
   ;;
@@ -65,7 +72,12 @@
   ;; Deployment
   ;;
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}}
+          :extra-paths ["src" "build"]
           :ns-default build}
+
+  ;; keep deploy deps separate from build deps; this avoids `bb download-deps` failures on windows
+  ;; when downloading jackson (and other conflicting) deps.
+  :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.2.5"}}}
 
   ;;
   ;; Maintenance support

@@ -1,8 +1,0 @@
-#kaocha/v1
-{:tests [{:id :clj}
-         {:id :cljs
-          :type :kaocha.type/cljs}]
- :plugins [:notifier :print-invocations :hooks]
- :kaocha.hooks/pre-load [(fn [t] (require (quote flatland.ordered.map)
-                                          (quote flatland.ordered.set))
-                           t)]}
