@@ -17,6 +17,9 @@
          dev-cljs          {:exec-fn dev-repl/dev-cljs      :doc "launch cljs nREPL for development"}
          lint-kondo        {:exec-fn lint-kondo/task        :doc "lint with clj-kondo" }
          lint-eastwood     {:exec-fn lint-eastwood/task     :doc "lint with Eastwood"}
+         lint-splint       {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.25.0"}}
+                            :task noahtheduke.splint/-main
+                            :doc "lint with splint"}
          test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}
          test-cljs         {:exec-fn test-cljs/task         :doc "run tests against a ClojureScript environment"}
          outdated          {:exec-fn outdated/task          :doc "report on outdated Clojure and npm dependencies"}}}

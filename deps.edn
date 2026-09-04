@@ -49,9 +49,6 @@
              :main-opts ["-m" "eastwood.lint" {:source-paths ["src"]
                                                :add-linters [:performance]}]}
 
-  :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.25.0"}}
-           :main-opts ["-m" "noahtheduke.splint"]}
-
   ;;
   ;; Test Runners
   ;;
