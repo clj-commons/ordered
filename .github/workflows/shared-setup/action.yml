@@ -45,3 +45,7 @@ runs:
         bb --version
         echo "clojure --version"
         clojure --version
+
+    - name: Download Clojure Dependencies
+      shell: ${{ inputs.shell }}
+      run: bb download-deps
