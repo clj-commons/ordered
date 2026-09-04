@@ -31,7 +31,7 @@ A release with known breaking changes is marked with:
 === Changed
 
 * Docs
-** While converting to AsiiDoc, restructured to separate User, Developer and Maintainer guide docs
+** While converting to AsciiDoc, restructured to separate User, Developer and Maintainer guide docs
 https://github.com/clj-commons/ordered/issues/81[#81]
 (https://github.com/lread[@lread])
 ** Explicitly state that the minimum supported Clojure version is 1.10.3 https://github.com/clj-commons/ordered/issues/86[#86]
