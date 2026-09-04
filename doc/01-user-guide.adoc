@@ -56,28 +56,28 @@ We test on macOS, Windows, and Linux.
 
 [source, clojure]
 ----
-(use 'flatland.ordered.set)
+(require '[flatland.ordered.set :as oset])
 
-(ordered-set 4 3 1 8 2)
+(oset/ordered-set 4 3 1 8 2)
 => #ordered/set (4 3 1 8 2)
 
-(conj (ordered-set 9 10) 1 2 3)
+(conj (oset/ordered-set 9 10) 1 2 3)
 => #ordered/set (9 10 1 2 3)
 
-(into (ordered-set) [7 6 1 5 6])
+(into (oset/ordered-set) [7 6 1 5 6])
 => #ordered/set (7 6 1 5)
 
-(disj (ordered-set 8 1 7 2 6) 7)
+(disj (oset/ordered-set 8 1 7 2 6) 7)
 => #ordered/set (8 1 2 6)
 
 ;; Adding an element already in an ordered set does not change its
 ;; position in the order.
-(conj (ordered-set 4 3 1 8 2) 8)
+(conj (oset/ordered-set 4 3 1 8 2) 8)
 => #ordered/set (4 3 1 8 2)
 
 ;; Removing an element, then adding it back in, puts it at the end,
 ;; just as it would if it were never part of the set.
-(-> (ordered-set 4 3 1 8 2) (disj 8) (conj 8))
+(-> (oset/ordered-set 4 3 1 8 2) (disj 8) (conj 8))
 => #ordered/set (4 3 1 2 8)
 ----
 
@@ -85,37 +85,37 @@ We test on macOS, Windows, and Linux.
 
 [source, clojure]
 ----
-(use 'flatland.ordered.map)
+(require '[flatland.ordered.map :as omap])
 
-(ordered-map :b 2 :a 1 :d 4)
+(omap/ordered-map :b 2 :a 1 :d 4)
 => #ordered/map ([:b 2] [:a 1] [:d 4])
 
-(assoc (ordered-map :b 2 :a 1 :d 4) :c 3)
+(assoc (omap/ordered-map :b 2 :a 1 :d 4) :c 3)
 => #ordered/map ([:b 2] [:a 1] [:d 4] [:c 3])
 
-(into (ordered-map) [[:c 3] [:a 1] [:d 4]])
+(into (omap/ordered-map) [[:c 3] [:a 1] [:d 4]])
 => #ordered/map ([:c 3] [:a 1] [:d 4])
 
-(dissoc (ordered-map :c 3 :a 1 :d 4) :a)
+(dissoc (omap/ordered-map :c 3 :a 1 :d 4) :a)
 => #ordered/map ([:c 3] [:d 4])
 
 ;; Adding a key already in an ordered map does not change its position
 ;; in the order.
-(assoc (ordered-map :b 2 :a 1 :d 4) :b 7)
+(assoc (omap/ordered-map :b 2 :a 1 :d 4) :b 7)
 => #ordered/map ([:b 7] [:a 1] [:d 4])
 
 ;; Removing a key, then adding it back in, puts it at the end, just as
 ;; it would if it were never part of the map.
-(-> (ordered-map :b 2 :a 1 :d 4) (dissoc :b) (assoc :b 7))
+(-> (omap/ordered-map :b 2 :a 1 :d 4) (dissoc :b) (assoc :b 7))
 => #ordered/map ([:a 1] [:d 4] [:b 7])
 ----
 
 == ClojureScript
 
 Both `flatland.ordered.map` and `flatland.ordered.set` work in ClojureScript.
-`#ordered/map` and `#ordered/set` literals are supported in ClojureScript source.
+`#ordered/map` and `#ordered/set` literals are supported in ClojureScript source at compile time.
 
-To read them at runtime, register the tags yourself:
+To read these literals at runtime, you must register the tags:
 
 [source, clojure]
 ----
@@ -123,8 +123,21 @@ To read them at runtime, register the tags yourself:
          '[flatland.ordered.map :as omap]
          '[flatland.ordered.set :as oset])
 
+;; we get reader errors if tags are not registered for runtime usage:
+(reader/read-string "#ordered/map ([:b 1] [:a 2])")
+=> ... No reader function for tag ordered/map.
+(reader/read-string "#ordered/set (4 3 2)")
+=> ... No reader function for tag ordered/set.
+
+;; but if we register our tags first...
 (reader/register-tag-parser! 'ordered/map omap/ordered-map)
 (reader/register-tag-parser! 'ordered/set oset/into-ordered-set)
+
+;; ... then we are fine:
+(reader/read-string "#ordered/map ([:b 1] [:a 2])")
+=> #ordered/map ([:b 1] [:a 2])
+(reader/read-string "#ordered/set (4 3 2)")
+=> #ordered/set (4 3 2)
 ----
 
 A few things are JVM-only:
