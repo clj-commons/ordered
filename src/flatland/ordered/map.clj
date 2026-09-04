@@ -6,6 +6,7 @@
                          IPersistentMap
                          IPersistentVector
                          IEditableCollection
+                         ITransientAssociative2
                          ITransientMap
                          ITransientVector
                          IHashEq
@@ -158,10 +159,7 @@ assoc'ed for the first time. Supports transient."
   ([k v & more]
      (apply assoc empty-ordered-map k v more)))
 
-;; contains? is broken for transients. we could define a closure around a gensym
-;; to use as the not-found argument to a get, but deftype can't be a closure.
-;; instead, we pass `this` as the not-found argument and hope nobody makes a
-;; transient contain itself.
+(def ^:private not-found-obj (Object.))
 
 (deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
                               ^{:unsynchronized-mutable true, :tag ITransientVector} order]
@@ -175,9 +173,9 @@ assoc'ed for the first time. Supports transient."
       (.val e)
       not-found))
   (assoc [this k v]
-    (let [^MapEntry e (.valAt backing-map k this)
+    (let [^MapEntry e (.valAt backing-map k not-found-obj)
           vector-entry (MapEntry. k v)
-          i (if (identical? e this)
+          i (if (identical? e not-found-obj)
               (do (change! order .conj vector-entry)
                   (dec (.count order)))
               (let [idx (.key e)]
@@ -189,15 +187,23 @@ assoc'ed for the first time. Supports transient."
     (let [[k v] e]
       (.assoc this k v)))
   (without [this k]
-    (let [^MapEntry e (.valAt backing-map k this)]
-      (when-not (identical? e this)
+    (let [^MapEntry e (.valAt backing-map k not-found-obj)]
+      (when-not (identical? e not-found-obj)
         (let [i (.key e)]
           (change! backing-map dissoc! k)
           (change! order assoc! i nil)))
       this))
   (persistent [_this]
     (OrderedMap. (.persistent backing-map)
-                 (.persistent order))))
+                 (.persistent order)))
+
+  ITransientAssociative2
+  (containsKey [this k]
+    (not (identical? (.valAt this k not-found-obj) not-found-obj)))
+  (entryAt [this k]
+    (let [v (.valAt this k not-found-obj)]
+      (when-not (identical? v not-found-obj)
+        (MapEntry. k v)))))
 
 (defn transient-ordered-map [^OrderedMap om]
   (TransientOrderedMap. (.asTransient ^IEditableCollection (.backing-map om))
