@@ -106,3 +106,27 @@ We test on macOS, Windows, and Linux.
 (-> (ordered-map :b 2 :a 1 :d 4) (dissoc :b) (assoc :b 7))
 => #ordered/map ([:a 1] [:d 4] [:b 7])
 ----
+
+== ClojureScript
+
+Both `flatland.ordered.map` and `flatland.ordered.set` work in ClojureScript.
+`#ordered/map` and `#ordered/set` literals are supported in ClojureScript source.
+
+To read them at runtime, register the tags yourself:
+
+[source, clojure]
+----
+(require '[cljs.reader :as reader]
+         '[flatland.ordered.map :as omap]
+         '[flatland.ordered.set :as oset])
+
+(reader/register-tag-parser! 'ordered/map omap/ordered-map)
+(reader/register-tag-parser! 'ordered/set oset/into-ordered-set)
+----
+
+A few things are JVM-only:
+
+* `transient` support
+* `flatland.ordered.common/compact`
+
+On ClojureScript, `disj` on an `ordered-set` is O(n) rather than O(1).

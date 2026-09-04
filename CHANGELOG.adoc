@@ -6,6 +6,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == Unreleased
 
+=== Added
+
+* Added ClojureScript support for `ordered-set`: https://github.com/clj-commons/ordered/issues/66[#66]
+
 === Changed
 
 * Docs
