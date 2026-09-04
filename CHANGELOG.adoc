@@ -47,7 +47,7 @@ https://github.com/clj-commons/ordered/issues/81[#81]
 (https://github.com/lread[@lread])
 ** Add eastwood linter and address findings https://github.com/clj-commons/ordered/pull/91[#91]
 (https://github.com/lread[@lread])
-** Automated release workflow
+** Automated release workflow https://github.com/clj-commons/ordered/pull/96[#96]
 (https://github.com/lread[@lread])
 
 == 1.15.12 - 2024-05-13
