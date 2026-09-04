@@ -24,7 +24,7 @@
   (keys [_this] (es6-iterator ks))
   (entries [_this] (es6-entries-iterator (seq kvs)))
   (values [_this] (es6-iterator (vals kvs)))
-  (has [_this k] (not (nil? (.get kvs k))))
+  (has [_this k] (some? (.get kvs k)))
   (get [_this k] (.get kvs k))
   (forEach [this f]
     (doseq [k ks]
