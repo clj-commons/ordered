@@ -1,5 +1,69 @@
 = Maintainer Guide
-:toclevels: 6
+:toclevels: 5
 :toc:
 
-Coming soon!
+== Audience
+You are a maintainer of this project.
+
+== Publishing a New Release
+Is invoked from the command line via:
+
+[source,shell]
+----
+bb publish
+----
+
+The publish task locally validates:
+
+* local git
+** you are not on a fork
+** you are on the default branch
+** do not have any uncommitted code
+** do not have any unpushed commits
+** local head sha matches matches remote head sha
+* changelog
+** Has an "Unreleased" section with content
+
+TIP: to run these validations without publishing, run `bb pubcheck`
+
+Then also locally:
+
+. bumps the version `<release count>` (our scheme is `major.minor.<release count>`)
+** Our version is stored in `deps.edn` under `:aliases` `:neil` `:project` `:version`
+. applies version to:
+.. `doc/01-user-guide.adoc`
+.. `CHANGELOG.adoc`
+. git commits: `deps.edn` `doc/01-user-guide.adoc` `CHANGELOG.adoc`
+. git tags with release tag `v<version>`
+. pushes commit
+. pushes tag
+
+Then up on CI, the CI publish workflow is only triggered when it sees a release tag:
+
+. CI tests workflow is invoked
+. a release jar is published to clojars
+. a GitHub release is created
+. cljdoc is informed of the new release
+
+== Relevant Sources
+
+Scripts:
+
+. `bb.edn` - tasks entry point
+. `script/publish.clj` - client side work
+. `script/ci_publish.clj` - ci side work
+
+CI - We use GitHub Actions for this project
+
+. `.github/workflows/publish.yml`
+
+== CI Config
+
+Clojars secrets are protected under the `publish` environment which is only referenced by `publish.yml`.
+
+== Expected Oddities
+
+When publishing, you will see both the `tests` workflow triggered and the `publish` workflow triggered (which also invokes the `tests` workflow).
+
+This extra running of the `tests` workflow is GitHub Actions responding to changes committed as part of the publishing work.
+Annoying, but harmless.

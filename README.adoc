@@ -19,5 +19,11 @@ https://book.babashka.org#badges[image:https://raw.githubusercontent.com/babashk
 == People
 A big thank you to all the people who have contributed to `ordered`!
 
+== Current Active Maintainers
+
+* https://github.com/danielcompton[@danielcompton]
+* https://github.com/NoahTheDuke[@NoahTheDuke]
+* https://github.com/lread[@lread]
+
 == License
 We honor the original Eclipse Public License link:LICENSE[LICENSE].
