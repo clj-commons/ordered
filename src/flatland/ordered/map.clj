@@ -1,7 +1,7 @@
 (ns flatland.ordered.map
   (:require [flatland.ordered.common :refer [change! Compactable]]
-            [flatland.ordered.set :refer [ordered-set]])
-  (:require [clojure.string :as s])
+            [flatland.ordered.set :refer [ordered-set]]
+            [clojure.string :as str])
   (:import (clojure.lang APersistentMap
                          IPersistentMap
                          IPersistentVector
@@ -54,7 +54,7 @@
   (count [_this]
     (.count backing-map))
   (empty [_this]
-    (OrderedMap. (-> {} (with-meta (meta backing-map))) []))
+    (OrderedMap. (with-meta {} (meta backing-map)) []))
   (cons [this obj]
     (condp instance? obj
       Map$Entry (let [^Map$Entry e obj]
@@ -116,7 +116,7 @@
 
   Object
   (toString [this]
-    (str "{" (s/join ", " (for [[k v] this] (str k " " v))) "}"))
+    (str "{" (str/join ", " (for [[k v] this] (str k " " v))) "}"))
   (equals [this other]
     (.equiv this other))
   (hashCode [this]

@@ -97,3 +97,8 @@ If you want to force a rebuild of the cache run:
 ----
 bb lint-kondo --rebuild
 ----
+
+We don't run it on CI, but you can also optionally lint with https://github.com/noahtheduke/splint[splint]:
+----
+bb lint-splint --help
+----

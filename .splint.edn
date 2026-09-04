@@ -1,0 +1,11 @@
+{
+ lint {:enabled true}
+ naming {:enabled true}
+ style {:enabled true}
+
+ ;; only methods are print-method so unnecessary
+ lint/defmethod-names {:enabled false}
+
+ ;; bug in splint which unconditionally treats .contains as a string method
+ style/prefer-clj-string {:enabled false}
+}

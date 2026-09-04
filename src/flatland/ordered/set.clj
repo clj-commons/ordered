@@ -35,8 +35,7 @@
   (seq [_this]
     (seq (remove #(identical? ::empty %) i->k)))
   (empty [_this]
-    (OrderedSet. (-> {} (with-meta (meta k->i)))
-                 []))
+    (OrderedSet. (with-meta {} (meta k->i)) []))
   (equiv [this other]
     (.equals this other))
   (get [_this k]
@@ -129,10 +128,9 @@
   (get [_this k]
     (when (.valAt k->i k) k))
   (disjoin [this k]
-    (let [i (.valAt k->i k)]
-      (when i
-        (change! k->i .without k)
-        (change! i->k .assocN i ::empty)))
+    (when-let [i (.valAt k->i k)]
+      (change! k->i .without k)
+      (change! i->k .assocN i ::empty))
     this)
   (conj [this k]
     (let [i (.valAt k->i k)]
