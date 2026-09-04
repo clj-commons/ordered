@@ -37,6 +37,25 @@ bb test-clj --help
 
 Tasks are described throughout this document.
 
+=== REPLs
+
+To launch a nREPL server:
+
+----
+bb dev-jvm
+----
+
+From your IDE, cider connect clj to this REPL server.
+
+
+For a nREPL server that also includes ClojureScript support:
+
+----
+bb dev-cljs
+----
+
+From your IDE, cider connect cljs to this REPL server.
+
 === Clean
 Sometimes you want to turf any local build work and caches, you can do so via:
 
@@ -52,7 +71,7 @@ bb test-clj
 bb test-cljs
 ----
 
-== Checking for Outdated Dependencies
+=== Checking for Outdated Dependencies
 
 To see what new dependencies are available, run:
 ----
