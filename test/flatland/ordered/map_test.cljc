@@ -184,7 +184,11 @@
            (is (not= t1 t2))
            (is (= (count ts) (count holder)))
            (are [t] (= t (holder t))
-             t1 t2))))))
+             t1 t2)))
+       (testing "Transients support ITransientAssociative2 methods"
+         (let [t (transient m)]
+           (is (contains? t 1))
+           (is (= [1 2] (find t 1))))))))
 
 (deftest print-and-read-ordered
   (let [s (ordered-map 1 2, 3 4, 5 6, 1 9, 7 8)]

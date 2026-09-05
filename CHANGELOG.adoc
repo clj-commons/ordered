@@ -27,6 +27,7 @@ A release with known breaking changes is marked with:
 
 * Added ClojureScript support for `ordered-set`: https://github.com/clj-commons/ordered/issues/66[#66]
 (thanks, https://github.com/marksto[@marksto]!)
+* Add support for `contains?` and `find` on transient `ordered-map`: https://github.com/clj-commons/ordered/issues/69[#69]
 
 === Changed
 
