@@ -5,6 +5,7 @@
 
 https://cljdoc.org/d/{project-mvn-coords}/CURRENT[image:https://cljdoc.org/badge/{project-mvn-coords}[cljdoc]]
 https://clojars.org/{project-mvn-coords}[image:https://img.shields.io/clojars/v/{project-mvn-coords}.svg[Clojars project]]
+https://github.com/{project-src-coords}/actions/workflows/tests.yml[image:https://github.com/{project-src-coords}/actions/workflows/tests.yml/badge.svg[CI tests]]
 https://book.babashka.org#badges[image:https://raw.githubusercontent.com/babashka/babashka/master/logo/built-in-badge.svg[bb built-in]]
 
 `ordered` provides sets and maps that preserve insertion order.
