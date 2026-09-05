@@ -11,11 +11,17 @@ You want to learn more about how to use the `ordered` library from your app, lib
 `ordered` provides sets and maps that preserve insertion order.
 
 == History
-`ordered` was originally created by https://github.com/amalloy[Alan Malloy] and was part of the https://github.com/flatland[flatland] organisation.
-In December 2018 it was moved to CLJ Commons for continued maintenance.
 
-It could previously be found at https://github.com/amalloy/ordered[amalloy/ordered] and https://github.com/flatland/ordered[flatland/ordered].
-https://github.com/clj-commons/ordered[clj-commons/ordered] is the canonical repository now.
+* 2011 https://github.com/amalloy[Alan Malloy] publishes the first release `ordered/ordered` to https://clojars.org/ordered/versions/0.3.0[Clojars].
+It is described as "Pure-clojure implementation of ruby's ordered hash and set types".
+* 2012 The library gets a new name and a new home.
+Alan's `ordered` github repo gets duplicated to `flatland/ordered`.
+https://github.com/flatland[Flatland] was created by https://www.geni.com/[Geni] to host their open-source works.
+The first release of `org.flatland/ordered` is published to https://clojars.org/org.flatland/ordered/versions/1.4.0[Clojars].
+* 2018 Alan's original GitHub repository (`amalloy/ordered`) is transferred to https://github.com/clj-commons/ordered[clj-commons/ordered] for continued maintenance and care.
+We continue to publish releases to `org.flatland/ordered` maven coordinates.
+Our first release was https://clojars.org/org.flatland/ordered/versions/1.5.7[v1.5.7].
+We are now the canonical repository for `ordered`.
 
 == Project Setup
 
