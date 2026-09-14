@@ -20,6 +20,10 @@ https://book.babashka.org#badges[image:https://raw.githubusercontent.com/babashk
 == People
 A big thank you to all the people who have contributed to `ordered`!
 
+== Founder
+
+* https://github.com/amalloy[Alan Malloy]
+
 == Current Active Maintainers
 
 * https://github.com/danielcompton[@danielcompton]
