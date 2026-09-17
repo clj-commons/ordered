@@ -13,7 +13,8 @@ Sometimes notifications can be missed.
 
 == Don't
 
-* *force push* on a PR, it makes it impossible to review.
+* *force push* on a PR; it makes it impossible to review.
+Don't worry if you have more commits than you'd like, we typically squash them into one commit when merging to master.
 * include more than one feature or fix in a single PR.
 * include changes unrelated to the purpose of the PR.
 This includes changing the project version number, adding lines to the `.gitignore` file, or purposefully changing the indentation or formatting.
