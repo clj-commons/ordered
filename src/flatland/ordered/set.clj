@@ -4,20 +4,13 @@
   (:import (clojure.lang IPersistentSet ITransientSet IEditableCollection
                          ITransientMap ITransientAssociative
                          ITransientVector IHashEq
-                         Associative Seqable SeqIterator Reversible IFn IObj)
+                         Associative SeqIterator Reversible IFn IObj)
            (java.io Writer)
            (java.util Set)))
 
 (set! *warn-on-reflection* true)
 
 (declare transient-ordered-set)
-
-;; We could use compile-if technique here, but hoping to avoid
-;; an AOT issue using this way instead.
-(def hasheq-ordered-set
-  (or (resolve 'clojure.core/hash-unordered-coll)
-      (fn old-hasheq-ordered-set [^Seqable s]
-        (reduce + (map hash (.seq s))))))
 
 (deftype OrderedSet [^clojure.lang.IPersistentMap k->i
                      ^clojure.lang.IPersistentVector i->k]
@@ -68,7 +61,7 @@
 
   IHashEq
   (hasheq [this]
-    (hasheq-ordered-set this))
+    (hash-unordered-coll this))
 
   Set
   (iterator [this]
