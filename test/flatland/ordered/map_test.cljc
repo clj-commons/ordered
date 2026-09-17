@@ -184,7 +184,20 @@
            (is (not= t1 t2))
            (is (= (count ts) (count holder)))
            (are [t] (= t (holder t))
-             t1 t2))))))
+             t1 t2)))
+       (testing "Transients support ITransientAssociative2 methods"
+         (let [t (transient m)]
+           (is (contains? t 1))
+           (is (= [1 2] (find t 1)))
+           (is (= [nil 10] (find (assoc! t nil 10) nil)))
+           (is (= :hello (get t :missing :hello)))))
+       (testing "storing-self works as expected (#69)"
+         (let [m1 (transient m)
+               m2 (assoc! m1 m1 :booya!)]
+           (is (identical? m1 m2))
+           (is (contains? m2 m1))
+           (is (= 3 (count m2)))
+           (is (= 2 (count (dissoc! m2 m1)))))))))
 
 (deftest print-and-read-ordered
   (let [s (ordered-map 1 2, 3 4, 5 6, 1 9, 7 8)]

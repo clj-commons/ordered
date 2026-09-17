@@ -176,7 +176,7 @@
                   (disj s k)))))
        (testing "Can lookup in transients"
          (let [t (transient s)]
-           (is (.contains t (first s))))))))
+           (is (contains? t (first s))))))))
 
 (deftest print-and-read-ordered
   (let [s (ordered-set 1 2 9 8 7 5)]
