@@ -25,6 +25,8 @@
 (defn entry [k v i]
   (MapEntry. k (MapEntry. i v)))
 
+(def ^:private not-found-obj (Object.))
+
 (declare transient-ordered-map)
 
 (deftype OrderedMap [^clojure.lang.IPersistentMap backing-map
@@ -43,8 +45,8 @@
                           (= (.val e) (.get ^Map other k)))))
                  (.seq this))))
   (entryAt [this k]
-    (let [v (get this k ::not-found)]
-      (when (not= v ::not-found)
+    (let [v (get this k not-found-obj)]
+      (when (not= v not-found-obj)
         (MapEntry. k v))))
   (valAt [this k]
     (.valAt this k nil))
@@ -158,8 +160,6 @@ assoc'ed for the first time. Supports transient."
      (into empty-ordered-map coll))
   ([k v & more]
      (apply assoc empty-ordered-map k v more)))
-
-(def ^:private not-found-obj (Object.))
 
 (deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
                               ^{:unsynchronized-mutable true, :tag ITransientVector} order]
