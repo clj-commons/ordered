@@ -1,5 +1,6 @@
 (ns build
-  (:require [build-shared]
+  (:require [babashka.fs :as fs]
+            [build-shared]
             [clojure.edn :as edn]
             [clojure.tools.build.api :as b]))
 
@@ -7,8 +8,29 @@
 (def lib (build-shared/lib-artifact-name))
 
 (def class-dir "target/classes")
+(def native-test-class-dir "target/native-test-classes") ;; keep this separate
 (def basis (b/create-basis {:project "deps.edn"}))
 (def jar-file (format "target/%s.jar" (name lib)))
+
+(defn compile-clj-for-native-test
+  "We compile our tests against our local jar."
+  [{:keys [clj-version-alias]}]
+  (println "compile-clj to:" native-test-class-dir)
+  (let [jars (->> (fs/glob "target" "*.jar") (mapv str))]
+    (when (not= (count jars) 1)
+      (throw (ex-info (format "Expected 1 jar under ./target to compile against, but found: %s"
+                              (if (seq jars) jars "none"))
+                      {})))
+    (let [jar (first jars)
+          basis (b/create-basis {:aliases [:native-test :test-common :clj-test-runner clj-version-alias]
+                                 :extra {:deps {'clj-commons/ordered {:local/root jar}}}})]
+      (println "Using jar:" jar)
+      ;; share the classpath for native-image to use in test-native bb task
+      (spit "target/native-classpath.edn" (pr-str (:classpath-roots basis)))
+      (b/compile-clj {:basis basis
+                      :class-dir native-test-class-dir
+                      :src-dirs ["test"]
+                      :ns-compile ['flatland.ordered.native-test-runner]}))))
 
 (defn jar
   "Build library jar file.

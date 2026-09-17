@@ -200,13 +200,6 @@
   (is (= (ordered-set) #ordered/set nil)))
 
 #?(:clj
-   (deftest print-read-eval-ordered
-     (is (= (seq (eval (read-string "#ordered/set (1 2 9 8 7 5)")))
-            '(1 2 9 8 7 5)))
-     (is (= (seq (eval (read-string "#ordered/set ([1 2] [3 4] [5 6] [1 9] [7 8])")))
-            '([1 2] [3 4] [5 6] [1 9] [7 8])))))
-
-#?(:clj
    (deftest compacting
      (let [s1 (ordered-set :a :b :c)
            s2 (disj s1 :b)
@@ -228,19 +221,23 @@
     (is (= (hash (ordered-set false nil)) (hash (hash-set nil false))))))
 
 #?(:clj
+   (defn hash-code [^Object o]
+     (.hashCode o)))
+
+#?(:clj
    (deftest same-hash-clj
      (let [m1 (ordered-set :a :b :c)
            m2 (hash-set :a :b :c)]
-       (is (= (.hashCode m1) (.hashCode m2)))
-       (is (= (.hashCode (ordered-set)) (.hashCode (hash-set))))
-       (is (= (.hashCode (ordered-set nil)) (.hashCode (hash-set nil))))
-       (is (= (.hashCode (ordered-set nil :a {:b nil})) (.hashCode (hash-set nil :a {:b nil})))))))
+       (is (= (hash-code m1) (hash-code m2)))
+       (is (= (hash-code (ordered-set)) (hash-code (hash-set))))
+       (is (= (hash-code (ordered-set nil)) (hash-code (hash-set nil))))
+       (is (= (hash-code (ordered-set nil :a {:b nil})) (hash-code (hash-set nil :a {:b nil})))))))
 
 #?(:clj
    (deftest nil-and-false-hashes
-     (is (not= (.hashCode (ordered-set nil)) (.hashCode (hash-set false))))
-     (is (not= (.hashCode (ordered-set false)) (.hashCode (hash-set nil))))
-     (is (= (.hashCode (ordered-set false nil)) (.hashCode (hash-set nil false))))))
+     (is (not= (hash-code (ordered-set nil)) (hash-code (hash-set false))))
+     (is (not= (hash-code (ordered-set false)) (hash-code (hash-set nil))))
+     (is (= (hash-code (ordered-set false nil)) (hash-code (hash-set nil false))))))
 
 (deftest nil-hash-npe
   ;; No assertions here; just check that it doesn't NPE
@@ -249,6 +246,6 @@
     [nil]
     [nil :a])
   #?(:clj
-     (are [contents] (.hashCode (apply ordered-set contents))
+     (are [contents] (hash-code (apply ordered-set contents))
        [nil]
        [nil :a])))

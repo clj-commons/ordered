@@ -83,3 +83,38 @@ jobs:
 
     - name: Run tests
       run: bb test-cljs --env node --optimizations ${{ matrix.optimizations }}
+
+  test-native:
+    runs-on: ${{matrix.os.name}}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [{name: 'windows', shell: 'pwsh'}, {name: 'ubuntu', shell: 'bash'}, {name: 'macos', shell: 'bash'}]
+        distribution:
+          - { name: 'graalvm', short-name: 'graal' }
+          - { name: 'graalvm-community', short-name: 'graalce' }
+        version:
+          - '25.3.4.1'
+        clojure-version: [ '1.12', '1.13' ]
+
+    name: ${{matrix.os.name}} ${{matrix.distribution.short-name}}${{matrix.version}} clj${{ matrix.clojure-version }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Setup
+      uses: ./.github/workflows/shared-setup
+      with:
+        jdk: skip
+        shell: ${{ matrix.os.shell }}
+
+    - name: Setup GraalVM
+      uses: graalvm/setup-graalvm@v1
+      with:
+        version: ${{ matrix.version }}
+        distribution: ${{ matrix.distribution.name }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run native tests
+      run: bb test-native --clojure-version ${{ matrix.clojure-version }}
