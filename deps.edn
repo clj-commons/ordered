@@ -54,6 +54,8 @@
 
   :eastwood {:extra-deps {jonase/eastwood {:mvn/version "1.4.3"}}
              :main-opts ["-m" "eastwood.lint" {:source-paths ["src"]
+                                               :test-paths ["test"]
+                                               :exclude-linters [:unused-ret-vals-in-try]
                                                :add-linters [:performance]}]}
 
   ;;
@@ -68,10 +70,14 @@
   :cljs-test {:extra-deps {olical/cljs-test-runner {:mvn/version "3.8.1"}}
               :main-opts ["-m" "cljs-test-runner.main"]}
 
+  :native-test {:replace-paths ["target/native-test-classes"]
+                :extra-deps {com.github.clj-easy/graal-build-time {:mvn/version "1.0.6"}}}
+
   ;;
   ;; Deployment
   ;;
-  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}}
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}
+                 babashka/fs {:mvn/version "0.5.34"}}
           :extra-paths ["src" "build"]
           :ns-default build}
 

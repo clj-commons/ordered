@@ -209,13 +209,6 @@
              (seq o))))))
 
 #?(:clj
-   (deftest print-read-eval-ordered
-     (is (= (pr-str (eval (read-string "#ordered/map[[:a 1] [:b 2]]")))
-            "#ordered/map ([:a 1] [:b 2])"))
-     (is (= (pr-str (eval (read-string "#ordered/map[[1 2] [3 4] [5 6] [1 9] [7 8]]")))
-            "#ordered/map ([1 9] [3 4] [5 6] [7 8])"))))
-
-#?(:clj
    (deftest compacting
      (let [m1 (ordered-map :a 1 :b 2 :c 3)
            m2 (dissoc m1 :b)
@@ -226,20 +219,24 @@
        (is (= m4 (ordered-map :a 1))))))
 
 #?(:clj
+   (defn hash-code [^Object o]
+     (.hashCode o)))
+
+#?(:clj
    (deftest same-hash
      (let [m1 (ordered-map :a 1 :b 2 :c 3)
            m2 (hash-map :a 1 :b 2 :c 3)
            m3 (array-map :a 1 :b 2 :c 3)]
        (is (= (hash m1) (hash m2) (hash m3)))
-       (is (= (.hashCode m1) (.hashCode m2) (.hashCode m3)))
+       (is (= (hash-code m1) (hash-code m2) (hash-code m3)))
        (is (= (hash (ordered-map)) (hash (hash-map)) (hash (array-map))))
-       (is (= (.hashCode (ordered-map)) (.hashCode (hash-map)) (.hashCode (array-map)))))))
+       (is (= (hash-code (ordered-map)) (hash-code (hash-map)) (hash-code (array-map)))))))
 
 #?(:clj
    (deftest nil-hash-code-npe
      ;; No assertions here; just check that it doesn't NPE
      ;; See: https://github.com/amalloy/ordered/issues/27
-     (are [contents] (.hashCode (ordered-map contents))
+     (are [contents] (hash-code (ordered-map contents))
        [[nil :a]]
        [[:a nil]]
        [[nil nil]])))

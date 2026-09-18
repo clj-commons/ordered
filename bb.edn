@@ -23,6 +23,7 @@
                             :doc "lint with splint"}
          test-clj          {:exec-fn test-clj/task          :doc "run tests against a version of Clojure"}
          test-cljs         {:exec-fn test-cljs/task         :doc "run tests against a ClojureScript environment"}
+         test-native       {:exec-fn test-native/task       :doc "run tests natively compiled (requires GraalVM)"}
          outdated          {:exec-fn outdated/task          :doc "report on outdated Clojure and npm dependencies"}
          pubcheck          {:exec-fn publish/pubcheck       :doc "Run only publish checks (without publishing)"}
          publish           {:exec-fn publish/publish        :doc "Publish a release (for maintainers)"}
