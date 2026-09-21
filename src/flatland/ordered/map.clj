@@ -22,7 +22,7 @@
 
 (set! *warn-on-reflection* true)
 
-(defn entry [k v i]
+(defn- entry [k v i]
   (MapEntry. k (MapEntry. i v)))
 
 (def ^:private not-found-obj (Object.))
@@ -150,16 +150,19 @@
        :tag OrderedMap} empty-ordered-map (empty (OrderedMap. nil nil)))
 
 (defn ordered-map
+  ;; REMINDER: Keep docstring and arglists exactly in sync with its ClojureScript counterpart
   "Return a map with the given keys and values, whose entries are
 sorted in the order that keys are added. assoc'ing a key that is
 already in an ordered map leaves its order unchanged. dissoc'ing a
 key and then later assoc'ing it puts it at the end, as if it were
-assoc'ed for the first time. Supports transient."
+  assoc'ed for the first time.
+
+  Clojure supports `transient` ordered maps, ClojureScript does not."
   ([] empty-ordered-map)
   ([coll]
      (into empty-ordered-map coll))
-  ([k v & more]
-     (apply assoc empty-ordered-map k v more)))
+  ([k v & kvs]
+     (apply assoc empty-ordered-map k v kvs)))
 
 (deftype TransientOrderedMap [^{:unsynchronized-mutable true, :tag ITransientMap} backing-map,
                               ^{:unsynchronized-mutable true, :tag ITransientVector} order]
@@ -205,7 +208,7 @@ assoc'ed for the first time. Supports transient."
       (when-not (identical? v not-found-obj)
         (MapEntry. k v)))))
 
-(defn transient-ordered-map [^OrderedMap om]
+(defn- transient-ordered-map [^OrderedMap om]
   (TransientOrderedMap. (.asTransient ^IEditableCollection (.backing-map om))
                         (.asTransient ^IEditableCollection (.order om))))
 
@@ -213,8 +216,12 @@ assoc'ed for the first time. Supports transient."
   (.write w "#ordered/map ")
   (print-method (seq o) w))
 
-(defn ordered-map-reader-clj [coll]
+(defn ^:no-doc ordered-map-reader-clj
+  "Called by data_readers"
+  [coll]
   (ordered-map coll))
 
-(defn ordered-map-reader-cljs [coll]
+(defn ^:no-doc ordered-map-reader-cljs
+  "Called by data_readers"
+  [coll]
   `(ordered-map ~(vec coll)))

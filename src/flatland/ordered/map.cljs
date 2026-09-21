@@ -2,7 +2,7 @@
 
 (declare equiv-impl)
 
-(defn print-ordered-map [writer kvs ks opts]
+(defn- print-ordered-map [writer kvs ks opts]
   (pr-sequential-writer
    writer
    (fn [k w _opts]
@@ -128,7 +128,7 @@
     (-write writer "#ordered/map ")
     (print-ordered-map writer kvs ks opts)))
 
-(defn equiv-impl [kvs that]
+(defn- equiv-impl [kvs that]
   (= kvs (if (instance? OrderedMap that)
            (.-kvs that)
            that)))
@@ -136,6 +136,14 @@
 (def ^:private empty-ordered-map (OrderedMap. {} []))
 
 (defn ordered-map
+  ;; REMINDER: Keep docstring and arglists exactly in sync with its ClojureScript counterpart
+  "Return a map with the given keys and values, whose entries are
+sorted in the order that keys are added. assoc'ing a key that is
+already in an ordered map leaves its order unchanged. dissoc'ing a
+key and then later assoc'ing it puts it at the end, as if it were
+  assoc'ed for the first time.
+
+  Clojure supports `transient` ordered maps, ClojureScript does not."
   ([]
    empty-ordered-map)
   ([coll]

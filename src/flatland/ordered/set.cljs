@@ -3,7 +3,7 @@
 
 (declare equiv-impl)
 
-(defn print-ordered-set [writer order opts]
+(defn- print-ordered-set [writer order opts]
   (if-let [ks (seq order)]
     (pr-sequential-writer writer
                           (fn [k w opts] (pr-seq-writer (list k) w opts))
@@ -90,7 +90,7 @@
     (-write writer "#ordered/set ")
     (print-ordered-set writer order opts)))
 
-(defn equiv-impl [elements that]
+(defn- equiv-impl [elements that]
   (= elements (if (instance? OrderedSet that)
                 (.-elements that)
                 that)))
@@ -98,16 +98,24 @@
 (def ^:private empty-ordered-set (OrderedSet. #{} []))
 
 (defn ordered-set
+  ;; REMINDER: Keep docstring and arglists exactly in sync with its Clojure counterpart
   "Return a set with the given `xs`, whose elements are sorted in the order
    that they are added. conj'ing an item that was already in the set leaves
    its order unchanged. disj'ing an item and then later conj'ing it puts it
    at the end, as if it were being added for the first time.
 
-   NB: The `clojure.set` functions like union, intersection, and difference
+   *NOTE*: The `clojure.set` functions like union, intersection, and difference
    can change the order of their input sets for efficiency purposes, so may
-   not return the order you expect given ordered sets as input."
+   not return the order you expect given ordered sets as input.
+
+   Clojure supports `transient` ordered sets, ClojureScript does not."
   ([] empty-ordered-set)
   ([& xs] (into empty-ordered-set xs)))
 
-(defn into-ordered-set [elements]
+(defn into-ordered-set
+  ;; REMINDER: Keep docstring and arglists exactly in sync with its Clojure counterpart
+  "Create a new ordered set from `elements`.
+
+  Used for registering runtime tag parsers for ClojureScript, see [docs](/doc/01-user-guide.adoc#cljs)."
+  [elements]
   (into empty-ordered-set elements))

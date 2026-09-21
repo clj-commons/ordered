@@ -3,7 +3,7 @@
  :aliases
  {;; we use babashka/neil for project attributes
   ;; publish workflow references these values (and automatically bumps patch component of version)
-  :neil {:project {:version "1.15.12" ;; describes last release and is template for next release
+  :neil {:project {:version "1.16.12" ;; describes last release and is template for next release
                    :name org.flatland/ordered
                    ;; not neilisms - could potentially conflict with new neilisms
                    :github-coords clj-commons/ordered}}

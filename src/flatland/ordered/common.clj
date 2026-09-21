@@ -2,8 +2,8 @@
 
 (set! *warn-on-reflection* true)
 
-(defmacro change! [field f & args]
+(defmacro ^:no-doc change! [field f & args]
   `(set! ~field (~f ~field ~@args)))
 
 (defprotocol Compactable
-  (compact [this]))
+  (compact [coll] "Returns ordered collection equal to `coll` with any deleted entries purged. Useful after many deletions to reclaim memory."))

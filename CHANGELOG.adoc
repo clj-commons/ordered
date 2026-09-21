@@ -21,7 +21,7 @@ A release with known breaking changes is marked with:
 // - unreleased section empty
 // - optional attribute is not [breaking] or [minor breaking]
 //   (adjust these in publish.clj as you see fit)
-== Unreleased
+== Unreleased [minor breaking]
 
 === Added
 
@@ -32,6 +32,34 @@ A release with known breaking changes is marked with:
 
 === Changed
 
+* Public API defined (*very small chance of breaking*)
+Because we made internals private, there is a tiny chance this release could be breaking for you.
+We found no uses of these internals in the wild.
+Let us know if you have been affected.
+https://github.com/clj-commons/ordered/issues/98[#98]
+** Public API docstrings and function signatures verified and consistent across Clojure & ClojureScript
+*** `flatland.ordered.common`
+**** `compact`
+*** `flatland.ordered.map`
+**** `ordered-map`
+*** `flatland.ordered.set`
+**** `into-ordered-set`
+**** `ordered-set`
+** Now marked with `^no-doc` (they are only used by data readers and sometimes in the wild)
+*** `flatland.ordered.map`
+**** `ordered-map-reader-clj`
+**** `ordered-map-reader-cljs`
+** Internals are now private
+*** `flatland.ordered.common`
+**** `change!`
+*** `flatland.ordered.map`
+**** `entry`
+**** `equiv-impl`
+**** `print-ordered-map`
+**** `transient-ordered-map`
+*** `flatland.ordered.set`
+**** `hasheq-ordered-set` (obsolete internal code removed as part of https://github.com/clj-commons/ordered/issues/71[#71])
+**** `transient-ordered-set`
 * Docs
 ** While converting to AsciiDoc, restructured to separate User, Developer and Maintainer guide docs
 https://github.com/clj-commons/ordered/issues/81[#81]

@@ -116,6 +116,7 @@ We test on macOS, Windows, and Linux.
 => #ordered/map ([:a 1] [:d 4] [:b 7])
 ----
 
+[#cljs]
 == ClojureScript
 
 Both `flatland.ordered.map` and `flatland.ordered.set` work in ClojureScript.
