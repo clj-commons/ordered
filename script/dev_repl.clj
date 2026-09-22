@@ -7,7 +7,7 @@
 (defn- launch-repl [flavor {:keys [flowstorm host bind port]}]
   (let [aliases (cond-> [(case flavor
                            :cljs "nrepl/cljs:cljs"
-                           :jvm  "nrepl/jvm")]
+                           :jvm  "clj-kondo:build:nrepl/jvm")]
                   flowstorm (conj "flowstorm"))]
     (status/line :head "Launching Clojure %s nREPL" (name flavor))
     (when flowstorm
