@@ -82,7 +82,7 @@
     (t/shell "java -version")
     (status/line :detail (str "\nnative-image max memory: " native-image-xmx))
     (fs/create-dirs target-path)
-    (status/line :head "Creating clj-yaml jar to test against")
+    (status/line :head "Creating ordered jar to test against")
     (t/clojure "-T:build jar")
     (status/line :head "AOT Compiling test sources against clojure %s" (:mvn-version clojure-version))
     (t/clojure "-T:build compile-clj-for-native-test :clj-version-alias" (:alias clojure-version))
