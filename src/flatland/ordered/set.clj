@@ -159,3 +159,8 @@
 (defmethod print-method OrderedSet [o ^Writer w]
   (.write w "#ordered/set ")
   (print-method (seq o) w))
+
+(defn ordered-set?
+  "Returns `true` if `x` is a flatland ordered set. Does not include `transient` variant."
+  [x]
+  (instance? OrderedSet x))

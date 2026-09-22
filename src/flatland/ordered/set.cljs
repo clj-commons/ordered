@@ -119,3 +119,8 @@
   Used for registering runtime tag parsers for ClojureScript, see [docs](/doc/01-user-guide.adoc#cljs)."
   [elements]
   (into empty-ordered-set elements))
+
+(defn ordered-set?
+  "Returns `true` if `x` is a flatland ordered set. Does not include `transient` variant."
+  [x]
+  (instance? OrderedSet x))

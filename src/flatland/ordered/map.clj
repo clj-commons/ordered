@@ -225,3 +225,8 @@ key and then later assoc'ing it puts it at the end, as if it were
   "Called by data_readers"
   [coll]
   `(ordered-map ~(vec coll)))
+
+(defn ordered-map?
+  "Returns `true` if `x` is a flatland ordered map. Does not include `transient` variant."
+  [x]
+  (instance? OrderedMap x))

@@ -151,6 +151,11 @@ key and then later assoc'ing it puts it at the end, as if it were
   ([k v & kvs]
    (apply assoc empty-ordered-map k v kvs)))
 
+(defn ordered-map?
+  "Returns `true` if `x` is a flatland ordered map. Does not include `transient` variant."
+  [x]
+  (instance? OrderedMap x))
+
 (comment
   (ordered-map :foo 123 :bar 456)
   ;; => #ordered/map [:foo 123, :bar 456]

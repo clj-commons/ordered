@@ -3,7 +3,7 @@
             [clojure.set :as set]
             [flatland.ordered.set :refer [#?(:cljs OrderedSet)
                                           #?(:cljs into-ordered-set)
-                                          ordered-set]]
+                                          ordered-set ordered-set?]]
             #?(:clj [flatland.ordered.common :refer [compact]]
                :cljs [cljs.reader :as reader]))
   #?(:clj (:import (flatland.ordered.set OrderedSet))))
@@ -249,3 +249,18 @@
      (are [contents] (hash-code (apply ordered-set contents))
        [nil]
        [nil :a])))
+
+(deftest predicate-test
+  (is (= true (set? (ordered-set))))
+  (is (= true (coll? (ordered-set))))
+  (is (= false (associative? (ordered-set))))
+  (is (= true (counted? (ordered-set))))
+  (is (= true (ordered-set? (ordered-set))))
+  (is (= true (ordered-set? (ordered-set :a 1))))
+  (is (= false (ordered-set? nil)))
+  (is (= false (ordered-set? #{:a :b}))))
+
+#?(:clj
+   (deftest predicate-transient-test
+     (is (= false (ordered-set? (transient (ordered-set)))))
+     (is (= true (ordered-set? (persistent! (transient (ordered-set))))))))
