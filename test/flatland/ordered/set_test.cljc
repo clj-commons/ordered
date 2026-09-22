@@ -1,6 +1,7 @@
 (ns flatland.ordered.set-test
   (:require [clojure.test :refer [deftest testing is are]]
             [clojure.set :as set]
+            [flatland.ordered.test-report]
             [flatland.ordered.set :refer [#?(:cljs OrderedSet)
                                           #?(:cljs into-ordered-set)
                                           ordered-set ordered-set?]]
