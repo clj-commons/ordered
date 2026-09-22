@@ -25,10 +25,12 @@ A release with known breaking changes is marked with:
 
 === Added
 
-* Remove use of `resolve` in ordered-set. https://github.com/clj-commons/ordered/issues/71[#71]
 * Added ClojureScript support for `ordered-set`: https://github.com/clj-commons/ordered/issues/66[#66]
 (thanks, https://github.com/marksto[@marksto]!)
-* Add support for `contains?` and `find` on transient `ordered-map`, fix bug related to self-referential transient maps: https://github.com/clj-commons/ordered/issues/69[#69]
+* Added `ordered-map?` and `ordered-set?` predicates: https://github.com/clj-commons/ordered/issues/102[#102]
+(https://github.com/lread[@lread])
+* Add support for `contains?` and `find` on transient `ordered-map`: https://github.com/clj-commons/ordered/issues/69[#69]
+(https://github.com/NoahTheDuke[@NoahTheDuke])
 
 === Changed
 
@@ -37,6 +39,7 @@ Because we made internals private, there is a tiny chance this release could be 
 We found no uses of these internals in the wild.
 Let us know if you have been affected.
 https://github.com/clj-commons/ordered/issues/98[#98]
+(https://github.com/lread[@lread])
 ** Public API docstrings and function signatures verified and consistent across Clojure & ClojureScript
 *** `flatland.ordered.common`
 **** `compact`
@@ -79,6 +82,12 @@ https://github.com/clj-commons/ordered/issues/81[#81]
 (https://github.com/lread[@lread])
 ** Automated release workflow https://github.com/clj-commons/ordered/pull/96[#96]
 (https://github.com/lread[@lread])
+
+=== Fixed
+* Remove use of `resolve` in ordered-set. https://github.com/clj-commons/ordered/issues/71[#71]
+(https://github.com/NoahTheDuke[@NoahTheDuke])
+* Fix bug related to self-referential transient maps: https://github.com/clj-commons/ordered/issues/69[#69]
+(https://github.com/NoahTheDuke[@NoahTheDuke])
 
 == 1.15.12 - 2024-05-13
 

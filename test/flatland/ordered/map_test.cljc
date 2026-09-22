@@ -1,7 +1,7 @@
 (ns flatland.ordered.map-test
   (:require [clojure.test :refer [deftest testing is are]]
             [flatland.ordered.test-report]
-            [flatland.ordered.map :refer [#?(:cljs OrderedMap) ordered-map]]
+            [flatland.ordered.map :refer [#?(:cljs OrderedMap) ordered-map ordered-map?]]
             #?(:clj [flatland.ordered.common :refer [compact]]
                :cljs [cljs.reader :as reader]))
   #?(:clj (:import flatland.ordered.map.OrderedMap)))
@@ -241,3 +241,18 @@
        [[nil :a]]
        [[:a nil]]
        [[nil nil]])))
+
+(deftest predicate-test
+  (is (= true (map? (ordered-map))))
+  (is (= true (coll? (ordered-map))))
+  (is (= true (associative? (ordered-map))))
+  (is (= true (counted? (ordered-map))))
+  (is (= true (ordered-map? (ordered-map))))
+  (is (= true (ordered-map? (ordered-map :a 1))))
+  (is (= false (ordered-map? nil)))
+  (is (= false (ordered-map? {:a 1}))))
+
+#?(:clj
+   (deftest predicate-transient-test
+     (is (= false (ordered-map? (transient (ordered-map)))))
+     (is (= true (ordered-map? (persistent! (transient (ordered-map))))))))

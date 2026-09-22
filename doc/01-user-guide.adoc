@@ -85,6 +85,22 @@ We test on macOS, Windows, and Linux.
 ;; just as it would if it were never part of the set.
 (-> (oset/ordered-set 4 3 1 8 2) (disj 8) (conj 8))
 => #ordered/set (4 3 1 2 8)
+
+;; You can check if you are dealing with a flatland ordered set
+(oset/ordered-set? (oset/ordered-set :a :b :c))
+=> true
+----
+
+In Clojure, you can use https://clojure.org/reference/transients[transient] on ordered sets:
+
+[source,clojure]
+----
+(def t (transient (oset/ordered-set)))
+(oset/ordered-set? t)
+=> false
+(def os (persistent! t))
+(oset/ordered-set? os)
+=> true
 ----
 
 == Maps
@@ -114,7 +130,24 @@ We test on macOS, Windows, and Linux.
 ;; it would if it were never part of the map.
 (-> (omap/ordered-map :b 2 :a 1 :d 4) (dissoc :b) (assoc :b 7))
 => #ordered/map ([:a 1] [:d 4] [:b 7])
+
+;; You can check if you are dealing with a flatland ordered map
+(omap/ordered-map? (omap/ordered-map :a 1))
+=> true
 ----
+
+In Clojure, you can use https://clojure.org/reference/transients[transient] on ordered maps:
+
+[source,clojure]
+----
+(def t (transient (omap/ordered-map)))
+(omap/ordered-map? t)
+=> false
+(def om (persistent! t))
+(omap/ordered-map? om)
+=> true
+----
+
 
 [#cljs]
 == ClojureScript
@@ -147,7 +180,7 @@ To read these literals at runtime, you must register the tags:
 => #ordered/set (4 3 2)
 ----
 
-A few things are JVM-only:
+Things are JVM Clojure only:
 
 * `transient` support
 * `flatland.ordered.common/compact`
