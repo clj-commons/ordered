@@ -90,5 +90,5 @@
   ;;
   :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}
                           ;; to rid ourselves of logger warnings
-                          org.slf4j/slf4j-simple {:mvn/version "2.0.19"}}
+                          org.slf4j/slf4j-simple {:mvn/version "2.0.20"}}
                       :main-opts ["-m" "antq.core" "--ignore-locals"]}}}
