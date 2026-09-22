@@ -1,7 +1,7 @@
 (ns flatland.ordered.map-test
   (:require [clojure.test :refer [deftest testing is are]]
             [flatland.ordered.test-report]
-            [flatland.ordered.map :refer [#?(:cljs OrderedMap) ordered-map]]
+            [flatland.ordered.map :refer [#?(:cljs OrderedMap) ordered-map ordered-map?]]
             #?(:clj [flatland.ordered.common :refer [compact]]
                :cljs [cljs.reader :as reader]))
   #?(:clj (:import flatland.ordered.map.OrderedMap)))
