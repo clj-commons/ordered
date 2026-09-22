@@ -93,12 +93,18 @@ The CI server runs:
 ----
 bb lint-kondo
 bb lint-eastwood
+bb lint-docstrings
 ----
-and you can too. The lint script will build the clj-kondo cache when it is missing or stale.
+and you can too.
+
+The `lint-kondo` task will build the clj-kondo cache when it is missing or stale.
 If you want to force a rebuild of the cache run:
 ----
 bb lint-kondo --rebuild
 ----
+
+The `lint-docstrings` task checks that public API docstrings match between `.clj` and `.cljs` implementations.
+Moving to `.cljc` would avoid this, but for now we want to avoid this refactor.
 
 We don't run it on CI, but you can also optionally lint with https://github.com/noahtheduke/splint[splint]:
 ----
