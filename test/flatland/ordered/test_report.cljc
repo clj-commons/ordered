@@ -8,7 +8,5 @@
 (defmethod test/report
   #?@(:cljs [[:cljs.test/default :begin-test-var]]
       :default [:begin-test-var]) [m]
-  (let [test-name (-> m :var meta :name)
-        line (str "=== " test-name " [" platform "]")]
-    #?(:cljs (js/process.stdout.write (str line "\n"))
-       :default (println line))))
+  (let [test-name (-> m :var meta :name)]
+    (println (str "=== " test-name " [" platform "]"))))
