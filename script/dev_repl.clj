@@ -1,18 +1,14 @@
 (ns dev-repl
   (:require [babashka.process :as process]
-            [clojure.string :as str]
             [helper.clojure-versions :as clojure-versions]
             [lread.status-line :as status]))
 
-(defn- launch-repl [flavor {:keys [flowstorm host bind port]}]
-  (let [aliases (cond-> [(case flavor
-                           :cljs "nrepl/cljs:cljs"
-                           :jvm  "clj-kondo:build:nrepl/jvm")]
-                  flowstorm (conj "flowstorm"))]
+(defn- launch-repl [flavor {:keys [host bind port]}]
+  (let [aliases (case flavor
+                  :cljs "nrepl/cljs:cljs"
+                  :jvm  "clj-kondo:build:nrepl/jvm")]
     (status/line :head "Launching Clojure %s nREPL" (name flavor))
-    (when flowstorm
-      (status/line :detail "Flowstorm support is enabled"))
-    (process/exec "clj" (str "-M:" (:alias (clojure-versions/current-prod)) ":test-common:nrepl:" (str/join ":" aliases))
+    (process/exec "clj" (str "-M:" (:alias (clojure-versions/current-prod)) ":test-common:nrepl:" aliases)
                   "-h" host
                   "-b" bind
                   "-p" port)))
