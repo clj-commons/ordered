@@ -3,11 +3,14 @@
   Separated out here:
   - to make it clear what is happening on ci
   - rate of change here should be less/different than in publish namespace"
-  (:require [babashka.tasks :as t]
-            [build-shared]
+  (:require [babashka.deps-deploy :as dd]
+            [babashka.http-client :as http]
+            [babashka.tasks :as t]
+            [build-config :as build-config]
+            [clojure.string :as str]
+            [clojure.tools.build.api :as b]
+            [jar :as jar]
             [lread.status-line :as status]))
-
-(def ^:private changelog-url (format "https://github.com/%s/blob/main/CHANGELOG.adoc" (build-shared/lib-github-coords)))
 
 (defn- assert-on-ci []
   (when (not (System/getenv "CI"))
@@ -17,53 +20,59 @@
   (when (= "tag" (System/getenv "GITHUB_REF_TYPE"))
     (System/getenv "GITHUB_REF_NAME")))
 
-(defn- analyze-ci-tag []
+(defn- tag->version [{:keys! [version-tag-prefix]} ci-tag]
+  (and (str/starts-with? ci-tag version-tag-prefix)
+       (str/replace-first ci-tag version-tag-prefix "")))
+
+(defn- analyze-ci-tag
+  [{:keys! [version] :as config}]
   (let [tag (ci-tag)]
     (if (not tag)
       (status/die 1 "CI tag not found")
-      (let [version-from-tag (build-shared/tag->version tag)
-            lib-version (build-shared/lib-version)]
-        (cond
-          (not version-from-tag)
-          (status/die 1 "Not recognized as version tag: %s" tag)
-
-          (not= version-from-tag lib-version)
-          (status/die 1 "Lib version %s does not match version from tag %s"
-                        lib-version version-from-tag)
-          :else
-          {:tag tag
-           :version lib-version})))))
+      (if (not= (tag->version config tag) version)
+        (status/die 1 "Lib version %s does not match version from tag %s"
+                    version tag)
+        {:tag tag
+         :version version}))))
 
 ;;
 ;; Task entry points
 ;;
 (defn clojars-deploy
   [_opts]
-  (assert-on-ci)
-  (analyze-ci-tag) ;; fail on unexpected version tag
-  (t/shell "clojure -T:build:deploy deploy"))
+  (let [{:keys! [lib jar-file class-dir] :as config} (build-config/config)]
+    (status/line :head "Deploying lib %s from jar-file %s" lib jar-file)
+    (assert-on-ci)
+    (analyze-ci-tag config) ;; fail on unexpected version tag
+    (jar/task {})
+    (dd/deploy {:installer :remote
+                :artifact jar-file
+                :pom-file (b/pom-path {:lib lib :class-dir class-dir})})))
 
 (defn github-create-release
   [_opts]
-  (assert-on-ci)
-  (let [{:keys [tag]} (analyze-ci-tag)]
+  (let [{:keys! [changelog-url version-tag] :as config} (build-config/config)]
+    (status/line :head "Creating github release on tag %s\nwith changelog %s" version-tag changelog-url)
+    (assert-on-ci)
+    (analyze-ci-tag config)
     (t/shell "gh release create"
-             tag
-             "--title" tag
-             "--notes" (format "[Changelog](%s#%s)" changelog-url tag))))
+             version-tag
+             "--title" version-tag
+             "--notes" (format "[Changelog](%s#%s)" changelog-url version-tag))))
 
 (defn cljdoc-request-build
   [_opts]
-  (assert-on-ci)
-  (let [{:keys [version]} (analyze-ci-tag)
-        lib (build-shared/lib-artifact-name)]
+  (let [{:keys! [version lib] :as config} (build-config/config)]
     (status/line :head "Informing cljdoc of %s version %s" lib version)
     (assert-on-ci)
-    (let [exit-code (->  (t/shell {:continue true}
-                                  "curl" "-X" "POST"
-                                  "-d" (str "project=" lib)
-                                  "-d" (str "version=" version)
-                                  "https://cljdoc.org/api/request-build2")
-                         :exit)]
-      (when (not (zero? exit-code))
-        (status/line :warn (str  "Informing cljdoc did not seem to work, exited with " exit-code))))))
+    (analyze-ci-tag config)
+    (try
+      (let [{http-status :status :keys!
+             [& :status]} (http/post "https://cljdoc.org/api/request-build2"
+                                     {:form-params {"project" lib
+                                                    "version" version}
+                                      :throw false})]
+        (when-not (= 200 http-status)
+          (status/line :warn (str "Informing cljdoc did not seem to work, got HTTP status " http-status))))
+      (catch Exception e
+        (status/line :warn (str "Informing cljdoc did not seem to work: " (ex-message e)))))))

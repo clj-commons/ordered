@@ -3,7 +3,7 @@
             [helper.clojure-versions :as clojure-versions]
             [lread.status-line :as status]))
 
-(defn- launch-repl [flavor {:keys [host bind port]}]
+(defn- launch-repl [flavor {:keys! [host bind port]}]
   (let [aliases (case flavor
                   :cljs "nrepl/cljs:cljs"
                   :jvm  "clj-kondo:build:nrepl/jvm")]

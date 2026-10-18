@@ -1,5 +1,6 @@
 (ns test-native
-  (:require [helper.clojure-versions :as clojure-versions]
+  (:require [jar :as jar]
+            [helper.clojure-versions :as clojure-versions]
             [lread.status-line :as status]
             [babashka.fs :as fs]
             [babashka.tasks :as t]
@@ -61,7 +62,7 @@
   "We compile our tests against our local jar."
   [clj-version-alias]
   (let [native-test-class-dir "target/native-test-classes"]
-    (println "compile-clj to:" native-test-class-dir)
+    (status/line :detail "compile-clj to: %s" native-test-class-dir)
     (let [jars (->> (fs/glob "target" "*.jar") (mapv str))]
       (when (not= (count jars) 1)
         (throw (ex-info (format "Expected 1 jar under ./target to compile against, but found: %s"
@@ -70,7 +71,7 @@
       (let [jar (first jars)
             basis (b/create-basis {:aliases [:native-test :test-common :clj-test-runner clj-version-alias]
                                    :extra {:deps {'clj-commons/ordered {:local/root jar}}}})]
-        (println "Using jar:" jar)
+        (status/line :detail "Using jar: %s" jar)
         (b/compile-clj {:basis basis
                         :class-dir native-test-class-dir
                         :src-dirs ["test"]
@@ -93,11 +94,11 @@
     (status/line :detail (str "\nnative-image max memory: " native-image-xmx))
     (fs/create-dirs target-path)
     (status/line :head "Creating ordered jar to test against")
-    (t/clojure "-T:build jar")
+    (jar/task {})
     (status/line :head "AOT Compiling test sources against clojure %s" (:mvn-version clojure-version))
     (let [{:keys [classpath]} (compile-clj-for-native-test (:alias clojure-version))]
       (status/line :head "Using classpath")
-      (println (str "- " (str/join "\n- " classpath)))
+      (status/line :detail (str "- " (str/join "\n- " classpath)))
       (run-native-image {:graal-native-image graal-native-image
                          :target-path target-path
                          :target-exe target-exe

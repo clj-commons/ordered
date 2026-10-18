@@ -28,15 +28,19 @@ TIP: to run these validations without publishing, run `bb pubcheck`
 
 Then also locally:
 
-. bumps the version `<release count>` (our scheme is `major.minor.<release count>`)
+. un``SNAPSHOT`` and bump the version `<release count>` (our scheme is `major.minor.<release count>`)
 ** Our version is stored in `deps.edn` under `:aliases` `:neil` `:project` `:version`
 . applies version to:
 .. `doc/01-user-guide.adoc`
 .. `CHANGELOG.adoc`
-. git commits: `deps.edn` `doc/01-user-guide.adoc` `CHANGELOG.adoc`
-. git tags with release tag `v<version>`
-. pushes commit
-. pushes tag
+. git commit: `deps.edn` `doc/01-user-guide.adoc` `CHANGELOG.adoc`
+. git tag with release tag `v<version>`
+. prep for ongoing dev work after release:
+.. add new Unreleased section to `CHANGELOG.adoc`
+.. bump & `SNAPSHOT` version stored in `deps.edn`
+.. git commits these files
+. push new commits
+. push version tag
 
 Then up on CI, the CI publish workflow is only triggered when it sees a release tag:
 
