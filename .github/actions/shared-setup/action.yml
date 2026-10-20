@@ -1,4 +1,5 @@
 name: 'shared setup'
+description: 'Composite action for common setup steps'
 inputs:
   jdk:
     description: 'jdk version'
