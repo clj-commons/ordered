@@ -4,6 +4,7 @@
                            :sha "eace48e2e0fcc65a3986d696fb0b910fa5790a1c"}
         version-clj/version-clj {:mvn/version "2.0.3"}
         wevre/natural-compare {:mvn/version "0.0.10"}
+        com.github.liquidz/antq {:git/sha "40de7dad0935c1198faa5b9a54a8c4a885080cbd"}
         io.github.babashka/neil {:git/tag "v0.3.70" :git/sha "2cdd7c6"}}
  :tasks {:requires ([clojure.string :as str]
                     [lread.status-line :as status])
