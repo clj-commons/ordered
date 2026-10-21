@@ -48,7 +48,7 @@
   ;;
   ;; Linters
   ;;
-  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.08.04"}}
+  :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.10.20"}}
               :override-deps {org.clojure/clojure {:mvn/version "1.12.3"}}
               :main-opts ["-m" "clj-kondo.main"]}
 
