@@ -3,9 +3,9 @@
             [lread.status-line :as status]
             [babashka.fs :as fs]
             [babashka.tasks :as t]
-            [clojure.edn :as edn]
             [clojure.math :as math]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.tools.build.api :as b]))
 
 (defn- find-graal-prog [prog-name]
   (or (fs/which prog-name)
@@ -19,16 +19,6 @@
                          (status/die 1 "failed to to find GraalVM native-image, it should be bundle with your Graal installation"))]
     (status/line :detail (str "found: " native-image))
     native-image))
-
-(defn get-classpath []
-  (status/line :head "Get classpath")
-  (let [classpath (-> "target/native-classpath.edn"
-                      slurp
-                      edn/read-string)]
-
-    (println "\nClasspath:")
-    (println (str "- " (str/join "\n- " classpath)))
-    (str/join fs/path-separator classpath)))
 
 (defn run-native-image [{:keys [:graal-native-image
                                 :target-path :target-exe :classpath :native-image-xmx
@@ -67,6 +57,26 @@
               (units exponent)
               in-bytes))))
 
+(defn- compile-clj-for-native-test
+  "We compile our tests against our local jar."
+  [clj-version-alias]
+  (let [native-test-class-dir "target/native-test-classes"]
+    (println "compile-clj to:" native-test-class-dir)
+    (let [jars (->> (fs/glob "target" "*.jar") (mapv str))]
+      (when (not= (count jars) 1)
+        (throw (ex-info (format "Expected 1 jar under ./target to compile against, but found: %s"
+                                (if (seq jars) jars "none"))
+                        {})))
+      (let [jar (first jars)
+            basis (b/create-basis {:aliases [:native-test :test-common :clj-test-runner clj-version-alias]
+                                   :extra {:deps {'clj-commons/ordered {:local/root jar}}}})]
+        (println "Using jar:" jar)
+        (b/compile-clj {:basis basis
+                        :class-dir native-test-class-dir
+                        :src-dirs ["test"]
+                        :ns-compile ['flatland.ordered.native-test-runner]})
+        {:classpath (:classpath-roots basis)}))))
+
 (def cli-clojure-versions (mapv :version (clojure-versions/for-native)))
 
 (defn task
@@ -85,12 +95,13 @@
     (status/line :head "Creating ordered jar to test against")
     (t/clojure "-T:build jar")
     (status/line :head "AOT Compiling test sources against clojure %s" (:mvn-version clojure-version))
-    (t/clojure "-T:build compile-clj-for-native-test :clj-version-alias" (:alias clojure-version))
-    (let [classpath (get-classpath)]
+    (let [{:keys [classpath]} (compile-clj-for-native-test (:alias clojure-version))]
+      (status/line :head "Using classpath")
+      (println (str "- " (str/join "\n- " classpath)))
       (run-native-image {:graal-native-image graal-native-image
                          :target-path target-path
                          :target-exe target-exe
-                         :classpath classpath
+                         :classpath (str/join fs/path-separator classpath)
                          :native-image-xmx native-image-xmx
                          :entry-class "flatland.ordered.native_test_runner"}))
     (status/line :head "Native image built")
