@@ -3,7 +3,6 @@
             [lread.status-line :as status]
             [babashka.fs :as fs]
             [babashka.tasks :as t]
-            [clojure.edn :as edn]
             [clojure.math :as math]
             [clojure.string :as str]
             [clojure.tools.build.api :as b]))
@@ -20,11 +19,6 @@
                          (status/die 1 "failed to to find GraalVM native-image, it should be bundle with your Graal installation"))]
     (status/line :detail (str "found: " native-image))
     native-image))
-
-(defn report-classpath [classpath]
-  (status/line :head "Using classpath")
-  (println (str "- " (str/join "\n- " classpath)))
-  (str/join fs/path-separator classpath))
 
 (defn run-native-image [{:keys [:graal-native-image
                                 :target-path :target-exe :classpath :native-image-xmx
