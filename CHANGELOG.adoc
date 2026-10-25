@@ -48,13 +48,13 @@ https://github.com/clj-commons/ordered/issues/98[#98]
 *** `flatland.ordered.set`
 **** `into-ordered-set`
 **** `ordered-set`
-** Now marked with `^no-doc` (they are only used by data readers and sometimes in the wild)
-*** `flatland.ordered.map`
+** Now marked with `^no-doc`
+*** `flatland.ordered.common`
+**** `change!`
+*** `flatland.ordered.map` (these are only used by data readers and sometimes in the wild)
 **** `ordered-map-reader-clj`
 **** `ordered-map-reader-cljs`
 ** Internals are now private
-*** `flatland.ordered.common`
-**** `change!`
 *** `flatland.ordered.map`
 **** `entry`
 **** `equiv-impl`
