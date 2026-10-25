@@ -60,11 +60,11 @@
 
 (defn- compile-clj-for-native-test
   "We compile our tests against our local jar."
-  [{:keys! [jar-file github-coords]} clj-version-alias]
+  [{:keys! [jar-file lib]} clj-version-alias]
   (let [native-test-class-dir "target/native-test-classes"]
     (status/line :detail "compile-clj to: %s" native-test-class-dir)
     (let [basis (b/create-basis {:aliases [:native-test :test-common :clj-test-runner clj-version-alias]
-                                 :extra {:deps {github-coords {:local/root jar-file}}}})]
+                                 :extra {:deps {lib {:local/root jar-file}}}})]
       (status/line :detail "Using jar: %s" jar-file)
       (b/compile-clj {:basis basis
                       :class-dir native-test-class-dir
