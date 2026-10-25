@@ -85,7 +85,7 @@
 
 (defn- bump-version-for-release!
   "bump version stored in deps.edn"
-  [{:keys [version]}]
+  [{:keys! [version]}]
   (-> version
       un-snapshot
       save-version))
