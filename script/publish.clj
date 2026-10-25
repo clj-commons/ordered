@@ -137,7 +137,7 @@
                       (str
                         "https://github.com/" github-coords "/compare/"
                         last-version-tag
-                        "\\\\..."  ; single backslash is escape for AsciiDoc
+                        "\\..."  ; single backslash is escape for AsciiDoc
                         version-tag
                         "[commit log]\n\n"))
                     ;; followed by next section indicator
@@ -209,17 +209,18 @@
                                        :default false}}}}
   [{:keys! [no-push] :as opts}]
   (pubcheck {})
-  (let [{:keys! [version lib]} (build-config/config)]
+  (let [{:keys! [version lib] :as config} (build-config/config)]
     (status/line :detail "About to publish %s %s" lib (un-snapshot version))
     (when no-push
       (status/line :warn "You've opted to not push changes to GitHub for testing purposes via --no-push"))
     (proceed-or-die opts)
     (let [pre-sha (subs (git/head-sha) 0 7)]
       (status/line :head "Calculating versions")
-      (bump-version-for-release! (build-config/config))
+      (bump-version-for-release! config)
       (let [{:keys! [version version-tag last-version-tag] :as config}
             ;; important to reload to pick up version bump
-            (build-config/config)]
+            (assoc (build-config/config)
+                   :last-version-tag (git/last-release-tag config))]
         (status/line :detail "Release version: %s" version)
         (status/line :detail "Release tag: %s" version-tag)
         (status/line :detail "Last release tag: %s" last-version-tag)
