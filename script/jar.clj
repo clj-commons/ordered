@@ -1,7 +1,9 @@
 (ns jar
   (:require [babashka.fs :as fs]
             [build-config :as build-config]
+            [clojure.string :as str]
             [clojure.tools.build.api :as b]
+            [helper.git :as git]
             [lread.status-line :as status]))
 
 (defn task
@@ -24,7 +26,9 @@
                   :scm {:url url
                         :connection scm-connection-url
                         :developerConnection scm-dev-connection-url
-                        :tag version-tag}
+                        :tag (if (str/ends-with? version-tag "-SNAPSHOT")
+                               (git/head-sha)
+                               version-tag)}
                   :pom-data [[:description description]
                              [:url url]
                              [:licenses
