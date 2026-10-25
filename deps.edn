@@ -81,8 +81,4 @@
   ;; Clojure JVM ./build.clj
   ;;
   :build {:extra-deps {babashka/fs {:mvn/version "0.5.34"}}
-          :ns-default build}
-
-  ;; keep deploy deps separate from build deps; this avoids `bb download-deps` failures on windows
-  ;; when downloading jackson (and other conflicting) deps.
-  :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.2.5"}}}}}
+          :ns-default build}}}
