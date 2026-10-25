@@ -10,7 +10,7 @@
     (some #{origin-url} [(format "https://github.com/%s.git" github-coords)
                          (format "git@github.com:%s.git" github-coords)])))
 
-(defn default-branch? [{:keys [default-branch]}]
+(defn default-branch? [{:keys! [default-branch]}]
   (let [current-branch (->> (t/shell {:out :string} "git rev-parse --abbrev-ref HEAD")
                             :out
                             str/trim)]
