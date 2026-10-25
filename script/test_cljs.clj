@@ -19,7 +19,7 @@
    :output-to (str out-dir "/compiled.js")
    :source-map (= "none" optimizations)})
 
-(defn run-tests [{:keys [:env :optimizations] :as opts}]
+(defn run-tests [{:keys! [:env :optimizations] :as opts}]
   (status/line :head "testing ClojureScript source under %s, cljs optimizations: %s" env optimizations)
   (let [test-combo (str env "-" optimizations)
         out-dir (str "target/cljsbuild/test/" test-combo)

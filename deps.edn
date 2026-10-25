@@ -2,8 +2,12 @@
  :deps {org.clojure/clojure {:mvn/version "1.10.3"}}
  :aliases
  {;; we use babashka/neil for project attributes
-  ;; publish workflow references these values (and automatically bumps patch component of version)
-  :neil {:project {:version "1.16.12" ;; describes last release and is template for next release
+  ;; publish workflow references these values, for :version, it:
+  ;; - removes SNAPSHOT for release commit
+  ;; - bumps patch component
+  ;; - adds SNAPSHOT for ongoing dev commit
+  ;; Edit major and minor version components as you see fit
+  :neil {:project {:version "1.16.13-SNAPSHOT" ;; SNAPSHOT indicates dev version
                    :name org.flatland/ordered
                    ;; not neilisms - could potentially conflict with new neilisms
                    :github-coords clj-commons/ordered}}
@@ -74,13 +78,7 @@
                 :extra-deps {com.github.clj-easy/graal-build-time {:mvn/version "1.0.6"}}}
 
   ;;
-  ;; Deployment
+  ;; Clojure JVM ./build.clj
   ;;
-  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}
-                 babashka/fs {:mvn/version "0.5.34"}}
-          :extra-paths ["src" "build"]
-          :ns-default build}
-
-  ;; keep deploy deps separate from build deps; this avoids `bb download-deps` failures on windows
-  ;; when downloading jackson (and other conflicting) deps.
-  :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.2.5"}}}}}
+  :build {:extra-deps {babashka/fs {:mvn/version "0.5.34"}}
+          :ns-default build}}}

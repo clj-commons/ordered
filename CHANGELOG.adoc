@@ -89,18 +89,18 @@ https://github.com/clj-commons/ordered/issues/81[#81]
 * Fix bug related to self-referential transient maps: https://github.com/clj-commons/ordered/issues/69[#69]
 (https://github.com/NoahTheDuke[@NoahTheDuke])
 
-== 1.15.12 - 2024-05-13
+== v1.15.12 - 2024-05-13
 
 * Fix NPE when hashing ordered-set that contain `nil`
 https://github.com/clj-commons/ordered/pull/74[#74]
 (thanks, https://github.com/NoahTheDuke[@NoahTheDuke]!)
 
-== 1.15.11 - 2023-03-26
+== v1.15.11 - 2023-03-26
 
 * Solve native image size problem by removing runtime `resolve` https://github.com/clj-commons/ordered/issues/71[#71]
 (thanks, https://github.com/borkdude[@borkdude]!)
 
-== 1.15.10 - 2021-10-09
+== v1.15.10 - 2021-10-09
 
 === Added
 
@@ -114,20 +114,20 @@ https://github.com/clj-commons/ordered/pull/74[#74]
 * Fixed data reader importing issues: https://github.com/clj-commons/ordered/pull/56[#56]
 (thanks, https://github.com/kolharsam[@kolharsam]!)
 
-== 1.5.9 - 2020-04-14
+== v1.5.9 - 2020-04-14
 
 === Fixed
 
 * Fixed reflection warnings: https://github.com/clj-commons/ordered/pull/51[#51]
 (thanks, https://github.com/borkdude[@borkdude]!)
 
-== 1.5.8 - 2020-04-13
+== v1.5.8 - 2020-04-13
 
 === Changed
 
 * Updated README, CircleCI configuration.
 
-== 1.5.7 - 2018-12-07
+== v1.5.7 - 2018-12-07
 
 === Fixed
 

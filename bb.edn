@@ -5,12 +5,9 @@
         version-clj/version-clj {:mvn/version "2.0.3"}
         wevre/natural-compare {:mvn/version "0.0.10"}
         com.github.liquidz/antq {:git/sha "40de7dad0935c1198faa5b9a54a8c4a885080cbd"}
+        io.github.babashka/deps-deploy {:mvn/version "0.0.1"}
         io.github.babashka/neil {:git/tag "v0.3.70" :git/sha "2cdd7c6"}}
- :tasks {:requires ([clojure.string :as str]
-                    [lread.status-line :as status])
-         :enter (let [{:keys [name]} (current-task)] (status/line :head "TASK %s %s" name (str/join " " *command-line-args*)))
-         :leave (let [{:keys [name]} (current-task)] (status/line :detail "\nTASK %s done." name))
-         :cli helper.cli/base-opts
+ :tasks {:cli helper.cli/base-opts
 
          ;; commands
          clean             {:exec-fn clean/task             :doc "delete all build work"}
@@ -27,6 +24,8 @@
          test-cljs         {:exec-fn test-cljs/task         :doc "run tests against a ClojureScript environment"}
          test-native       {:exec-fn test-native/task       :doc "run tests natively compiled (requires GraalVM)"}
          outdated          {:exec-fn outdated/task          :doc "report on outdated Clojure dependencies"}
+         jar               {:exec-fn jar/task               :doc "create a jar"}
+         install           {:exec-fn install/task           :doc "create and install jar to local maven repo"}
          pubcheck          {:exec-fn publish/pubcheck       :doc "Run only publish checks (without publishing)"}
          publish           {:exec-fn publish/publish        :doc "Publish a release (for maintainers)"}
          ;; let's not rely on a random version of neil

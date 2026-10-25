@@ -27,7 +27,7 @@
     (status/line :detail "- copying lib configs and creating cache")
     (shell/command "clojure -M:clj-kondo --skip-lint --copy-configs --dependencies --lint" clj-cp bb-cp)))
 
-(defn- check-cache [{:keys [rebuild]}]
+(defn- check-cache [{:keys! [rebuild]}]
   (status/line :head "clj-kondo: cache check")
   (if-let [rebuild-reason (cond
                             rebuild
@@ -55,10 +55,9 @@
       (= 3 exit) (status/die exit "clj-kondo found one or more lint warnings")
       (> exit 0) (status/die exit "clj-kondo returned unexpected exit code"))))
 
-(def cli-opts {:spec {:rebuild {:coerce :boolean
-                                :desc "Force rebuild of clj-kondo lint cache"}}})
-
 (defn task
-  {:org.babashka/cli cli-opts}
+  {:org.babashka/cli {:spec {:rebuild {:coerce :boolean
+                                       :desc "Force rebuild of clj-kondo lint cache"
+                                       :default false}}}}
   [opts]
   (lint opts))

@@ -4,7 +4,7 @@
             [helper.shell :as shell]
             [lread.status-line :as status]))
 
-(defn run-unit-tests [{:keys [mvn-version alias] :as _clojure-version}]
+(defn run-unit-tests [{:keys! [mvn-version alias] :as _clojure-version}]
   (status/line :head (str "testing clojure source against clojure v" mvn-version))
   (shell/command "clojure"
                  (str "-M:test-common:clj-test-runner:" alias)))
@@ -13,7 +13,7 @@
 
 (defn task
   {:org.babashka/cli {:spec (clojure-versions/cli-opt cli-clojure-versions)}}
-  [{:keys [clojure-version]}]
+  [{:keys! [clojure-version]}]
   (let [env-jdk-version (jdk/version)
         clojure-versions (if (= "all" clojure-version)
                              (clojure-versions/all)
