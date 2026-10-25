@@ -14,8 +14,8 @@
       :description "Pure-clojure implementation of ruby's ordered hash and set types - instead of sorting by key, these collections retain insertion order."
       :github-coords github-coords
       :url (str "https://github.com/" github-coords)
-      :scm-connection-url (format "scm:git:https://github.com/%s.git" github-coords)
-      :scm-dev-connection-url (format "scm:git:ssh://git@github.com/%s.git" github-coords)
+      :scm-connection (format "scm:git:https://github.com/%s.git" github-coords)
+      :scm-dev-connection (format "scm:git:ssh://git@github.com/%s.git" github-coords)
       :license-name "Eclipse Public License - v 1.0"
       :license-url "http://www.eclipse.org/legal/epl-v10.html"
       :default-branch default-branch
@@ -28,5 +28,5 @@
       :class-dir "target/classes"
       :jar-file (format "target/%s-%s.jar" (name lib) version)
       :changelog-url (format "https://github.com/%s/blob/%s/CHANGELOG.adoc" github-coords default-branch)
-      :changelog-fname "CHANGELOG.adoc"
-      :user-guide-fname "doc/01-user-guide.adoc"})))
+      :changelog-file "CHANGELOG.adoc"
+      :user-guide-file "doc/01-user-guide.adoc"})))

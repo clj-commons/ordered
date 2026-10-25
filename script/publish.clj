@@ -13,8 +13,8 @@
 
 (defn- analyze-changelog
   "Certainly not fool proof, but should help for common mistakes"
-  [{:keys! [changelog-fname]}]
-  (let [changelog-content (slurp changelog-fname)
+  [{:keys! [changelog-file]}]
+  (let [changelog-content (slurp changelog-file)
         valid-attrs ["[minor breaking]" "[breaking]"]
         [_ sp-attr unreleased-content :as match] (re-find re-changelog-unreleased changelog-content)
         [_ sp attr] (re-find #"(\s*)(.*)" sp-attr)]
@@ -104,9 +104,9 @@
       (status/die 1 "Expected to %s in %s" desc fname)
       (spit fname new-content))))
 
-(defn- update-user-guide! [{:keys! [version user-guide-fname]}]
+(defn- update-user-guide! [{:keys! [version user-guide-file]}]
   (status/line :detail "Applying version %s to user guide" version)
-  (update-file! user-guide-fname
+  (update-file! user-guide-file
                 "update :lib-version: adoc attribute"
                 #"(?m)^(:lib-version: )(.*)$"
                 (str "$1" version)))
@@ -115,9 +115,9 @@
   (-> (java.time.Instant/now) str (subs 0 10)))
 
 (defn- update-changelog!
-  [{:keys! [version version-tag last-version-tag changelog-fname github-coords]}]
+  [{:keys! [version version-tag last-version-tag changelog-file github-coords]}]
   (status/line :detail "Applying version %s to changelog" version)
-  (update-file! changelog-fname
+  (update-file! changelog-file
                 "update unreleased header to release header"
                 re-changelog-unreleased
                 (fn [[_ attributes unreleased-content next-section]]
@@ -144,9 +144,9 @@
                     next-section))))
 
 (defn- update-changelog-for-dev-work!
-  [{:keys! [changelog-fname]}]
+  [{:keys! [changelog-file]}]
   (status/line :detail "Adding unreleased header for future dev work")
-  (update-file! changelog-fname
+  (update-file! changelog-file
                 "add new unreleased header"
                 #"(?ims)(?<releasedSection>^== v\d+\.\d+\.)"
                 (fn [[_ released-section]]
@@ -154,13 +154,13 @@
                     "== Unreleased\n\n"
                     released-section))))
 
-(defn- commit-changes-for-release! [{:keys! [version changelog-fname user-guide-fname]}]
-  (t/shell "git add deps.edn" changelog-fname user-guide-fname)
+(defn- commit-changes-for-release! [{:keys! [version changelog-file user-guide-file]}]
+  (t/shell "git add deps.edn" changelog-file user-guide-file)
   (t/shell "git commit -m" (str "publish: apply version " version)))
 
 (defn- commit-changes-for-dev-work!
-  [{:keys! [changelog-fname]}]
-  (t/shell "git add deps.edn" changelog-fname)
+  [{:keys! [changelog-file]}]
+  (t/shell "git add deps.edn" changelog-file)
   (t/shell "git commit -m" "publish: prep for dev work"))
 
 (defn- tag! [{:keys! [version-tag version]}]
@@ -220,7 +220,7 @@
       (let [{:keys! [version version-tag last-version-tag] :as config}
             ;; important to reload to pick up version bump
             (assoc (build-config/config)
-                   :last-version-tag (git/last-release-tag config))]
+                   :last-version-tag (git/last-version-tag config))]
         (status/line :detail "Release version: %s" version)
         (status/line :detail "Release tag: %s" version-tag)
         (status/line :detail "Last release tag: %s" last-version-tag)

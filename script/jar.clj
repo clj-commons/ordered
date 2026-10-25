@@ -11,7 +11,7 @@
   (status/line :head "Jar")
   (let [{:keys! [lib version basis src-dirs class-dir jar-file url
                  description version-tag
-                 scm-connection-url scm-dev-connection-url
+                 scm-connection scm-dev-connection
                  license-name license-url] :as opts}
         (-> (build-config/config opts)
             (assoc :basis (b/create-basis {})))]
@@ -24,8 +24,8 @@
                   :basis basis
                   :src-dirs src-dirs
                   :scm {:url url
-                        :connection scm-connection-url
-                        :developerConnection scm-dev-connection-url
+                        :connection scm-connection
+                        :developerConnection scm-dev-connection
                         :tag (if (str/ends-with? version-tag "-SNAPSHOT")
                                (git/head-sha)
                                version-tag)}

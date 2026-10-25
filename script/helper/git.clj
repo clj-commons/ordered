@@ -66,7 +66,7 @@
         first
         :tag))
 
-(defn last-release-tag [config]
+(defn last-version-tag [config]
   (->>  (raw-tags config)
         (keep #(parse-raw-tag config %))
         (most-recent-tag)))
