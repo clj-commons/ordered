@@ -5,10 +5,9 @@ inputs:
     description: 'jdk version'
     required: true
   shell:
-    # shell must be specified for runs for composite actions
-    description: 'which shell to use'
+    description: 'shell must be specified for composite actions - so we setup an appropriate default'
     required: false
-    default: bash
+    default: ${{ contains(runner.os, 'windows') && 'pwsh' || 'bash' }}
 
 runs:
   using: 'composite'
