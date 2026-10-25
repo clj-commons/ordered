@@ -16,22 +16,22 @@
   [{:keys! [changelog-file]}]
   (let [changelog-content (slurp changelog-file)
         valid-attrs ["[minor breaking]" "[breaking]"]
-        [_ sp-attr unreleased-content :as match] (re-find re-changelog-unreleased changelog-content)
-        [_ sp attr] (re-find #"(\s*)(.*)" sp-attr)]
+        [_ sp-attr unreleased-content :as match] (re-find re-changelog-unreleased changelog-content)]
     (if (not match)
       [{:error :section-missing}]
-      (cond-> []
-        (and (not (str/blank? sp-attr)) (not= " " sp))
-        (conj {:error :attr-sep-not-space :sep sp})
+      (let [[_ sp attr] (re-find #"(\s*)(.*)" sp-attr)]
+        (cond-> []
+          (and (not (str/blank? sp-attr)) (not= " " sp))
+          (conj {:error :attr-sep-not-space :sep sp})
 
-        (and attr
-             (not (str/blank? attr))
-             (not (contains? (set valid-attrs) attr)))
-        (conj {:error :attr-invalid :valid-attrs valid-attrs :found attr})
+          (and attr
+               (not (str/blank? attr))
+               (not (contains? (set valid-attrs) attr)))
+          (conj {:error :attr-invalid :valid-attrs valid-attrs :found attr})
 
-        ;; without any words of a reasonable min length, we consider section blank
-        (not (re-find #"(?m)[\p{L}]{3,}" unreleased-content))
-        (conj {:error :content-missing})))))
+             ;; without any words of a reasonable min length, we consider section blank
+          (not (re-find #"(?m)[\p{L}]{3,}" unreleased-content))
+          (conj {:error :content-missing}))))))
 
 (defn- release-checks [config]
   (let [changelog-findings (reduce (fn [acc n] (assoc acc (:error n) n))
