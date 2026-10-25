@@ -9,24 +9,28 @@
              :aliases :neil :project)
          version (or override-version version)
          version-tag-prefix "v"
-         default-branch "master"]
-     {:lib lib
+         default-branch "master"
+         changelog-file "CHANGELOG.adoc"]
+     {;; project specific
+      :lib lib
+      :default-branch default-branch
       :description "Pure-clojure implementation of ruby's ordered hash and set types - instead of sorting by key, these collections retain insertion order."
-      :github-coords github-coords
-      :url (str "https://github.com/" github-coords)
-      :scm-connection (format "scm:git:https://github.com/%s.git" github-coords)
-      :scm-dev-connection (format "scm:git:ssh://git@github.com/%s.git" github-coords)
       :license-name "Eclipse Public License - v 1.0"
       :license-url "http://www.eclipse.org/legal/epl-v10.html"
-      :default-branch default-branch
+      :github-coords github-coords
       :version version
-      :version-tag-prefix version-tag-prefix
-      :version-tag (str version-tag-prefix version)
       ;; this project started with no prefix, moved to "Release-", but we prefer "v" as a version tag prefix
       :legacy-version-tag-prefixes ["Release-" ""]
       :src-dirs ["src"]
+      :changelog-file changelog-file
+      :user-guide-file "doc/01-user-guide.adoc"
+
+      ;; derived and/or less likely to change
+      :url (str "https://github.com/" github-coords)
+      :scm-connection (format "scm:git:https://github.com/%s.git" github-coords)
+      :scm-dev-connection (format "scm:git:ssh://git@github.com/%s.git" github-coords)
+      :version-tag-prefix version-tag-prefix
+      :version-tag (str version-tag-prefix version)
       :class-dir "target/classes"
       :jar-file (format "target/%s-%s.jar" (name lib) version)
-      :changelog-url (format "https://github.com/%s/blob/%s/CHANGELOG.adoc" github-coords default-branch)
-      :changelog-file "CHANGELOG.adoc"
-      :user-guide-file "doc/01-user-guide.adoc"})))
+      :changelog-url (format "https://github.com/%s/blob/%s/%s" github-coords default-branch changelog-file)})))
