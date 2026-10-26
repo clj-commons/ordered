@@ -13,6 +13,13 @@ Is invoked from the command line via:
 bb publish
 ----
 
+TIP: To run validations without publishing, run `bb pubcheck`
+
+TIP: To validate without pushing an actual release, use `bb publish --no-push`.
+Output will instruct you on how to undo the git tag and commits.
+
+TIP: To skip the confirmation prompt: `bb publish --yes`.
+
 The publish task locally validates:
 
 * local git
@@ -23,8 +30,6 @@ The publish task locally validates:
 ** local head sha matches matches remote head sha
 * changelog
 ** Has an "Unreleased" section with content
-
-TIP: to run these validations without publishing, run `bb pubcheck`
 
 Then also locally:
 
@@ -51,9 +56,11 @@ Then up on CI, the CI publish workflow is only triggered when it sees a release 
 
 == Relevant Sources
 
-Scripts:
+Sources:
 
 . `bb.edn` - tasks entry point
+. `deps.edn` - we store project info (incuding version) under `:aliases` -> `:neil` -> `:project`
+. `script/build_config.clj` - build configuration
 . `script/publish.clj` - client side work
 . `script/ci_publish.clj` - ci side work
 
