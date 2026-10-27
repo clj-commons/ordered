@@ -2,7 +2,7 @@
 :toclevels: 5
 :toc:
 // DO NOT EDIT: the lib-version parameter is automatically updated by bb publish
-:lib-version: 1.15.12
+:lib-version: 1.16.13
 
 == Audience
 You want to learn more about how to use the `ordered` library from your app, library or script.
