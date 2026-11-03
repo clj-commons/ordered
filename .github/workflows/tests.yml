@@ -107,7 +107,7 @@ jobs:
           - { name: 'graalvm', short-name: 'graal' }
           - { name: 'graalvm-community', short-name: 'graalce' }
         version:
-          - '25.4.4.1.1'
+          - '25.5.5.0.3'
         clojure-version: [ '1.12', '1.13' ]
 
     name: ${{matrix.os}} ${{matrix.distribution.short-name}}${{matrix.version}} clj${{ matrix.clojure-version }}
