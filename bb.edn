@@ -6,7 +6,7 @@
         wevre/natural-compare {:mvn/version "0.0.10"}
         com.github.liquidz/antq {:git/sha "06f01e9532ac165ca9a9c802f9817c52929cc56c"}
         io.github.babashka/deps-deploy {:mvn/version "0.0.1"}
-        io.github.babashka/neil {:git/tag "v0.3.70" :git/sha "2cdd7c6"}}
+        io.github.babashka/neil {:git/tag "v0.3.71" :git/sha "78e11f7"}}
  :tasks {:cli helper.cli/base-opts
 
          ;; commands
