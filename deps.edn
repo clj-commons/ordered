@@ -31,7 +31,7 @@
   ;;
   :nrepl
   {:extra-deps {nrepl/nrepl {:mvn/version "1.8.0"}
-                cider/cider-nrepl {:mvn/version "0.63.1"}}
+                cider/cider-nrepl {:mvn/version "0.64.0"}}
    :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}
 
   :nrepl/jvm
